@@ -18,10 +18,10 @@ class CardInitTestCase(unittest.TestCase):
             c = Card('♠', 'Z')
         self.assertTrue((str(context.exception)).startswith("Invalid card:"))
 
-        
+
 class CardBeatTestCase(unittest.TestCase):
 
-    def test_case_beat_self(self):
+    def test_case_beat_self(self):        
         with self.assertRaises(Exception) as context:
             c1 = Card('♠', '8')
             c2 = Card('♠', '8')
@@ -58,3 +58,8 @@ class CardBeatTestCase(unittest.TestCase):
         self.assertTrue(c1.beats(c2,'♠' ))
         self.assertFalse(c2.beats(c1, '♠'))
         
+class CardStringCase(unittest.TestCase):
+
+    def test_string(self):
+        c1 = Card('♠', 'A')
+        self.assertTrue(str(c1) == '♠A')

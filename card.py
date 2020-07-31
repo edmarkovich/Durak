@@ -23,4 +23,9 @@ class Card:
             return Card.ranks.index(self.rank) > Card.ranks.index(other.rank) 
 
         return self.suit == trump
+
+    def __str__(self):
+        return self.suit+self.rank
+
+        
         
