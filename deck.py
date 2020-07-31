@@ -15,9 +15,7 @@ class Deck:
     def shuffle(self, cards):
         #TODO - random seeds
         return random.sample(cards, len(cards))
-
-    
-                
+                    
     def __str__(self):        
         out = ""
         for x in self.cards:
