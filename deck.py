@@ -1,11 +1,12 @@
 from card import Card
 import random
+
 class Deck:
 
     def __init__(self):
-        self.cards = self.shuffle(self.generateCards())
+        self.cards = self.shuffle(self.generate_cards())
 
-    def generateCards(self):
+    def generate_cards(self):
         cards = []
         for x in Card.suits:
             for y in Card.ranks:                
@@ -15,7 +16,14 @@ class Deck:
     def shuffle(self, cards):
         #TODO - random seeds
         return random.sample(cards, len(cards))
-                    
+
+    def peek_last(self):
+        if not self.cards:
+            raise Exception("Empty deck")
+
+        return self.cards[0]
+
+    
     def __str__(self):        
         out = ""
         for x in self.cards:
