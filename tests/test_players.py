@@ -97,4 +97,38 @@ class PlayersTestCase(unittest.TestCase):
 
         players.players["Ed2"].hand = []
         self.assertEqual(players.next_attacker("Ed2", "Ed3", None), None)
-        self.assertEqual(players.next_attacker("Ed2", "Ed3", "Ed2"), None)        
+        self.assertEqual(players.next_attacker("Ed2", "Ed3", "Ed2"), None)   
+
+    def test_players_refill_one(self):
+        players = Players(Deck(), 1)
+        players.add_player("Ed")
+        players.players["Ed"].hand = [Card('♠', 'A'), Card('♠', 'K')]
+
+        players.refill_one("Ed")
+        self.assertEqual(len(players.players["Ed"].hand), 6)
+        self.assertEqual(len(players.deck.cards), 36-6-4)
+
+    def test_players_refill_all(self):
+        players = Players(Deck(), 3)
+        players.add_player("Ed1")
+        players.add_player("Ed2")
+        players.add_player("Ed3")
+
+        players.players["Ed1"].hand = []
+        players.players["Ed2"].hand = []
+        players.players["Ed3"].hand = []
+
+        players.deck.cards = players.deck.cards[0:8]
+
+        players.refill_all("Ed2", "Ed3")
+
+        self.assertEqual(len(players.players["Ed1"].hand), 2)
+        self.assertEqual(len(players.players["Ed2"].hand), 6)
+        self.assertEqual(len(players.players["Ed3"].hand), 0)
+
+
+
+
+        
+
+

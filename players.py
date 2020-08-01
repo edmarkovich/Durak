@@ -59,4 +59,20 @@ class Players:
             if passer == current and candidate == current: return None
             if self.players[candidate].has_cards(): return candidate            
             if candidate == current:
-                return None    
+                return None   
+
+
+    def refill_one(self, player):
+        need = self.players[player].needs_cards()
+        cards = self.deck.draw(need)
+        self.players[player].add_cards(cards)
+    
+    def refill_all(self, attacker, defender):        
+        self.refill_one(attacker)
+        player = attacker
+        while True:            
+            player = self.player_on_left(player)
+            if player == defender: continue
+            if player == attacker: break  
+            self.refill_one(player)          
+        self.refill_one(defender) 
