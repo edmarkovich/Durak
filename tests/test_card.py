@@ -70,3 +70,15 @@ class CardTestCase(unittest.TestCase):
         self.assertTrue(c1 == c2)
         self.assertTrue(c1 != c3)
         self.assertTrue(c4 != c3)        
+
+    def test_card_lt(self):
+        c1 = Card('♠', 'A')
+        c2 = Card('♠', 'K')
+        c3 = Card('♦', 'K')
+
+        self.assertTrue(c1 > c2)
+        self.assertTrue(c2 < c1)
+
+        with self.assertRaises(Exception) as context:
+            x = c3 < c2
+        self.assertTrue((str(context.exception)).startswith("Compare across suits"))

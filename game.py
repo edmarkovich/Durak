@@ -12,9 +12,10 @@ class Game:
         self.expect_players = expect_players
         self.players = {}
         self.deck = Deck()
-        self.trump = self.deck.peek_last().suit
+        self.trump_card = self.deck.peek_last()
 
     def add_console(self, log):
+        #print(log)
         self.console.append(log)
         
     def add_player(self, name):
@@ -29,5 +30,37 @@ class Game:
 
         self.add_console("Joined: "+name)
 
+        if len(self.players) == self.expect_players:
+            self.start()
 
+    def who_goes_first(self):
+        #TODO: for now, everyone will auto-show weakest trump/weakest card
         
+        self.add_console("Player with smallest trump card goes first")
+        least_seen = None
+        least_player = list(self.players.keys())[0]
+        
+        for player in self.players:
+            trumps = self.players[player].hand_by_suit_sorted(self.trump_card.suit)
+            least = trumps[0] if trumps else None
+            self.add_console(player + " shows " + str(least))
+
+            if least:
+                if not least_seen or least_seen > least:
+                    least_seen = least
+                    least_player = player
+
+        return least_player    
+        
+
+    def start(self):
+        player_gap = self.expect_players - len(self.players)
+        if player_gap>0:
+            self.add_console("Awaiting " + str(player_gap) +" player(s)")
+            return False
+
+        self.attacker = self.who_goes_first()
+        self.add_console("Game Started")
+        self.add_console("Trump card: "+ str(self.trump_card))
+
+        return True

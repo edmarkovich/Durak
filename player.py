@@ -16,13 +16,8 @@ class Player:
             raise Exception("Card not in hand " + str(card) + ":" + str(self))
         self.hand.remove(card)
 
-    def hand_by_suits_sorted(self):
-        out = {}
-        for suit in Card.suits:
-            temp = list(filter(lambda x: x.suit == suit, self.hand))
-            out[suit] = sorted(temp, key=lambda x: Card.ranks.index(x.rank))
-        return out
-                
+    def hand_by_suit_sorted(self, suit):
+        return sorted(list(filter(lambda x: x.suit == suit, self.hand)))
 
     def __str__(self):        
         out = ""

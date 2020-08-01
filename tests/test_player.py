@@ -43,17 +43,20 @@ class PlayerTestCase(unittest.TestCase):
         player.add_cards([Card('♠', '10'), Card('♠', 'J')])
         self.assertTrue(len(str(player)) == 5)
     
-    def test_player_hand_by_suits_sorted(self):
+    def test_player_hand_by_suit_sorted(self):
         player = Player()
         player.add_cards([Card('♠', '7'), Card('♠', '6'),
                           Card('♠', 'Q'), Card('♠', '9'),
                           Card('♦', 'K')])
 
-        out = player.hand_by_suits_sorted()
-        self.assertTrue(len(out['♠']) == 4)
-        self.assertTrue(out['♠'][0].rank=='6')
-        self.assertTrue(out['♠'][3].rank=='Q')
-        
-        self.assertTrue(len(out['♦']) == 1)
-        self.assertTrue(len(out['♣']) == 0)                       
+        out = player.hand_by_suit_sorted('♠')
+        self.assertTrue(len(out) == 4)
+        self.assertTrue(out[0].rank=='6')
+        self.assertTrue(out[3].rank=='Q')
+
+        out = player.hand_by_suit_sorted('♦')
+        self.assertTrue(len(out) == 1)
+
+        out = player.hand_by_suit_sorted('♣')
+        self.assertTrue(len(out) == 0)                       
 
