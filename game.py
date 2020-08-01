@@ -76,3 +76,53 @@ class Game:
         return True
 
     
+    def turn(self):
+        return
+    
+        target = self.player_on_left(self.attacker)
+        passes = 0
+        pile = []
+        took = False
+        beat = False
+        
+        while not took and not beat and self.players[target].has_cards():
+            
+            while not took and not beat:
+
+                if not self.players[attacker].has_cards():
+                    passes = passes + 1
+                    break
+                
+                move = {} #TODO - prompt attacker
+                if move.action == "pass": #not on first go
+                    passes = passes + 1
+                    break
+                
+                if move.action == "add":
+                    # TODO check first versus follow-up
+                    passes = 0
+                    card = move.card
+
+                    self.players[attacker].remove_card(card)
+                    pile.append(card)
+
+                    move = {} #TODO - prompt target
+                    if move.action == "take":
+                        #TODO - prompt attacker and other players for more cards
+                        self.players[target].add_cards(pile)
+                        took = True
+                        break
+
+                    if move.action == "defend":
+                        card = move.card
+                        if card.beats(pile[-1]):
+                            self.players[defender].remove_card(card)
+                            pile.append(card)
+                            if not self.players[defender].has_cards():
+                                beat = True
+                                break
+                            continue
+                        else:
+                            #TODO: deal with the bad move
+                            pass
+                

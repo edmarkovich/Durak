@@ -4,6 +4,13 @@ from card import Card
 
 class PlayerTestCase(unittest.TestCase):
 
+    def test_player_init(self):
+        player = Player()
+        self.assertEqual(len(player.hand), 0)
+
+        player = Player([Card('♠', '10'), Card('♠', 'J')])
+        self.assertEqual(len(player.hand), 2)
+        
     def test_player_add_cards(self):
         player = Player()
         player.add_cards([Card('♠', '10'), Card('♠', 'J')])
@@ -60,3 +67,10 @@ class PlayerTestCase(unittest.TestCase):
         out = player.hand_by_suit_sorted('♣')
         self.assertTrue(len(out) == 0)                       
 
+    def test_player_has_cards(self):
+        player = Player()
+        player.add_cards([Card('♦', 'K')])
+        self.assertTrue(player.has_cards())
+
+        player.remove_card(Card('♦', 'K'))
+        self.assertFalse(player.has_cards())
