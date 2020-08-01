@@ -25,11 +25,6 @@ class Game:
         self.attacker = self.players.who_goes_first(self.trump_card.suit)
         self.console.add("Game Started")
         self.console.add("Trump card: "+ str(self.trump_card))
-
-    def get_input(self, player):
-        #TODO: make this real + test
-        print("Get input from ", player)
-        return {}
     
     def turn(self):
         #TODO: test
