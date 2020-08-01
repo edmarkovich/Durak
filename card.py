@@ -16,7 +16,7 @@ class Card:
         if trump not in Card.suits:
             raise Exception ("Invalid trump: " + trump)
 
-        if self.rank == other.rank and self.suit == other.suit:
+        if self == other:
             raise Exception ("Comparing to self")
                 
         if self.suit == other.suit:
@@ -24,6 +24,9 @@ class Card:
 
         return self.suit == trump
 
+    def __eq__(self, other):
+        return self.rank == other.rank and self.suit == other.suit
+    
     def __str__(self):
         return self.suit+self.rank
 
