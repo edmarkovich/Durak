@@ -1,5 +1,6 @@
 from deck import Deck
 from player import Player
+from table import Table
 
 class Game:
 
@@ -63,6 +64,15 @@ class Game:
         if idx==len(self.players): idx=0
         return list(self.players.keys())[idx]
 
+    def next_attacker(self, current, defender):
+        candidate = current
+        while True:
+            candidate = self.player_on_left(candidate)
+            if candidate == defender: continue
+            if self.players[candidate].has_cards(): return candidate            
+            if candidate == current:
+                return None
+    
     def start(self):
         player_gap = self.expect_players - len(self.players)
         if player_gap>0:
@@ -77,9 +87,23 @@ class Game:
 
     
     def turn(self):
+        table = Table(self.trump_card.suit)
+        defender = self.player_on_left(self.attacker)
+
+        a_player = self.players[self.attacker]
+        d_player = self.players[defender]
+
+        while True:
+            if not d_player.has_cards():
+                break;
+
+            if not a_player.has_cards():
+                pass
+
+        
         return
     
-        target = self.player_on_left(self.attacker)
+
         passes = 0
         pile = []
         took = False

@@ -99,3 +99,18 @@ class GameTestCase(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             game.player_on_left("Rando")
         self.assertTrue((str(context.exception)).startswith("Invalid player: Rando"))
+
+    def test_game_next_attacker(self):
+        game = Game(3)
+        game.add_player("Ed1")
+        game.add_player("Ed2")
+        game.add_player("Ed3")
+
+        self.assertEqual(game.next_attacker("Ed2", "Ed1"), "Ed3")
+        self.assertEqual(game.next_attacker("Ed2", "Ed3"), "Ed1")
+
+        game.players["Ed1"].hand = []
+        self.assertEqual(game.next_attacker("Ed2", "Ed3"), "Ed2")
+
+        game.players["Ed2"].hand = []
+        self.assertEqual(game.next_attacker("Ed2", "Ed3"), None)
