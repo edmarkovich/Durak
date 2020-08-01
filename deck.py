@@ -23,6 +23,11 @@ class Deck:
 
         return self.cards[0]
 
+    # Draw up to this many cards out of the deck
+    def draw(self, num_cards):
+        out = self.cards[num_cards* -1 : ]
+        self.cards = self.cards[0 : (len(self.cards) - len(out))]
+        return out                                
     
     def __str__(self):        
         out = ""

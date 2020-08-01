@@ -35,3 +35,28 @@ class DeskTestCase(unittest.TestCase):
             deck.cards = []
             card = deck.peek_last()
         self.assertTrue((str(context.exception)).startswith("Empty deck"))
+
+    def test_deck_draw(self):
+        deck = Deck()
+        deck.cards = deck.generate_cards()
+
+        out = deck.draw(4)
+        self.assertTrue(len(out) == 4)
+        self.assertTrue(len(deck.cards) == 32)
+        self.assertTrue(out[3].rank == 'A')        
+
+        out = deck.draw(4)
+        self.assertTrue(len(out) == 4)
+        self.assertTrue(len(deck.cards) == 28)
+        self.assertTrue(out[3].rank == '10') 
+
+        deck.draw(25)
+        self.assertTrue(len(deck.cards) == 3)
+
+        out = deck.draw(4) #more than there is
+        self.assertTrue(len(out) == 3)
+        self.assertTrue(len(deck.cards) == 0)     
+
+        out = deck.draw(4) #more than there is
+        self.assertTrue(len(out) == 0)
+        self.assertTrue(len(deck.cards) == 0) 
