@@ -35,7 +35,6 @@ class PlayersTestCase(unittest.TestCase):
         players.add_player("Conway")
         self.assertTrue(len(players.deck.cards) == 12)
         self.assertTrue("Joined: Conway" in players.console.lines)
-        #self.assertTrue("Players Started" in players.console.lines)
 
         with self.assertRaises(Exception) as context:
             players.add_player("Fred")

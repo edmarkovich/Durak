@@ -22,10 +22,6 @@ class Players:
 
         self.console.add("Joined: "+name)
 
-        #MOVE TO GAME
-        #if len(self.players) == self.expect_players:
-        #    self.start()        
-
     def who_goes_first(self, trump):
         #TODO: for now, everyone will auto-show weakest trump/weakest card
         

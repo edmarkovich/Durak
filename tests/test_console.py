@@ -8,7 +8,7 @@ class ConsoleTestCase(unittest.TestCase):
     
     def test_console_init(self):
         console = Console()
-        self.assertEquals(console.lines, [])
+        self.assertEqual(console.lines, [])
         
         with self.assertRaises(Exception) as context:
             console = Console()
@@ -29,7 +29,7 @@ class ConsoleTestCase(unittest.TestCase):
         y = Console.getInstance()
         y.add("Two")
 
-        self.assertEquals(len(y.lines), 2)
-        self.assertEquals(y.lines[-2], "One")
+        self.assertEqual(len(y.lines), 2)
+        self.assertEqual(y.lines[-2], "One")
         
         

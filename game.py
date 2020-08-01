@@ -1,6 +1,8 @@
 from deck import Deck
 from player import Player
+from players import Players
 from table import Table
+from console import Console
 
 class Game:
 
@@ -9,144 +11,101 @@ class Game:
         if expect_players < 2 or expect_players > 6:
             raise Exception("Invalid expected players" + str(expect_players))
 
-        self.console = []
-        self.expect_players = expect_players
-        self.players = {}
+        self.console = Console.getInstance()
+        self.expect_players = expect_players 
         self.deck = Deck()
+        self.players = Players(self.deck, self.expect_players)
+
         self.trump_card = self.deck.peek_last()
-
-    def add_console(self, log):
-        #print(log)
-        self.console.append(log)
-        
-    def add_player(self, name):
-        if name in self.players:
-            raise Exception ("Duplicate player "+ name)
-
-        if len(self.players) == self.expect_players:
-            raise Exception ("Game full")
-
-        self.players[name] = Player()
-        self.players[name].add_cards(self.deck.draw(6))
-
-        self.add_console("Joined: "+name)
-
-        if len(self.players) == self.expect_players:
-            self.start()
-
-    def who_goes_first(self):
-        #TODO: for now, everyone will auto-show weakest trump/weakest card
-        
-        self.add_console("Player with smallest trump card goes first")
-        least_seen = None
-        least_player = list(self.players.keys())[0]
-        
-        for player in self.players:
-            trumps = self.players[player].hand_by_suit_sorted(self.trump_card.suit)
-            least = trumps[0] if trumps else None
-            self.add_console(player + " shows " + str(least))
-
-            if least:
-                if not least_seen or least_seen > least:
-                    least_seen = least
-                    least_player = player
-
-        return least_player    
-
-
-    def player_on_left(self, player):
-
-        if player not in self.players:
-            raise Exception ("Invalid player: "+player)
-
-        idx = 1 + list(self.players.keys()).index(player)
-        
-        if idx==len(self.players): idx=0
-        return list(self.players.keys())[idx]
-
-    def next_attacker(self, current, defender):
-        candidate = current
-        while True:
-            candidate = self.player_on_left(candidate)
-            if candidate == defender: continue
-            if self.players[candidate].has_cards(): return candidate            
-            if candidate == current:
-                return None
-    
+            
     def start(self):
-        player_gap = self.expect_players - len(self.players)
+        player_gap = self.expect_players - len(self.players.players)
         if player_gap>0:
-            self.add_console("Awaiting " + str(player_gap) +" player(s)")
+            self.console.add("Awaiting " + str(player_gap) +" player(s)")
             return False
 
-        self.attacker = self.who_goes_first()
-        self.add_console("Game Started")
-        self.add_console("Trump card: "+ str(self.trump_card))
+        self.attacker = self.players.who_goes_first(self.trump_card.suit)
+        self.console.add("Game Started")
+        self.console.add("Trump card: "+ str(self.trump_card))
 
         return True
 
+
+    def get_input(self, player):
+        #TODO: make this real + test
+        print("Get input from ", player)
+        return {}
+
+    def refill_one(self, player):
+        #TODO: test
+        need = self.players[player].needs_cards()
+        cards = self.deck.draw(need)
+        self.players[player].add_cards(cards)
+    
+    def refill_all(self, attacker, defender):
+        #TODO: test
+        self.refill_one(attacker)
+        player = attacker
+        while True:
+            player = self.player_on_left(player)
+            if player == defender: continue
+            if player == attacker: break            
+        self.refill_one(defender)
+
+
     
     def turn(self):
+        #TODO: test
         table = Table(self.trump_card.suit)
-        defender = self.player_on_left(self.attacker)
 
+        attacker = self.attacker
+        defender = self.player_on_left(attacker)
+        passer   = None
+        
         a_player = self.players[self.attacker]
         d_player = self.players[defender]
 
-        while True:
+        outcome = None
+        
+        while not outcome:
+
+            a_move = get_input(attacker)
+            if a_move == "pass":
+                if not passer: passer = attacker
+                attacker = self.next_attacker(attacker, defender, passer)
+                if not attacker:
+                    outcome = "beat"
+                    break
+                a_player = self.players[self.attacker]
+                continue
+
+            if not table.attack(a_move, a_player):
+                #TODO - invalid attack. Notify
+                continue
+
+            while True:
+                d_move = get_input(defender)
+                if d_move == "take":
+                    table.take_pile(d_player)
+                    outcome = "took"
+                    break
+
+                if not table.defend(d_move, d_player):
+                    #TODO - invalid defend. Notify
+                    continue
+
             if not d_player.has_cards():
+                outcome = "beat"
                 break;
 
             if not a_player.has_cards():
-                pass
+                attacker = self.next_attacker(attacker, defender, None)
+                if not attacker: break
 
-        
-        return
-    
+        if outcome == "beat":
+            self.attacker = defender
+        elif outcome == "took":
+            self.attacker = self.player_on_left(defender)
 
-        passes = 0
-        pile = []
-        took = False
-        beat = False
-        
-        while not took and not beat and self.players[target].has_cards():
-            
-            while not took and not beat:
-
-                if not self.players[attacker].has_cards():
-                    passes = passes + 1
-                    break
-                
-                move = {} #TODO - prompt attacker
-                if move.action == "pass": #not on first go
-                    passes = passes + 1
-                    break
-                
-                if move.action == "add":
-                    # TODO check first versus follow-up
-                    passes = 0
-                    card = move.card
-
-                    self.players[attacker].remove_card(card)
-                    pile.append(card)
-
-                    move = {} #TODO - prompt target
-                    if move.action == "take":
-                        #TODO - prompt attacker and other players for more cards
-                        self.players[target].add_cards(pile)
-                        took = True
-                        break
-
-                    if move.action == "defend":
-                        card = move.card
-                        if card.beats(pile[-1]):
-                            self.players[defender].remove_card(card)
-                            pile.append(card)
-                            if not self.players[defender].has_cards():
-                                beat = True
-                                break
-                            continue
-                        else:
-                            #TODO: deal with the bad move
-                            pass
+        #TODO - refill their hands
                 
