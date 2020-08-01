@@ -1,18 +1,18 @@
 import unittest
 from game import Game
 from card import Card
+from game_setup import GameSetup
 
 class GameTestCase(unittest.TestCase):
 
     def test_game_init(self):
         game = Game(2)
-        #self.assertTrue(len(game.deck.cards) == 36)
-        #self.assertTrue(game.trump_card.suit in Card.suits)
-        #self.assertTrue(game.players)
+        self.assertTrue(game.console)
+        self.assertTrue(game.expect_players==2)
 
         game = Game(6)
-        #self.assertTrue(len(game.deck.cards) == 36)
-        
+        self.assertTrue(game.expect_players==6)        
+
         with self.assertRaises(Exception) as context:
             game = Game(1)       
         self.assertTrue((str(context.exception)).startswith("Invalid expected"))
@@ -22,20 +22,20 @@ class GameTestCase(unittest.TestCase):
         self.assertTrue((str(context.exception)).startswith("Invalid expected"))
         
         
-    def test_game_start(self):
-        return
-        game = Game(2)
+    def test_game_start(self):        
+        game = Game(2)    
+        game_setup = GameSetup(2)
         
-        game.players.add_player("Ed1")
+        game_setup.players.add_player("Ed1")
         
         with self.assertRaises(Exception) as context:
-            game.start()
+            game.start(game_setup)
         self.assertTrue((str(context.exception)).startswith("Not enough players"))
 
         self.assertFalse(hasattr(game, 'attacker'))
 
-        game.players.add_player("Ed2")
-        game.start()
+        game_setup.players.add_player("Ed2")
+        game.start(game_setup)
         self.assertTrue(game.attacker)
         self.assertTrue(game.console.lines[-2] == "Game Started")
         self.assertTrue(game.console.lines[-1].startswith("Trump card"))
