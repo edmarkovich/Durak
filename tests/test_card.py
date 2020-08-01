@@ -3,6 +3,11 @@ from card import Card
 
 class CardTestCase(unittest.TestCase):
 
+    def test_card_from_string(self):
+        c = Card.from_string("♠8")
+        self.assertEqual(c.suit, "♠")
+        self.assertEqual(c.rank, "8")
+
     def test_card_create_valid(self):
         c = Card('♠', '8')
         self.assertEqual(c.suit,'♠')

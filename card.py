@@ -4,6 +4,10 @@ class Card:
     suits = ['♠', '♥', '♦', '♣']
     ranks = ['6','7','8','9','10','J','Q','K','A']
 
+    @staticmethod
+    def from_string(card):
+        return Card(card[0], card[1:])
+
 
     def __init__(self, suit, rank):
         if suit not in Card.suits or rank not in Card.ranks:

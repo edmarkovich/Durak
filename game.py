@@ -92,6 +92,7 @@ class Game:
 
 
     def main_loop(self):
+        #TODO test
         game_setup = GameSetup(self.expect_players)
         game_setup.await_all_join()
         self.start(game_setup)

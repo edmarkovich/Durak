@@ -1,16 +1,20 @@
 import json
-
+from card import Card
 
 class IOUtil:
 
-    @staticmethod
-    def prompt():
-        print("Input: ")
-        txt = input("[[[[[[]]]]]]]]]]] ==> ")
-        return txt
+    defaultSource = lambda: '{}'
 
     @staticmethod
-    def get_input(source = prompt, player = None):
+    def get_input(source = None, player = None):
+
+        if not source:
+            source = IOUtil.defaultSource
 
         input = source()
-        return json.loads(input)
+        input = json.loads(input)
+
+        if "card" in input:
+            input["card"] = Card.from_string(input["card"])
+
+        return input
