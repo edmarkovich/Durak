@@ -19,40 +19,17 @@ class Game:
         self.trump_card = self.deck.peek_last()
             
     def start(self):
-        player_gap = self.expect_players - len(self.players.players)
-        if player_gap>0:
-            self.console.add("Awaiting " + str(player_gap) +" player(s)")
-            return False
+        if self.expect_players > len(self.players.players):
+            raise Exception("Not enough players")
 
         self.attacker = self.players.who_goes_first(self.trump_card.suit)
         self.console.add("Game Started")
         self.console.add("Trump card: "+ str(self.trump_card))
 
-        return True
-
-
     def get_input(self, player):
         #TODO: make this real + test
         print("Get input from ", player)
         return {}
-
-    def refill_one(self, player):
-        #TODO: test
-        need = self.players[player].needs_cards()
-        cards = self.deck.draw(need)
-        self.players[player].add_cards(cards)
-    
-    def refill_all(self, attacker, defender):
-        #TODO: test
-        self.refill_one(attacker)
-        player = attacker
-        while True:
-            player = self.player_on_left(player)
-            if player == defender: continue
-            if player == attacker: break            
-        self.refill_one(defender)
-
-
     
     def turn(self):
         #TODO: test
@@ -108,4 +85,23 @@ class Game:
             self.attacker = self.player_on_left(defender)
 
         #TODO - refill their hands
-                
+
+
+    def await_single_join(self):
+        out = self.get_input("Any")
+
+        if "action" not in out or "name" not in out or out["action"] != "join" or len(out["name"])==0:            
+            raise Exception("Invalid join: "+str(out))
+
+        self.players.add_player(out["name"])
+
+    def await_all_join(self):
+        while len(self.players.players) < self.expect_players:
+            self.await_single_join()
+
+    def main_loop(self):
+        self.await_all_join()
+        self.start()
+
+
+

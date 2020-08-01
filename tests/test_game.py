@@ -1,4 +1,5 @@
 import unittest
+import random
 from game import Game
 from card import Card
 
@@ -26,14 +27,63 @@ class GameTestCase(unittest.TestCase):
         game = Game(2)
         
         game.players.add_player("Ed1")
-        self.assertFalse(game.start())
+        
+        with self.assertRaises(Exception) as context:
+            game.start()
+        self.assertTrue((str(context.exception)).startswith("Not enough players"))
+
         self.assertFalse(hasattr(game, 'attacker'))
-        self.assertTrue(game.console.lines[-1] == "Awaiting 1 player(s)")
 
         game.players.add_player("Ed2")
-        self.assertTrue(game.start())
+        game.start()
         self.assertTrue(game.attacker)
         self.assertTrue(game.console.lines[-2] == "Game Started")
         self.assertTrue(game.console.lines[-1].startswith("Trump card"))
 
+    def test_await_single_join(self):
+        game = Game(2)
+
+        game.get_input = lambda x: {"name":"Someone"}
+        with self.assertRaises(Exception) as context:
+            game.await_single_join()       
+        self.assertTrue((str(context.exception)).startswith("Invalid join"))
+ 
+        game.get_input = lambda x: {"action":"join"}
+        with self.assertRaises(Exception) as context:
+            game.await_single_join()       
+        self.assertTrue((str(context.exception)).startswith("Invalid join"))
+
+        game.get_input = lambda x: {"action":"join_bad", "name":"Someone"}
+        with self.assertRaises(Exception) as context:
+            game.await_single_join()       
+        self.assertTrue((str(context.exception)).startswith("Invalid join"))
+
+        game.get_input = lambda x: {"action":"join", "name":""}
+        with self.assertRaises(Exception) as context:
+            game.await_single_join()       
+        self.assertTrue((str(context.exception)).startswith("Invalid join"))
+
+
+        self.assertEqual(len(game.players.players), 0)
+        game.get_input = lambda x: {"action":"join", "name":"Someone"}
+        game.await_single_join()  
+        self.assertEqual(len(game.players.players), 1)
+        self.assertTrue("Someone" in game.players.players)
+
+        with self.assertRaises(Exception) as context:
+            game.await_single_join()  
+        self.assertTrue((str(context.exception)).startswith("Duplicate player"))
+
+    def test_await_all_join(self):
+        game = Game(4)
+        #Technically could be a collision
+        game.get_input = lambda x: {"action":"join", "name":"P"+str(random.randint(0,999999999999))}
+        game.await_all_join()
+        self.assertEqual(len(game.players.players), 4)
+
+    def test_main_loop(self):
+        game = Game(4)
+        game.get_input = lambda x: {"action":"join", "name":"P"+str(random.randint(0,999999999999))}
+        game.main_loop()
+        self.assertTrue("Game Started" in game.console.lines)
 
