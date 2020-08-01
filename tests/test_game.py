@@ -87,3 +87,15 @@ class GameTestCase(unittest.TestCase):
         self.assertTrue(game.attacker)
         self.assertTrue(game.console[-2] == "Game Started")
         self.assertTrue(game.console[-1].startswith("Trump card"))
+
+    def test_game_player_on_left(self):
+        game = Game(3)
+        game.add_player("Ed1")
+        game.add_player("Ed2")
+        game.add_player("Ed3")
+
+        self.assertTrue(game.player_on_left("Ed2") == "Ed3")
+        self.assertTrue(game.player_on_left("Ed3") == "Ed1")
+        with self.assertRaises(Exception) as context:
+            game.player_on_left("Rando")
+        self.assertTrue((str(context.exception)).startswith("Invalid player: Rando"))

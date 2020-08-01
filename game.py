@@ -51,7 +51,17 @@ class Game:
                     least_player = player
 
         return least_player    
+
+
+    def player_on_left(self, player):
+
+        if player not in self.players:
+            raise Exception ("Invalid player: "+player)
+
+        idx = 1 + list(self.players.keys()).index(player)
         
+        if idx==len(self.players): idx=0
+        return list(self.players.keys())[idx]
 
     def start(self):
         player_gap = self.expect_players - len(self.players)
@@ -64,3 +74,5 @@ class Game:
         self.add_console("Trump card: "+ str(self.trump_card))
 
         return True
+
+    
