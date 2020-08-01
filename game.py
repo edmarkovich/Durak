@@ -1,8 +1,9 @@
-from deck import Deck
 from player import Player
 from players import Players
 from table import Table
 from console import Console
+from game_setup import GameSetup
+from ioutil import IOUtil
 
 class Game:
 
@@ -12,15 +13,17 @@ class Game:
             raise Exception("Invalid expected players" + str(expect_players))
 
         self.console = Console.getInstance()
-        self.expect_players = expect_players 
-        self.deck = Deck()
-        self.players = Players(self.deck, self.expect_players)
-
-        self.trump_card = self.deck.peek_last()
+        self.expect_players = expect_players                 
             
-    def start(self):
+    def start(self, game_setup):
+        self.players = game_setup.players #TEST
+
         if self.expect_players > len(self.players.players):
             raise Exception("Not enough players")
+
+        
+        self.deck = game_setup.deck
+        self.trump_card = self.deck.peek_last()
 
         self.attacker = self.players.who_goes_first(self.trump_card.suit)
         self.console.add("Game Started")
@@ -31,24 +34,28 @@ class Game:
         table = Table(self.trump_card.suit)
 
         attacker = self.attacker
-        defender = self.player_on_left(attacker)
+        defender = self.players.player_on_left(attacker)
         passer   = None
         
-        a_player = self.players[self.attacker]
-        d_player = self.players[defender]
+        a_player = self.players.players[self.attacker]
+        d_player = self.players.players[defender]
 
         outcome = None
         
         while not outcome:
 
-            a_move = get_input(attacker)
-            if a_move == "pass":
+            #TODO: fix    
+            def src():
+                return '{"action":"pass"}'
+
+            a_move = IOUtil.get_input(src, attacker) 
+            if a_move["action"] == "pass":
                 if not passer: passer = attacker
-                attacker = self.next_attacker(attacker, defender, passer)
+                attacker = self.players.next_attacker(attacker, defender, passer)
                 if not attacker:
                     outcome = "beat"
                     break
-                a_player = self.players[self.attacker]
+                a_player = self.players.players[self.attacker]
                 continue
 
             if not table.attack(a_move, a_player):
@@ -82,21 +89,15 @@ class Game:
         #TODO - refill their hands
 
 
-    def await_single_join(self):
-        out = self.get_input("Any")
 
-        if "action" not in out or "name" not in out or out["action"] != "join" or len(out["name"])==0:            
-            raise Exception("Invalid join: "+str(out))
-
-        self.players.add_player(out["name"])
-
-    def await_all_join(self):
-        while len(self.players.players) < self.expect_players:
-            self.await_single_join()
 
     def main_loop(self):
-        self.await_all_join()
-        self.start()
+        game_setup = GameSetup(self.expect_players)
+        game_setup.await_all_join()
+        self.start(game_setup)
+
+        #while True: #game not finished
+        #self.turn()
 
 
 
