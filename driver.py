@@ -16,14 +16,29 @@ print_state_and_input.inputs = [
     '{"action":"join", "name":"Jon"}',
     '{"action":"join", "name":"Conway"}',
 
-    '{"action":"attack", "card":"♦9"}',   #Conway attacks
+    '{"action":"attack", "card":"♦9"}',   #Conway attacks Ed
     '{"action":"defend", "card":"♦10"}',  #Ed Defends
-    '{"action":"add", "card":"♠9"}',      #Conway ads
+    '{"action":"add", "card":"♠9"}',      #Conway adds
     '{"action":"take"}',                  #Ed takes
     '{"action":"add", "card":"♥10"}',     #Conway tosses one more
     '{"action":"pass"}',                  #Conway doesn't want to add more
     '{"action":"pass"}',                  #Mike doesn't want to add more
     '{"action":"pass"}',                  #Jon doesn't want to add more
+
+    '{"action":"attack", "card":"♦6"}',   #Mike attacks Jon
+    '{"action":"defend", "card":"♠7"}',   #Jon defends (uses trump)
+    '{"action":"add", "card":"♥7"}',      #Mike adds
+    '{"action":"defend", "card":"♠J"}',   #Jon defends (uses trump)
+    '{"action":"add", "card":"♦J"}',      #Mike adds
+    '{"action":"take"}',                  #Jon takes
+    '{"action":"pass"}',                  #Mike doesn't want to add more
+    '{"action":"add", "card":"♣7"}',      #Conway tosses one more
+    '{"action":"pass"}',                  #Conway doesn't want to add more
+    '{"action":"add", "card":"♣6"}',      #Ed tosses one more
+    '{"action":"add", "card":"♦7"}',      #Ed tosses one more
+    '{"action":"pass"}',                  #Ed doesn't want to add more
+    #TODO: add limit to how much can be tossed in
+
 ]
 
 game = Game(4)

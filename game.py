@@ -41,7 +41,7 @@ class Game:
     
         if hasattr(self, 'attacker'):
             out += "Attacker: " + self.attacker + "\t"
-            out += "Defender: " + self.attacker + "\t"
+            out += "Defender: " + self.defender + "\t"
 
         if hasattr(self, 'trump_card'):
             out += "Trump: " + str(self.trump_card) + "\t"
@@ -53,13 +53,19 @@ class Game:
 
 
     def set_next_attacker_defender(self, outcome):
+        #TODO: add this to test
         if outcome == "beat_all":
             self.attacker == self.defender
         elif outcome == "took":
-            self.attacker = players.player_on_left(self.defender)
+            self.attacker = self.players.player_on_left(self.defender, False)
         else: 
             raise Exception("Invalid Outcome: ", outcome)
         
+        if not self.players.players[self.attacker].has_cards():
+            self.attacker = self.players.player_on_left(self.attacker)
+        self.defender = self.players.player_on_left(self.attacker)
+
+
 
     def main_loop(self):
         #TODO test
@@ -68,13 +74,18 @@ class Game:
         self.start(game_setup)
         print(self)
 
-        while not self.players.is_game_over():
+        while True:
             game_round = GameRound(self.players, self.attacker, self.defender, self.trump_card.suit)
             outcome = game_round.play()
 
             print("Round is finished. Refilling")
             self.players.refill_all(self.attacker, self.defender)
-            print(self)
+            
+            if self.players.is_game_over():
+                print("Game Over")
+                break
+
+            self.set_next_attacker_defender(outcome)
 
 
 
