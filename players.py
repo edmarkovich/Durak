@@ -48,17 +48,32 @@ class Players:
 
         return least_player            
 
-    def player_on_left(self, player):
+    def player_on_left(self, player, skip_no_cards = True):
 
         if player not in self.players:
             raise Exception ("Invalid player: "+player)
-
-        idx = 1 + list(self.players.keys()).index(player)
+        candidate = player
         
-        if idx==len(self.players): idx=0
-        return list(self.players.keys())[idx]
+        while True:
+            idx = 1 + list(self.players.keys()).index(candidate)        
+            if idx==len(self.players): idx=0
+            candidate = list(self.players.keys())[idx]
+
+            if self.players[candidate].has_cards() or not skip_no_cards: #TODO: add this case to test
+                return candidate
+            
+            print (candidate, player)
+            if candidate == player:
+                return None 
+            
+    def is_game_over(self):
+        with_cards = 0
+        for p in self.players:
+            if self.players[p].has_cards(): with_cards += 1        
+        return with_cards < 2        
 
     def next_attacker(self, current, defender):
+        if self.is_game_over(): return None
         candidate = current
         while True:
             candidate = self.player_on_left(candidate)
@@ -77,7 +92,7 @@ class Players:
         self.refill_one(attacker)
         player = attacker
         while True:            
-            player = self.player_on_left(player)
+            player = self.player_on_left(player, False) #TODO: test the 'false' case
             if player == defender: continue
             if player == attacker: break  
             self.refill_one(player)          

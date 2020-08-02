@@ -51,11 +51,15 @@ class Game:
 
         return out + "\n"
 
-    def is_game_over(self):
-        with_cards = 0
-        for p in self.players.players:
-            if self.players.players[p].has_cards(): with_cards += 1        
-        return with_cards < 2
+
+    def set_next_attacker_defender(self, outcome):
+        if outcome == "beat_all":
+            self.attacker == self.defender
+        elif outcome == "took":
+            self.attacker = players.player_on_left(self.defender)
+        else: 
+            raise Exception("Invalid Outcome: ", outcome)
+        
 
     def main_loop(self):
         #TODO test
@@ -64,7 +68,7 @@ class Game:
         self.start(game_setup)
         print(self)
 
-        while not self.is_game_over():
+        while not self.players.is_game_over():
             game_round = GameRound(self.players, self.attacker, self.defender, self.trump_card.suit)
             outcome = game_round.play()
 

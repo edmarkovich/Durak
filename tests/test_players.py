@@ -129,7 +129,14 @@ class PlayersTestCase(unittest.TestCase):
         self.assertEqual(len(players.players["Ed2"].hand), 6)
         self.assertEqual(len(players.players["Ed3"].hand), 0)
 
-
+    def test_players_is_game_over(self):
+        players = Players(Deck(), 2)
+        players.add_player("Ed1")
+        players.add_player("Ed2")
+        self.assertFalse(players.is_game_over())
+        
+        players.players["Ed1"].hand = []
+        self.assertTrue(players.is_game_over())
 
 
         

@@ -41,17 +41,6 @@ class GameTestCase(unittest.TestCase):
         self.assertTrue(game.console.lines[-1].startswith("Trump card"))
 
 
-    def test_game_is_game_over(self):
-        game = Game(2)    
-        game_setup = GameSetup(2)        
-        game_setup.players.add_player("Ed1")
-        game_setup.players.add_player("Ed2")
-        game.start(game_setup)
-        self.assertFalse(game.is_game_over())
-        
-        game.players.players["Ed1"].hand = []
-        self.assertTrue(game.is_game_over())
-
     def test_game_main_loop(self):        
         game = Game(4)
         game.get_input = lambda x: {"action":"join", "name":"P"+str(random.randint(0,999999999999))}
