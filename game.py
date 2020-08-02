@@ -30,63 +30,7 @@ class Game:
         self.console.add("Trump card: "+ str(self.trump_card))
     
     def turn(self):
-        #TODO: test
-        table = Table(self.trump_card.suit)
-
-        attacker = self.attacker
-        defender = self.players.player_on_left(attacker)
-        passer   = None
-        
-        a_player = self.players.players[self.attacker]
-        d_player = self.players.players[defender]
-
-        outcome = None
-        
-        while not outcome:
-
-            #TODO: fix    
-            def src():
-                return '{"action":"pass"}'
-
-            a_move = IOUtil.get_input(src, attacker) 
-            if a_move["action"] == "pass":
-                if not passer: passer = attacker
-                attacker = self.players.next_attacker(attacker, defender, passer)
-                if not attacker:
-                    outcome = "beat"
-                    break
-                a_player = self.players.players[self.attacker]
-                continue
-
-            if not table.attack(a_move, a_player):
-                #TODO - invalid attack. Notify
-                continue
-
-            while True:
-                d_move = get_input(defender)
-                if d_move == "take":
-                    table.take_pile(d_player)
-                    outcome = "took"
-                    break
-
-                if not table.defend(d_move, d_player):
-                    #TODO - invalid defend. Notify
-                    continue
-
-            if not d_player.has_cards():
-                outcome = "beat"
-                break;
-
-            if not a_player.has_cards():
-                attacker = self.next_attacker(attacker, defender, None)
-                if not attacker: break
-
-        if outcome == "beat":
-            self.attacker = defender
-        elif outcome == "took":
-            self.attacker = self.player_on_left(defender)
-
-        #TODO - refill their hands
+        pass
 
 
 

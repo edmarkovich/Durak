@@ -51,12 +51,11 @@ class Players:
         if idx==len(self.players): idx=0
         return list(self.players.keys())[idx]
 
-    def next_attacker(self, current, defender, passer):
+    def next_attacker(self, current, defender):
         candidate = current
         while True:
             candidate = self.player_on_left(candidate)
-            if candidate == defender: continue
-            if passer == current and candidate == current: return None
+            if candidate == defender: continue            
             if self.players[candidate].has_cards(): return candidate            
             if candidate == current:
                 return None   

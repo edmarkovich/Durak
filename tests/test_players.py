@@ -84,20 +84,18 @@ class PlayersTestCase(unittest.TestCase):
         players.add_player("Ed2")
         players.add_player("Ed3")
 
-        self.assertEqual(players.next_attacker("Ed2", "Ed1", None), "Ed3")
-        self.assertEqual(players.next_attacker("Ed2", "Ed3", None), "Ed1")
+        self.assertEqual(players.next_attacker("Ed2", "Ed1"), "Ed3")
 
-        self.assertEqual(players.next_attacker("Ed2", "Ed1", "Ed2"), "Ed3")
-        self.assertEqual(players.next_attacker("Ed2", "Ed3", "Ed2"), "Ed1")
+        self.assertEqual(players.next_attacker("Ed2", "Ed1"), "Ed3")
+        self.assertEqual(players.next_attacker("Ed2", "Ed3"), "Ed1")
 
         
         players.players["Ed1"].hand = []
-        self.assertEqual(players.next_attacker("Ed2", "Ed3", None), "Ed2")
-        self.assertEqual(players.next_attacker("Ed2", "Ed3", "Ed2"), None)
+        self.assertEqual(players.next_attacker("Ed2", "Ed3"), "Ed2")
 
         players.players["Ed2"].hand = []
-        self.assertEqual(players.next_attacker("Ed2", "Ed3", None), None)
-        self.assertEqual(players.next_attacker("Ed2", "Ed3", "Ed2"), None)   
+        self.assertEqual(players.next_attacker("Ed2", "Ed3"), None)
+
 
     def test_players_refill_one(self):
         players = Players(Deck(), 1)
