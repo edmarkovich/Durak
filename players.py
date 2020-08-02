@@ -10,10 +10,9 @@ class Players:
         self.console = Console.getInstance()
 
     def __str__(self):
-        out = "PLAYERS \n"
+        out = ""
         for p in self.players:
-            out = out + p +" " + str(self.players[p]) + "\n"
-        out = out + str(self.deck) 
+            out += "   " + p.ljust(10," ") +": " + str(self.players[p]) + "\n"        
         return out
 
 

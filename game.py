@@ -32,8 +32,21 @@ class Game:
 
 
     def __str__(self):
-        out = "GAME\n" + str(self.players) +"\n" + "attacker" + self.attacker + " trump:" + str(self.trump_card)
-        return out
+        out = ""
+
+        if hasattr(self, 'players'):
+            out += str(self.players) +"\n"
+
+        if hasattr(self, 'attacker'):
+            out += "   Attacker: " + self.attacker + "\t"
+
+        if hasattr(self, 'trump_card'):
+            out += "   Trump: " + str(self.trump_card) + "\t"
+        
+        if hasattr(self, 'deck'):
+            out += "   Deck: " + str(len(self.deck.cards)) + "\t"
+
+        return out + "\n"
 
     def main_loop(self):
         #TODO test

@@ -25,6 +25,6 @@ class Player:
     
     def __str__(self):        
         out = ""
-        for x in self.hand:
-            out = out+str(x)
+        for card in self.hand:
+            out += str(card) + " "
         return out

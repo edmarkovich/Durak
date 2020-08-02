@@ -4,11 +4,16 @@ from card import Card
 class IOUtil:
 
     defaultSource = lambda: '{}'
+    game = None
 
     @staticmethod
     def get_input(prompt = None, player = None):
 
-        if prompt: print("@@",prompt,"["+str(player)+"]@@ => ",end='')
+        if IOUtil.game:
+            print(IOUtil.game)
+
+        if prompt: 
+            print(prompt,"["+str(player)+"] => ",end='')
         
         source = IOUtil.defaultSource
 

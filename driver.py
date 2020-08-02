@@ -6,8 +6,9 @@ def print_state_and_input():
     print_state_and_input.next = print_state_and_input.next + 1
     next = print_state_and_input.inputs[print_state_and_input.next]
     print(next)
+    print("")
     return next
-    #return input()
+    
 print_state_and_input.next = -1
 print_state_and_input.inputs = [
     '{"action":"join", "name":"Ed"}',
@@ -24,9 +25,11 @@ print_state_and_input.inputs = [
     '{"action":"pass"}',                  #Mike doesn't want to add more
     '{"action":"pass"}',                  #Jon doesn't want to add more
 ]
-IOUtil.defaultSource = print_state_and_input
 
 game = Game(4)
+IOUtil.defaultSource = print_state_and_input
+IOUtil.game = game
+
 game.main_loop()
 
 print(Console.getInstance().lines)
