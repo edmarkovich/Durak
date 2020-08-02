@@ -86,3 +86,5 @@ class GameRound:
         out = self.add_in_loop(out == "took")
         if out == "took":
             self.table.take_pile(self.players.players[self.defender])
+        
+        return out

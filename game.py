@@ -51,6 +51,12 @@ class Game:
 
         return out + "\n"
 
+    def is_game_over(self):
+        with_cards = 0
+        for p in self.players.players:
+            if self.players.players[p].has_cards(): with_cards += 1        
+        return with_cards < 2
+
     def main_loop(self):
         #TODO test
         game_setup = GameSetup(self.expect_players)
@@ -58,12 +64,14 @@ class Game:
         self.start(game_setup)
         print(self)
 
-        game_round = GameRound(self.players, self.attacker, self.defender, self.trump_card.suit)
-        game_round.play()
+        while not self.is_game_over():
+            game_round = GameRound(self.players, self.attacker, self.defender, self.trump_card.suit)
+            outcome = game_round.play()
 
-        print("Round is finished. Refilling")
-        self.players.refill_all(self.attacker, self.defender)
-        print(self)
+            print("Round is finished. Refilling")
+            self.players.refill_all(self.attacker, self.defender)
+            print(self)
+
 
 
 
