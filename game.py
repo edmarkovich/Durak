@@ -55,7 +55,7 @@ class Game:
     def set_next_attacker_defender(self, outcome):
         #TODO: add this to test
         if outcome == "beat_all":
-            self.attacker == self.defender
+            self.attacker = self.defender
         elif outcome == "took":
             self.attacker = self.players.player_on_left(self.defender, False)
         else: 

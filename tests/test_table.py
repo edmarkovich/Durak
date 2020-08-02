@@ -9,6 +9,7 @@ class TableTestCase(unittest.TestCase):
         table = Table('♠')
         self.assertFalse(table.pile)
         self.assertEqual(table.trump, '♠')
+        self.assertEqual(table.attack_cards, 0)
         
     def test_table_attack(self):
         table = Table('♠')
@@ -24,15 +25,19 @@ class TableTestCase(unittest.TestCase):
         self.assertTrue(table.attack(c1, player))
         self.assertEqual(len(table.pile), 1)
         self.assertEqual(len(player.hand), 2)
+        self.assertEqual(table.attack_cards, 1)
         table.defend(Card('♠', '10'), player2)
+        self.assertEqual(table.attack_cards, 1)
         
         self.assertFalse(table.attack(c2, player))
         self.assertEqual(len(table.pile), 2)
         self.assertEqual(len(player.hand), 2)
+        self.assertEqual(table.attack_cards, 1) 
 
         self.assertTrue(table.attack(c3, player))
         self.assertEqual(len(table.pile), 3)
         self.assertEqual(len(player.hand), 1)
+        self.assertEqual(table.attack_cards, 2)
 
         #with self.assertRaises(Exception) as context:
         #    table.attack(c4, player)

@@ -62,7 +62,6 @@ class Players:
             if self.players[candidate].has_cards() or not skip_no_cards: #TODO: add this case to test
                 return candidate
             
-            print (candidate, player)
             if candidate == player:
                 return None 
             

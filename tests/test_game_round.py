@@ -65,7 +65,7 @@ class GameRoundTestCase(unittest.TestCase):
         self.assertEqual(game_round.defend(), "beat_one")
         self.assertEqual(len(game_round.players.players["Fred"].hand),1)
 
-    def test_game_round_defend_beat_all(self):
+    def test_game_round_defend_beat_all_used_all_cards(self):
         game_round = self.set_up_game_round()        
         IOUtil.defaultSource = lambda: '{"action": "add", "card": "♠J"}'
         game_round.first_attack()
@@ -75,6 +75,19 @@ class GameRoundTestCase(unittest.TestCase):
 
         self.assertEqual(game_round.defend(), "beat_all")
         self.assertEqual(len(game_round.players.players["Fred"].hand),0)
+
+    def test_game_round_defend_beat_all_used_6_attacks(self):
+        game_round = self.set_up_game_round()        
+        
+        IOUtil.defaultSource = lambda: '{"action": "add", "card": "♠J"}'
+        game_round.first_attack()
+
+        game_round.table.attack_cards = 6
+        IOUtil.defaultSource = lambda: '{"action": "beat", "card": "♠A"}'
+        #game_round.players.players["Fred"].hand = [Card('♠', 'A')]        
+
+        self.assertEqual(game_round.defend(), "beat_all")        
+
 
     def test_game_round_defend_beat_fail(self):
         return

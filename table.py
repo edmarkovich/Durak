@@ -5,6 +5,7 @@ class Table:
     def __init__(self, trump):
         self.trump = trump
         self.pile  = []
+        self.attack_cards = 0
 
     def attack(self, card, player):
         if self.pile:
@@ -18,11 +19,12 @@ class Table:
             
         player.remove_card(card)
         self.pile.append(card)
+
+        self.attack_cards += 1
         return True
 
     
     def defend(self, card, player):
-
 
         #TODO: implement this some other way   
         #if len(self.pile) % 2 == 1:

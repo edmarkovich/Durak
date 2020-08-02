@@ -40,13 +40,14 @@ class GameRound:
         passer = None
 
         while True:
-            if passer == attacker:
+            #Attcker = None = Game over? Test it
+            if passer == attacker or self.table.attack_cards==6 or attacker == None:
                 return "took" if took else "beat_all"
 
             out = self.add_in_one(attacker)
             if out == "pass":
                 if not passer: passer = attacker
-                attacker = self.players.next_attacker(attacker, self.defender)
+                attacker = self.players.next_attacker(attacker, self.defender)                    
                 continue
             if out == "added" and not took:
                 passer = None
@@ -70,10 +71,11 @@ class GameRound:
             if not self.table.defend(card, self.players.players[self.defender]):
                 continue
 
-            if self.players.players[self.defender].has_cards():
-                return "beat_one"
+            #if defender beats 6 cards, or uses all his cards, he won this round
+            if self.table.attack_cards == 6 or not self.players.players[self.defender].has_cards():
+                return "beat_all"
         
-            return "beat_all"
+            return "beat_one"
 
     def play(self):
 
