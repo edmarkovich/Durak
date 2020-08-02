@@ -34,11 +34,11 @@ class TableTestCase(unittest.TestCase):
         self.assertEqual(len(table.pile), 3)
         self.assertEqual(len(player.hand), 1)
 
-        with self.assertRaises(Exception) as context:
-            table.attack(c4, player)
-        self.assertTrue((str(context.exception)).startswith("Attack in progress"))
-        self.assertEqual(len(table.pile), 3)
-        self.assertEqual(len(player.hand), 1)      
+        #with self.assertRaises(Exception) as context:
+        #    table.attack(c4, player)
+        #self.assertTrue((str(context.exception)).startswith("Attack in progress"))
+        #self.assertEqual(len(table.pile), 3)
+        #self.assertEqual(len(player.hand), 1)      
 
     def test_table_defend(self):
         table = Table('♠')

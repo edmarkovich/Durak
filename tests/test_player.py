@@ -48,7 +48,7 @@ class PlayerTestCase(unittest.TestCase):
     def test_player_str(self):
         player = Player()
         player.add_cards([Card('♠', '10'), Card('♠', 'J')])
-        self.assertTrue(len(str(player)) == 5)
+        self.assertTrue(len(str(player)) == 7)
     
     def test_player_hand_by_suit_sorted(self):
         player = Player()
