@@ -31,12 +31,16 @@ class Game:
         self.console.add("Trump card: "+ str(self.trump_card))
 
 
+    def __str__(self):
+        out = "GAME\n" + str(self.players) +"\n" + "attacker" + self.attacker
+        return out
+
     def main_loop(self):
         #TODO test
         game_setup = GameSetup(self.expect_players)
         game_setup.await_all_join()
         self.start(game_setup)
-
+        print(self)
 
         game_round = GameRound(self.players, self.attacker, self.players.player_on_left(self.attacker), self.trump_card.suit)
         game_round.play()

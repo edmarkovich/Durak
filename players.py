@@ -9,6 +9,13 @@ class Players:
         self.expect_players = expect_players
         self.console = Console.getInstance()
 
+    def __str__(self):
+        out = "PLAYERS \n"
+        for p in self.players:
+            out = out + p +" " + str(self.players[p]) + "\n"
+        out = out + str(self.deck) 
+        return out
+
 
     def add_player(self, name):
         if name in self.players:

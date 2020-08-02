@@ -21,3 +21,4 @@ class GameSetup:
     def await_all_join(self):
         while len(self.players.players) < self.expect_players:
             self.await_single_join()
+            print(self.players)
