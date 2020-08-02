@@ -11,7 +11,7 @@ class GameSetup:
         self.players = Players(self.deck, self.expect_players)
 
     def await_single_join(self):
-        out = IOUtil.get_input(self.input_source)
+        out = IOUtil.get_input(prompt="User Join")
 
         if "action" not in out or "name" not in out or out["action"] != "join" or len(out["name"])==0:            
             raise Exception("Invalid join: "+str(out))

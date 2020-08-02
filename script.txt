@@ -1,0 +1,4 @@
+{"action":"join", "name":"Ed"}
+{"action":"join", "name":"E2"}
+{"action":"join", "name":"E3"}
+{"action":"join", "name":"E4"}

@@ -6,10 +6,11 @@ class IOUtil:
     defaultSource = lambda: '{}'
 
     @staticmethod
-    def get_input(source = None, player = None):
+    def get_input(prompt = None, player = None):
 
-        if not source:
-            source = IOUtil.defaultSource
+        if prompt: print("XXXX",prompt,"==>")
+        
+        source = IOUtil.defaultSource
 
         input = source()
         input = json.loads(input)

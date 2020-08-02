@@ -11,7 +11,7 @@ class GameRound:
 
 
     def first_attack(self):
-        move = IOUtil.get_input(source=None, player=self.attacker)
+        move = IOUtil.get_input(prompt="First Attack", player=self.attacker)
         #TODO: validate message
         card = move["card"]
         
@@ -22,7 +22,7 @@ class GameRound:
             return "pass"
 
         while True:
-            move = IOUtil.get_input(source=None, player=attacker)
+            move = IOUtil.get_input(prompt="Add Cards", player=attacker)
             #TODO: validate message
 
             if move["action"] == "pass":
@@ -60,7 +60,7 @@ class GameRound:
 
     def defend(self):
         while True:
-            move = IOUtil.get_input(source=None, player=self.defender)
+            move = IOUtil.get_input(prompt="Defend", player=self.defender)
             #TODO: validate message
 
             if move["action"] == "take":
