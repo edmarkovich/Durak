@@ -1,7 +1,6 @@
 from players import Players
 from deck import Deck #Ugly
 from ioutil import IOUtil
-import random #Ugly
 
 class GameSetup:
 

@@ -32,7 +32,7 @@ class Game:
 
 
     def __str__(self):
-        out = "GAME\n" + str(self.players) +"\n" + "attacker" + self.attacker
+        out = "GAME\n" + str(self.players) +"\n" + "attacker" + self.attacker + " trump:" + str(self.trump_card)
         return out
 
     def main_loop(self):

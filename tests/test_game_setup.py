@@ -2,6 +2,7 @@ import unittest
 import random
 from game_setup import GameSetup
 from ioutil import IOUtil
+random.seed(1)
 
 class GameTestSetupCase(unittest.TestCase):
 

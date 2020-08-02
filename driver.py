@@ -14,7 +14,15 @@ print_state_and_input.inputs = [
     '{"action":"join", "name":"Mike"}',
     '{"action":"join", "name":"Jon"}',
     '{"action":"join", "name":"Conway"}',
-    '{"action":"attack", "card":"♦J"}'
+
+    '{"action":"attack", "card":"♦9"}',   #Conway attacks
+    '{"action":"defend", "card":"♦10"}',  #Ed Defends
+    '{"action":"add", "card":"♠9"}',      #Conway ads
+    '{"action":"take"}',                  #Ed takes
+    '{"action":"add", "card":"♥10"}',     #Conway tosses one more
+    '{"action":"pass"}',                  #Conway doesn't want to add more
+    '{"action":"pass"}',                  #Mike doesn't want to add more
+    '{"action":"pass"}',                  #Jon doesn't want to add more
 ]
 IOUtil.defaultSource = print_state_and_input
 

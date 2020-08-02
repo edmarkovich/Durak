@@ -9,8 +9,9 @@ class Table:
     def attack(self, card, player):
         if self.pile:
 
-            if len(self.pile) % 2 == 1:
-                raise Exception ("Attack in progress")
+            #TODO: implement this some other way
+            #if len(self.pile) % 2 == 1:
+            #    raise Exception ("Attack in progress")
             
             if card.rank not in list(map(lambda x: x.rank, self.pile)):
                 return False
@@ -22,6 +23,10 @@ class Table:
     
     def defend(self, card, player):
 
+
+        #TODO: implement this some other way   
+        #if len(self.pile) % 2 == 1:
+        #    raise Exception ("Attack in progress")
         if len(self.pile) % 2 == 0:
             raise Exception ("No attack in progress")
 

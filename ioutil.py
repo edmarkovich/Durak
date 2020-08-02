@@ -8,7 +8,7 @@ class IOUtil:
     @staticmethod
     def get_input(prompt = None, player = None):
 
-        if prompt: print("@@",prompt,"@@ => ",end='')
+        if prompt: print("@@",prompt,"["+str(player)+"]@@ => ",end='')
         
         source = IOUtil.defaultSource
 
