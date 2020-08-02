@@ -52,7 +52,9 @@ class GameRoundTestCase(unittest.TestCase):
 
         IOUtil.defaultSource = lambda: '{"action": "take"}'
         self.assertEqual(game_round.defend(), "took")
-        self.assertEqual(len(game_round.players.players["Fred"].hand),3)
+        
+        #TODO: taking doesn't happen now until end of the play loop
+        #self.assertEqual(len(game_round.players.players["Fred"].hand),3)
 
     def test_game_round_defend_beat_one(self):
         game_round = self.set_up_game_round()

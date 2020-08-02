@@ -104,7 +104,12 @@ class PlayersTestCase(unittest.TestCase):
 
         players.refill_one("Ed")
         self.assertEqual(len(players.players["Ed"].hand), 6)
-        self.assertEqual(len(players.deck.cards), 36-6-4)
+        self.assertEqual(len(players.deck.cards), 26)
+
+        #Full hand, doesn't need more
+        players.refill_one("Ed")
+        self.assertEqual(len(players.players["Ed"].hand), 6)
+        self.assertEqual(len(players.deck.cards), 26)
 
     def test_players_refill_all(self):
         players = Players(Deck(), 3)

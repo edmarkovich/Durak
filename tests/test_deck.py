@@ -40,6 +40,10 @@ class DeskTestCase(unittest.TestCase):
         deck = Deck()
         deck.cards = deck.generate_cards()
 
+        out = deck.draw(0)
+        self.assertTrue(len(out) == 0)
+        self.assertTrue(len(deck.cards) == 36)
+
         out = deck.draw(4)
         self.assertTrue(len(out) == 4)
         self.assertTrue(len(deck.cards) == 32)

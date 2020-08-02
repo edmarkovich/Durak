@@ -64,7 +64,6 @@ class GameRound:
             #TODO: validate message
 
             if move["action"] == "take":
-                self.table.take_pile(self.players.players[self.defender])
                 return "took"
 
             card = move["card"]
@@ -81,5 +80,9 @@ class GameRound:
         self.first_attack()
         out = self.defend()
 
-        if out == "beat_all": return "beat_all"
-        return self.add_in_loop(out == "took")
+        if out == "beat_all": 
+            return "beat_all"        
+
+        out = self.add_in_loop(out == "took")
+        if out == "took":
+            self.table.take_pile(self.players.players[self.defender])

@@ -27,6 +27,8 @@ class Game:
         self.trump_card = self.deck.peek_last()
 
         self.attacker = self.players.who_goes_first(self.trump_card.suit)
+        self.defender = self.players.player_on_left(self.attacker) #TODO: add to test
+
         self.console.add("Game Started")
         self.console.add("Trump card: "+ str(self.trump_card))
 
@@ -36,15 +38,16 @@ class Game:
 
         if hasattr(self, 'players'):
             out += str(self.players) +"\n"
-
+    
         if hasattr(self, 'attacker'):
-            out += "   Attacker: " + self.attacker + "\t"
+            out += "Attacker: " + self.attacker + "\t"
+            out += "Defender: " + self.attacker + "\t"
 
         if hasattr(self, 'trump_card'):
-            out += "   Trump: " + str(self.trump_card) + "\t"
+            out += "Trump: " + str(self.trump_card) + "\t"
         
         if hasattr(self, 'deck'):
-            out += "   Deck: " + str(len(self.deck.cards)) + "\t"
+            out += "Deck: " + str(len(self.deck.cards)) + "\t"
 
         return out + "\n"
 
@@ -55,8 +58,14 @@ class Game:
         self.start(game_setup)
         print(self)
 
-        game_round = GameRound(self.players, self.attacker, self.players.player_on_left(self.attacker), self.trump_card.suit)
+        game_round = GameRound(self.players, self.attacker, self.defender, self.trump_card.suit)
         game_round.play()
+
+        print("Round is finished. Refilling")
+        self.players.refill_all(self.attacker, self.defender)
+        print(self)
+
+
 
 
 

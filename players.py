@@ -11,8 +11,9 @@ class Players:
 
     def __str__(self):
         out = ""
-        for p in self.players:
-            out += "   " + p.ljust(10," ") +": " + str(self.players[p]) + "\n"        
+        for player in self.players:
+            p = player +" " + str(len(self.players[player].hand))
+            out += "   " + p.ljust(10," ") +": " + str(self.players[player]) + "\n"        
         return out
 
 
