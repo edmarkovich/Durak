@@ -21,7 +21,7 @@ class Card:
             raise Exception ("Invalid trump: " + trump)
 
         if self == other:
-            raise Exception ("Comparing to self")
+            raise Exception ("Comparing to self" + str(other))
                 
         if self.suit == other.suit:
             return self > other

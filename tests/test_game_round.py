@@ -123,3 +123,24 @@ class GameRoundTestCase(unittest.TestCase):
         # Attacker Adds
         IOUtil.defaultSource = lambda: '{"action": "add", "card": "♠A"}'
         self.assertEqual(game_round.add_in_one("Ed"), "added")    
+
+    def test_game_round_play(self):
+
+        class FakeInput:
+            def __init__(self):
+                self.inputs = [
+                    '{"action": "add", "card": "♠A"}',
+                    '{"action": "take"}',
+                    '{"action": "pass"}'
+                ]
+                self.next = -1
+
+            def get_input(self):
+                self.next = self.next + 1
+                return self.inputs[self.next]
+
+        fi = FakeInput()
+        IOUtil.defaultSource = fi.get_input
+
+        game_round = self.set_up_game_round()
+        game_round.play()
