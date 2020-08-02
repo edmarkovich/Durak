@@ -4,6 +4,8 @@ from table import Table
 from console import Console
 from game_setup import GameSetup
 from ioutil import IOUtil
+from game_round import GameRound
+import json
 
 class Game:
 
@@ -28,12 +30,9 @@ class Game:
         self.attacker = self.players.who_goes_first(self.trump_card.suit)
         self.console.add("Game Started")
         self.console.add("Trump card: "+ str(self.trump_card))
-    
-    def turn(self):
-        pass
 
-
-
+    def __str__(self):
+        return str(vars(self))
 
     def main_loop(self):
         #TODO test
@@ -41,8 +40,11 @@ class Game:
         game_setup.await_all_join()
         self.start(game_setup)
 
-        #while True: #game not finished
-        #self.turn()
+        print(self)
+
+        game_round = GameRound(self.players, self.attacker, self.players.player_on_left(self.attacker), self.trump_card.suit)
+        game_round.play()
+
 
 
 
