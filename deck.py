@@ -1,6 +1,5 @@
 from card import Card
 import random
-random.seed(1) #TODO
 
 class Deck:
 
