@@ -1,6 +1,6 @@
 import unittest
-from game import Game
-from ioutil import IOUtil
+from server.game import Game
+from server.ioutil import IOUtil
 import random
 
 def print_state_and_input():

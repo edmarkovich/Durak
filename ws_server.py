@@ -5,12 +5,13 @@ import asyncio
 import websockets
 import json
 
+from server.game import Game
+
 async def update(websocket, path):
-    print("Path: ", path)
     while True:
         await websocket.send("Hello")
         async for message in websocket:
-            data = json.loads(message)
+            data = message #= json.loads(message)
             await websocket.send("Got: "+data)            
 
 start_server = websockets.serve(update, "192.168.0.111", 5678)

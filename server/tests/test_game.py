@@ -1,7 +1,7 @@
 import unittest
-from game import Game
-from card import Card
-from game_setup import GameSetup
+from server.game import Game
+from server.card import Card
+from server.game_setup import GameSetup
 
 class GameTestCase(unittest.TestCase):
 

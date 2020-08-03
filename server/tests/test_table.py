@@ -1,7 +1,7 @@
 import unittest
-from table import Table
-from card import Card
-from player import Player
+from server.table import Table
+from server.card import Card
+from server.player import Player
 
 class TableTestCase(unittest.TestCase):
 

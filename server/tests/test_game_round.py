@@ -1,10 +1,10 @@
 import unittest
-from game_round import GameRound
-from players import Players
-from player import Player
-from card import Card
-from ioutil import IOUtil
-from deck import Deck
+from server.game_round import GameRound
+from server.players import Players
+from server.player import Player
+from server.card import Card
+from server.ioutil import IOUtil
+from server.deck import Deck
 
 class GameRoundTestCase(unittest.TestCase):
 

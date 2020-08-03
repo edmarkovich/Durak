@@ -1,10 +1,10 @@
-from player import Player
-from players import Players
-from table import Table
-from console import Console
-from game_setup import GameSetup
-from ioutil import IOUtil
-from game_round import GameRound
+from .player import Player
+from .players import Players
+from .table import Table
+from .console import Console
+from .game_setup import GameSetup
+from .ioutil import IOUtil
+from .game_round import GameRound
 
 class Game:
 
