@@ -3,7 +3,8 @@ from .card import Card
 
 class IOUtil:
 
-    defaultSource = lambda: '{}'
+    defaultSource      = lambda: '{}'
+    defaultDestination = lambda x: '{}'
     game = None
 
     @staticmethod
@@ -12,13 +13,16 @@ class IOUtil:
         if IOUtil.game:
             print(IOUtil.game)
 
-        if prompt: 
-            print(prompt,"["+str(player)+"] => ",end='')
+        if prompt:
+            prompt = prompt+"["+str(player)+"] => " 
+            print(prompt,end='')
+            IOUtil.defaultDestination(prompt)
         
         source = IOUtil.defaultSource
 
-        input = source()
-        input = json.loads(input)
+        inputA = source()
+        input = json.loads(inputA)
+        IOUtil.defaultDestination(inputA)
 
         if "card" in input:
             input["card"] = Card.from_string(input["card"])
