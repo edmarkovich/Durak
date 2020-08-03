@@ -1,8 +1,8 @@
 import unittest
 import random
-from game_setup import GameSetup
-from ioutil import IOUtil
-random.seed(1)
+from server.game_setup import GameSetup
+from server.ioutil import IOUtil
+random.seed(1) #TODO
 
 class GameTestSetupCase(unittest.TestCase):
 

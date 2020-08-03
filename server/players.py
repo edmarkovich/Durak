@@ -1,5 +1,5 @@
-from player import Player
-from console import Console
+from .player import Player
+from .console import Console
 
 class Players:
 

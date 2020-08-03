@@ -1,6 +1,6 @@
 import unittest
-from ioutil import IOUtil
-from card import Card
+from server.ioutil import IOUtil
+from server.card import Card
 
 class GameIOCase(unittest.TestCase):
 

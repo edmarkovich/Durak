@@ -1,8 +1,8 @@
 import unittest
-from players import Players
-from player import Player
-from card import Card
-from deck import Deck
+from server.players import Players
+from server.player import Player
+from server.card import Card
+from server.deck import Deck
 
 class PlayersTestCase(unittest.TestCase):
 

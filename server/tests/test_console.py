@@ -1,5 +1,5 @@
 import unittest
-from console import Console
+from server.console import Console
 
 class ConsoleTestCase(unittest.TestCase):
 

@@ -1,6 +1,6 @@
-from players import Players
-from deck import Deck #Ugly
-from ioutil import IOUtil
+from .players import Players
+from .deck import Deck #Ugly
+from .ioutil import IOUtil
 
 class GameSetup:
 

@@ -1,5 +1,5 @@
-from table import Table
-from ioutil import IOUtil
+from .table import Table
+from .ioutil import IOUtil
 
 class GameRound:
 

@@ -1,6 +1,6 @@
-from game import Game
-from ioutil import IOUtil
-from console import Console
+from .game import Game
+from .ioutil import IOUtil
+from .console import Console
 
 def print_state_and_input():
     print_state_and_input.next = print_state_and_input.next + 1
