@@ -5,7 +5,7 @@
                 messages = document.createElement('ul');
 
 	    ws.onopen = function() {
-		    ws.send('{"action":"join", "name", "Ed"}');
+		    ws.send('{"action":"join", "name": "Ed"}');
 	    }
 
             ws.onmessage = function (event) {
