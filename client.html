@@ -1,0 +1,25 @@
+<body>
+<script>
+
+let socket = new WebSocket("ws://192.168.1.13:5678")
+
+socket.onopen = function(e) {
+	messages = document.createElement('ul');
+	document.body.appendChild(messages);
+	socket.send('{"action":"join","name":"Ed"}');
+};
+
+socket.onmessage = function(event) {
+  //alert(`[message] Data received from server: ${event.data}`);
+	var messages = document.getElementsByTagName('ul')[0],
+			message = document.createElement('li'),
+			content = document.createTextNode(event.data);
+	message.appendChild(content);
+	messages.appendChild(message);
+};
+
+</script>
+
+	<input type="text" id="command" value='{"a":"b"}'  />
+	<button value="124" onclick="socket.send(document.getElementById('command').value);">Eh</button>
+</body>
