@@ -22,7 +22,6 @@ class IOUtil:
 
         inputA = source()
         input = json.loads(inputA)
-        IOUtil.defaultDestination(inputA)
 
         if "card" in input:
             input["card"] = Card.from_string(input["card"])

@@ -12,8 +12,8 @@ from server.ioutil import IOUtil
 
 import time
 
-inqueue = queue.Queue(1)
-outqueue = queue.Queue(1)
+inqueue = queue.Queue()
+outqueue = queue.Queue()
 
 class WSThread(threading.Thread):
     def __init__(self):
@@ -21,24 +21,30 @@ class WSThread(threading.Thread):
       self.websocket=None
     def run(self):
       async def update(websocket, path):
-        self.websocket = websocket
-        while True:
-           await websocket.send("Hello")
+           print("Serving", websocket)
+           self.websocket = websocket
            async for message in websocket:
-             data = message #= json.loads(message)
+             data = message
              inqueue.put(data)
-             #await websocket.send("Got: "+data)            
+             print("Got: ", data)
+             await websocket.send("Thanks for "+data)
+           print("Exited update")
 
       async def test():
         while True:
-            await asyncio.sleep(1)
-            if self.websocket:
-              await self.websocket.send(outqueue.get())
+           await asyncio.sleep(1)
+           if self.websocket:
+            if not outqueue.empty():
+             m = outqueue.get()
+             await self.websocket.send(m)
 
-      asyncio.set_event_loop(asyncio.new_event_loop())
-      start_server = websockets.serve(update, "192.168.0.111", 5678)
-      asyncio.get_event_loop().run_until_complete(start_server)
-      asyncio.get_event_loop().create_task(test())
+      loop = asyncio.new_event_loop()
+      asyncio.set_event_loop(loop)
+
+      start_server = websockets.serve(update, "192.168.1.13", 5678)
+
+      asyncio.ensure_future(start_server)
+      asyncio.ensure_future(test())
       asyncio.get_event_loop().run_forever()
 
 wsthread = WSThread()
