@@ -23,7 +23,7 @@ class GameRound:
             return "pass"
 
         while True:
-            move = IOUtil.get_input(prompt="Add Cards", player=attacker)
+            move = IOUtil.get_input({"prompt":"Add Cards", "player":attacker})
             #TODO: validate message
 
             if move["action"] == "pass":
