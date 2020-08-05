@@ -31,7 +31,6 @@ class WSThread(threading.Thread):
            if self.websocket:
             if not outqueue.empty():
              m = outqueue.get()
-             print("Sending", m)
              await self.websocket.send(m)
 
       loop = asyncio.new_event_loop()
