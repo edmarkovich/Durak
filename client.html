@@ -6,20 +6,53 @@ let socket = new WebSocket("ws://192.168.1.13:5678")
 socket.onopen = function(e) {
 	messages = document.createElement('ul');
 	document.body.appendChild(messages);
-	socket.send('{"action":"join","name":"Ed"}');
+
+	document.body.appendChild(document.createElement('span'));
+	document.body.appendChild(document.createElement('span'));
+	document.body.appendChild(document.createElement('span'));
+	document.body.appendChild(document.createElement('span'));
+	document.body.appendChild(document.createElement('span'));
+	document.body.appendChild(document.createElement('span'));
 };
 
 socket.onmessage = function(event) {
-  //alert(`[message] Data received from server: ${event.data}`);
 	var messages = document.getElementsByTagName('ul')[0],
 			message = document.createElement('li'),
 			content = document.createTextNode(event.data);
 	message.appendChild(content);
 	messages.appendChild(message);
+
+	var messages = document.getElementsByTagName('div')[0]
+
+	try {
+		//messages.textContent = ""
+		hand  = JSON.parse(event.data).players.Ed;
+		for (i=0; i<6; i++) {
+			document.getElementsByTagName('span')[i].innerHTML = '<i onclick="send_card(\''+hand[i]+'\')">'+hand[i]+"</i>"
+		}
+
+		//messages.textContent = content
+	} catch (e) {
+		console.log(e);
+		return;
+	}
+	//messages.appendChild(content);
 };
 
-</script>
+function send_card(card) {
+	console.log("send", card)
+	socket.send('{"card":"'+card+'"}')
+}
 
-	<input type="text" id="command" value='{"a":"b"}'  />
-	<button value="124" onclick="socket.send(document.getElementById('command').value);">Eh</button>
+function login() {
+	socket.send('{"action":"join","name":"Ed"}')
+	socket.send('{"action":"join","name":"Jon"}')
+	socket.send('{"action":"join","name":"Mike"}')
+	socket.send('{"action":"join","name":"Conway"}')
+}
+
+</script>
+	<button onclick="login();">FF</button>
+	<input type="text" id="command" value='{"action":"join","name":"Ed"}'  />
+	<button onclick="socket.send(document.getElementById('command').value);">Eh</button>
 </body>
