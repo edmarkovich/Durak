@@ -8,23 +8,22 @@ function makePlayerArea(name) {
 	player.setAttribute('class', name)
 
 	player.appendChild(document.createTextNode(name));
-
-	player.appendChild(document.createElement('span'));
-	player.appendChild(document.createElement('span'));
-	player.appendChild(document.createElement('span'));
-	player.appendChild(document.createElement('span'));
-	player.appendChild(document.createElement('span'));
-	player.appendChild(document.createElement('span'));
-
 	document.body.appendChild(player)
 }
 
 function populatePlayerArea(name, hand) {
 	player = document.getElementsByClassName(name)[0]
-	console.log(player)
 
-	for (i=0; i<6; i++) {
-		player.getElementsByTagName('span')[i].innerHTML = '<i onclick="send_card(\''+hand[i]+'\')">'+hand[i]+"</i>"
+	//Get rid of existing cards
+	var children = player.getElementsByTagName('span')
+	for (child=children.length-1; child >=0; child--) {
+		player.removeChild(children[child]);
+	}
+
+	for (card in hand) {
+		span = document.createElement('span');
+		span.innerHTML = '<i onclick="send_card(\''+hand[card]+'\')">'+hand[card]+"</i>"
+		player.appendChild(span)
 	}
 
 
@@ -50,27 +49,10 @@ socket.onmessage = function(event) {
 	if (!('players' in payload)) { return }
 
 	for (id in payload.players) {
-		console.log("YYYY", id)
 		name = payload.players[id].name
 		hand = payload.players[id].hand
-		console.log("XXX", name, hand)
 		populatePlayerArea(name, hand)
 	}
-	return;
-
-	try {
-		//messages.textContent = ""
-
-		for (i=0; i<6; i++) {
-			player.getElementsByTagName('span')[i].innerHTML = '<i onclick="send_card(\''+hand[i]+'\')">'+hand[i]+"</i>"
-		}
-
-		//messages.textContent = content
-	} catch (e) {
-		//console.log(e);
-		return;
-	}
-	//messages.appendChild(content);
 };
 
 function send_card(card) {
