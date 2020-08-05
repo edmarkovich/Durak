@@ -1,5 +1,3 @@
-#https://websockets.readthedocs.io/en/stable/intro.html
-
 import asyncio
 import websockets
 import json
@@ -53,5 +51,3 @@ IOUtil.defaultSource = inqueue.get
 IOUtil.defaultDestination = outqueue.put
 
 game.main_loop()
-
-

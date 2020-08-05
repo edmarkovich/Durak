@@ -14,15 +14,15 @@ class Game:
             raise Exception("Invalid expected players" + str(expect_players))
 
         self.console = Console.getInstance()
-        self.expect_players = expect_players                 
-            
+        self.expect_players = expect_players
+
     def start(self, game_setup):
         self.players = game_setup.players #TEST
 
         if self.expect_players > len(self.players.players):
             raise Exception("Not enough players")
 
-        
+
         self.deck = game_setup.deck
         self.trump_card = self.deck.peek_last()
 
@@ -32,20 +32,29 @@ class Game:
         self.console.add("Game Started")
         self.console.add("Trump card: "+ str(self.trump_card))
 
+    def json(self):
+        #TODO -test
+        out = {}
+
+        if hasattr(self, 'players'):
+            out['players'] = self.players.json()
+
+        return out
+
 
     def __str__(self):
         out = "{"
 
         if hasattr(self, 'players'):
             out += '"players":'+ str(self.players) +' ,'
-    
+
         #if hasattr(self, 'attacker'):
         #    out += "Attacker: " + self.attacker + "\t"
         #    out += "Defender: " + self.defender + "\t"
 
         if hasattr(self, 'trump_card'):
             out += '"trump": "' + str(self.trump_card) + '" ,'
-        
+
         if hasattr(self, 'deck'):
             out += '"deck": ' + str(len(self.deck.cards))
 
@@ -58,9 +67,9 @@ class Game:
             self.attacker = self.defender
         elif outcome == "took":
             self.attacker = self.players.player_on_left(self.defender, False)
-        else: 
+        else:
             raise Exception("Invalid Outcome: ", outcome)
-        
+
         if not self.players.players[self.attacker].has_cards():
             self.attacker = self.players.player_on_left(self.attacker)
         self.defender = self.players.player_on_left(self.attacker)
@@ -79,16 +88,9 @@ class Game:
 
             print("Round is finished. Refilling")
             self.players.refill_all(self.attacker, self.defender)
-            
+
             if self.players.is_game_over():
                 print("Game Over")
                 break
 
             self.set_next_attacker_defender(outcome)
-
-
-
-
-
-
-

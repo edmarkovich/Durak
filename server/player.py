@@ -4,8 +4,8 @@ class Player:
 
     def __init__(self, cards=[]):
         self.hand=cards
-        
-        
+
+
     def needs_cards(self):
         return max(0, 6-len(self.hand))
 
@@ -22,8 +22,12 @@ class Player:
 
     def has_cards(self):
         return len(self.hand) > 0
-    
-    def __str__(self):        
+
+    def json(self):
+        #TODO -test
+        return list(map(lambda x: str(x), self.hand))
+
+    def __str__(self):
         out = "["
         for card in self.hand:
             out += '"' + str(card) + '", '
