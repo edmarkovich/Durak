@@ -3,16 +3,40 @@
 
 let socket = new WebSocket("ws://192.168.1.13:5678")
 
+function makePlayerArea(name) {
+	player = document.createElement('div');
+	player.setAttribute('class', name)
+
+	player.appendChild(document.createTextNode(name));
+
+	player.appendChild(document.createElement('span'));
+	player.appendChild(document.createElement('span'));
+	player.appendChild(document.createElement('span'));
+	player.appendChild(document.createElement('span'));
+	player.appendChild(document.createElement('span'));
+	player.appendChild(document.createElement('span'));
+
+	document.body.appendChild(player)
+}
+
+function populatePlayerArea(name, hand) {
+	player = document.getElementsByClassName(name)[0]
+	console.log(player)
+
+	for (i=0; i<6; i++) {
+		player.getElementsByTagName('span')[i].innerHTML = '<i onclick="send_card(\''+hand[i]+'\')">'+hand[i]+"</i>"
+	}
+
+
+}
 socket.onopen = function(e) {
 	messages = document.createElement('ul');
 	document.body.appendChild(messages);
 
-	document.body.appendChild(document.createElement('span'));
-	document.body.appendChild(document.createElement('span'));
-	document.body.appendChild(document.createElement('span'));
-	document.body.appendChild(document.createElement('span'));
-	document.body.appendChild(document.createElement('span'));
-	document.body.appendChild(document.createElement('span'));
+	makePlayerArea("Ed")
+	makePlayerArea("Jon")
+	makePlayerArea("Mike")
+	makePlayerArea("Conway")
 };
 
 socket.onmessage = function(event) {
@@ -22,18 +46,28 @@ socket.onmessage = function(event) {
 	message.appendChild(content);
 	messages.appendChild(message);
 
-	var messages = document.getElementsByTagName('div')[0]
+	payload = JSON.parse(event.data)
+	if (!('players' in payload)) { return }
+
+	for (id in payload.players) {
+		console.log("YYYY", id)
+		name = payload.players[id].name
+		hand = payload.players[id].hand
+		console.log("XXX", name, hand)
+		populatePlayerArea(name, hand)
+	}
+	return;
 
 	try {
 		//messages.textContent = ""
-		hand  = JSON.parse(event.data).players.Ed;
+
 		for (i=0; i<6; i++) {
-			document.getElementsByTagName('span')[i].innerHTML = '<i onclick="send_card(\''+hand[i]+'\')">'+hand[i]+"</i>"
+			player.getElementsByTagName('span')[i].innerHTML = '<i onclick="send_card(\''+hand[i]+'\')">'+hand[i]+"</i>"
 		}
 
 		//messages.textContent = content
 	} catch (e) {
-		console.log(e);
+		//console.log(e);
 		return;
 	}
 	//messages.appendChild(content);
