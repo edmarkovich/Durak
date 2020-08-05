@@ -10,10 +10,10 @@ class Players:
         self.console = Console.getInstance()
 
     def __str__(self):
-        out = "["
+        out = "{"
         for player in self.players:
-            out += '{"name":"'+player+'", "hand":' + str(self.players[player]) + "},"        
-        return out + ' "xx"]'
+            out += '"'+player+'": ' + str(self.players[player]) + ","        
+        return out + '"x": "xx"}'
 
 
     def add_player(self, name):
