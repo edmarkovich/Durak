@@ -3,6 +3,9 @@
 
 let socket = new WebSocket("ws://192.168.1.13:5678")
 
+mode = null;
+turn = null;
+
 function makePlayerArea(name) {
 	player = document.createElement('div');
 	player.setAttribute('class', name)
@@ -11,31 +14,71 @@ function makePlayerArea(name) {
 	document.body.appendChild(player)
 }
 
+function makeGameArea() {
+	game = document.createElement('div')
+	game.setAttribute('class', 'game')
+
+	trump = document.createElement('span');
+	trump.setAttribute('class', 'trump');
+	game.appendChild(trump)
+
+	document.body.appendChild(game)
+}
+
 function populatePlayerArea(name, hand) {
 	player = document.getElementsByClassName(name)[0]
+  player.setAttribute('style', '')
 
 	//Get rid of existing cards
-	var children = player.getElementsByTagName('span')
+	var children = player.getElementsByClassName('card')
+	for (child=children.length-1; child >=0; child--) {
+		player.removeChild(children[child]);
+	}
+	children = player.getElementsByClassName('verb')
 	for (child=children.length-1; child >=0; child--) {
 		player.removeChild(children[child]);
 	}
 
 	for (card in hand) {
 		span = document.createElement('span');
+		span.setAttribute('class', 'card')
 		span.innerHTML = '<i onclick="send_card(\''+hand[card]+'\')">'+hand[card]+"</i>"
 		player.appendChild(span)
 	}
+}
 
+function updatePrompt() {
+	player = document.getElementsByClassName(turn)[0]
+	if (mode == "First attack") {
+		color = 'red';
+		verb  = '';
+	} else if (mode == "Defend") {
+		color = 'blue';
+		verb  = 'take';
+	} else if (mode == "Add Cards") {
+		color = 'yellow';
+		verb  = 'pass';
+	}
+	player = document.getElementsByClassName(turn)[0]
+	player.setAttribute('style', 'background-color: '+color+';')
+
+	verb_node = document.createElement('span');
+	verb_node.setAttribute('class', 'verb');
+	verb_node.innerHTML = '<i onclick="send_verb(\''+verb+'\')">'+verb+"</i>"
+
+	player.appendChild(verb_node);
 
 }
-socket.onopen = function(e) {
-	messages = document.createElement('ul');
-	document.body.appendChild(messages);
 
+socket.onopen = function(e) {
 	makePlayerArea("Ed")
 	makePlayerArea("Jon")
 	makePlayerArea("Mike")
 	makePlayerArea("Conway")
+
+	messages = document.createElement('ul');
+	document.body.appendChild(messages);
+
 };
 
 socket.onmessage = function(event) {
@@ -46,18 +89,33 @@ socket.onmessage = function(event) {
 	messages.appendChild(message);
 
 	payload = JSON.parse(event.data)
-	if (!('players' in payload)) { return }
-
-	for (id in payload.players) {
-		name = payload.players[id].name
-		hand = payload.players[id].hand
-		populatePlayerArea(name, hand)
+	if ('game' in payload) {
+		game = payload.game;
+		for (id in game.players) {
+			name = game.players[id].name
+			hand = game.players[id].hand
+			populatePlayerArea(name, hand)
+		}
+	}
+	if ('prompt' in payload) {
+		mode = payload.prompt.prompt;
+		if ('player' in payload.prompt) {
+			turn = payload.prompt.player
+			updatePrompt(player, prompt)
+		} else {
+			turn = null;
+		}
 	}
 };
 
 function send_card(card) {
 	console.log("send", card)
-	socket.send('{"card":"'+card+'"}')
+	socket.send('{"action":"", "card":"'+card+'"}')
+}
+
+function send_verb(verb) {
+	console.log("send", verb)
+	socket.send('{"action":"'+verb+'"}')
 }
 
 function login() {
