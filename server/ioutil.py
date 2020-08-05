@@ -11,11 +11,12 @@ class IOUtil:
     def get_input(prompt = None, player = None):
 
         if IOUtil.game:
-            IOUtil.defaultDestination(json.dumps(IOUtil.game.json()))
+            js = IOUtil.game.json()
+            if js: IOUtil.defaultDestination(json.dumps(js))
 
         if prompt:
-            prompt = prompt+"["+str(player)+"] => "
-            IOUtil.defaultDestination(prompt)
+            #prompt = prompt+"["+str(player)+"] => "
+            IOUtil.defaultDestination(json.dumps(prompt))
 
         source = IOUtil.defaultSource
 

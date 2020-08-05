@@ -34,13 +34,15 @@ class Game:
 
     def json(self):
         #TODO -test
-        out = {}
 
-        if hasattr(self, 'players'):
-            out['players'] = self.players.json()
+        if not hasattr(self, 'players'):
+            return None;
 
-        return out
-
+        return {
+            'players': self.players.json(),
+            'trump': str(self.trump_card),
+            'deck': str(len(self.deck.cards))
+        }
 
     def __str__(self):
         out = "{"
