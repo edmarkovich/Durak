@@ -34,22 +34,22 @@ class Game:
 
 
     def __str__(self):
-        out = ""
+        out = "{"
 
         if hasattr(self, 'players'):
-            out += str(self.players) +"\n"
+            out += '"players":'+ str(self.players) +' ,'
     
-        if hasattr(self, 'attacker'):
-            out += "Attacker: " + self.attacker + "\t"
-            out += "Defender: " + self.defender + "\t"
+        #if hasattr(self, 'attacker'):
+        #    out += "Attacker: " + self.attacker + "\t"
+        #    out += "Defender: " + self.defender + "\t"
 
         if hasattr(self, 'trump_card'):
-            out += "Trump: " + str(self.trump_card) + "\t"
+            out += '"trump": "' + str(self.trump_card) + '" ,'
         
         if hasattr(self, 'deck'):
-            out += "Deck: " + str(len(self.deck.cards)) + "\t"
+            out += '"deck": ' + str(len(self.deck.cards))
 
-        return out + "\n"
+        return out + "}"
 
 
     def set_next_attacker_defender(self, outcome):
@@ -72,7 +72,6 @@ class Game:
         game_setup = GameSetup(self.expect_players)
         game_setup.await_all_join()
         self.start(game_setup)
-        print(self)
 
         while True:
             game_round = GameRound(self.players, self.attacker, self.defender, self.trump_card.suit)

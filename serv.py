@@ -26,13 +26,10 @@ class WSThread(threading.Thread):
            async for message in websocket:
              data = message
              inqueue.put(data)
-             print("Got: ", data)
-             await websocket.send("Thanks for "+data)
-           print("Exited update")
 
       async def test():
         while True:
-           await asyncio.sleep(1)
+           await asyncio.sleep(0.1)
            if self.websocket:
             if not outqueue.empty():
              m = outqueue.get()
@@ -51,9 +48,9 @@ wsthread = WSThread()
 wsthread.start()
 
 game = Game(4)
+IOUtil.game = game
 IOUtil.defaultSource = inqueue.get
 IOUtil.defaultDestination = outqueue.put
-IOUtil.game = game
 
 game.main_loop()
 

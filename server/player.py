@@ -24,7 +24,7 @@ class Player:
         return len(self.hand) > 0
     
     def __str__(self):        
-        out = ""
+        out = "["
         for card in self.hand:
-            out += str(card) + " "
-        return out
+            out += '"' + str(card) + '", '
+        return out+' "xx"]'

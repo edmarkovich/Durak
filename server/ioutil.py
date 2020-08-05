@@ -11,11 +11,10 @@ class IOUtil:
     def get_input(prompt = None, player = None):
 
         if IOUtil.game:
-            print(IOUtil.game)
+            IOUtil.defaultDestination(str(IOUtil.game))
 
         if prompt:
             prompt = prompt+"["+str(player)+"] => " 
-            print(prompt,end='')
             IOUtil.defaultDestination(prompt)
         
         source = IOUtil.defaultSource
