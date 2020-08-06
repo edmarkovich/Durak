@@ -16,15 +16,18 @@ class IOUtil:
 
         if IOUtil.game:
             g = IOUtil.game.json()
-            if g: message['game'] = g 
+            if g: message['game'] = g
 
 
         IOUtil.defaultDestination(json.dumps(message))
 
 
         source = IOUtil.defaultSource
-
         inputA = source()
+
+        if inputA == "Die":
+            raise Exception("Time to Die")
+
         input = json.loads(inputA)
 
         if "card" in input:

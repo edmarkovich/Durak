@@ -3,6 +3,9 @@ import websockets
 import json
 import os
 
+import http.server
+import socketserver
+
 import threading
 import queue
 
@@ -13,6 +16,23 @@ import time
 
 inqueue = queue.Queue()
 outqueue = queue.Queue()
+
+class HTTPThread(threading.Thread):
+    def __init__(self):
+        threading.Thread.__init__(self)
+
+    def run(self):
+        class S(http.server.SimpleHTTPRequestHandler):
+            def do_GET(self):
+                self.path = '/client.html'
+                return http.server.SimpleHTTPRequestHandler.do_GET(self)
+
+        S.allow_reuse_address = True
+
+        with socketserver.TCPServer(("", 8000), S) as httpd:
+            print ("Serving HTTP")
+            httpd.serve_forever()
+
 
 class WSThread(threading.Thread):
     def __init__(self):
@@ -26,7 +46,7 @@ class WSThread(threading.Thread):
              data = message
              inqueue.put(data)
            self.websockets.remove(websocket)
-           os._exit(0)
+           inqueue.put("Die")
 
       async def test():
         while True:
@@ -44,13 +64,28 @@ class WSThread(threading.Thread):
       asyncio.ensure_future(start_server)
       asyncio.ensure_future(test())
       asyncio.get_event_loop().run_forever()
+      print("WSThread Done")
+
+class GameThread(threading.Thread):
+    def __init__(self):
+        threading.Thread.__init__(self)
+
+    def run(self):
+        while True:
+            try:
+                game = Game(2)
+                IOUtil.game = game
+                IOUtil.defaultSource = inqueue.get
+                IOUtil.defaultDestination = outqueue.put
+                game.main_loop()
+            except Exception as e:
+                print ("Caught", e)
 
 wsthread = WSThread()
 wsthread.start()
 
-game = Game(2)
-IOUtil.game = game
-IOUtil.defaultSource = inqueue.get
-IOUtil.defaultDestination = outqueue.put
+httpthread = HTTPThread()
+httpthread.start()
 
-game.main_loop()
+gamethread = GameThread()
+gamethread.start()

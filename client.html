@@ -1,0 +1,262 @@
+<html>
+<head>
+	<style>
+		.card {
+			border-style: solid;
+			border-radius: 5px;
+			border-color: green;
+			padding: 5px;
+			margin: 5px;
+			width: 40px;
+			float: left;
+			text-align: center;
+			position: absolute;
+		}
+
+		.back {
+			color: black;
+			background: linear-gradient(to bottom right, gray, black);
+		}
+
+		.red {
+			color: white;
+			background: linear-gradient(to bottom right, black, 10%, darkred, 70%, black);
+		}
+
+		.black {
+			color: white;
+			background: linear-gradient(to bottom right, black, 10%, darkblue, 70%, black);
+		}
+
+		.defended {
+			transform: rotate(20deg);
+		}
+
+		.attack {
+			transform: rotate(0deg);
+		}
+
+		.name {
+			float: left;
+			padding: 5px;
+			margin: 10px;
+			width: 50px;
+		}
+
+		.verb {
+			float: right;
+			padding: 5px;
+			margin: 10px;
+			width: 50px;
+		}
+
+		.player {
+			border-radius: 5px;
+			border-style: solid;
+			border-color: white;
+			padding: 20px;
+			margin: 10px;
+			color: gray;
+			clear: both;
+			overflow: auto;
+			pointer-events: none;
+			position: relative;
+		}
+
+		.turn {
+			background-color: pink;
+			border-color: green;
+			pointer-events: auto;
+		}
+	</style>
+</head>
+
+<body>
+<script>
+
+let socket = new WebSocket("ws://192.168.1.13:5678")
+
+mode = null;
+turn = null;
+player_name = null;
+initialized = false;
+
+function makePlayerArea(name) {
+	player = document.createElement('div');
+	player.setAttribute('class', name+" player")
+
+	name_node = document.createElement('div')
+	name_node.setAttribute('class', 'name')
+	name_node.innerHTML = name
+	player.appendChild(name_node);
+	document.body.appendChild(player)
+}
+
+
+function updateGameArea(deck, trump, table) {
+	populatePlayerArea("Table", table)
+	populatePlayerArea("Deck", [trump, deck])
+}
+
+function getCardClass(name, card, sequence) {
+
+	if (name!=player_name && name != "Table" && name != "Deck") {
+		return "card back";
+	}
+
+	if (name == "Deck" && card[0]>='0' && card[0]<='9') {
+		return "card";
+	}
+
+	base = ""
+	if (name == "Table") { base = (sequence % 2 == 1) ? 'defended ' : 'attack '}
+
+	if (card[0] == "♥" || card[0] == "♦") {
+		return base+"card red";
+	}
+
+	return base+"card black"
+}
+
+function populatePlayerArea(name, hand) {
+	player = document.getElementsByClassName(name)[0]
+  player.setAttribute('class', name + " player") //Clear others
+
+	//Get rid of existing cards
+	var children = player.getElementsByClassName('card')
+	for (child=children.length-1; child >=0; child--) {
+		player.removeChild(children[child]);
+	}
+	children = player.getElementsByClassName('verb')
+	for (child=children.length-1; child >=0; child--) {
+		player.removeChild(children[child]);
+	}
+
+	for (card in hand) {
+		span = document.createElement('div');
+		marking = hand[card]
+
+
+		span.style.left = 100 + (65* card);
+		if (name == "Table"){ //} && card % 2 == 1) {
+			span.style.left = 100 + (65*card/2);// - 35;
+		}
+
+		span.setAttribute('class', getCardClass(name, marking, card))
+		span.style.top = 0;
+		span.setAttribute('onclick', 'send_card(\''+hand[card]+'\')')
+		span.innerHTML = '<span>'
+			+marking[0]
+			+ "<br><B>" + marking.substring(1) + "</B><br>"
+			+marking[0]
+			+"</span>"
+		player.appendChild(span)
+	}
+}
+
+function updatePrompt() {
+	player = document.getElementsByClassName(turn)[0]
+	if (mode == "First attack") {
+		color = 'red';
+		verb  = '';
+	} else if (mode == "Add Cards") {
+		color = 'red';
+		verb  = 'pass';
+	}
+	else if (mode == "Defend") {
+		color = 'blue';
+		verb  = 'take';
+	}
+
+	player = document.getElementsByClassName(turn)[0]
+	player.setAttribute('class', turn + " player turn")
+
+	verb_node = document.createElement('div');
+	verb_node.setAttribute('class', 'verb');
+	verb_node.innerHTML = '<i onclick="send_verb(\''+verb+'\')">'+verb+"</i>"
+
+	player.appendChild(verb_node);
+
+}
+
+
+socket.onopen = function(e) {
+	//makeGameArea();
+};
+
+function makeGameArea(players) {
+	makePlayerArea("Deck")
+
+	for (id in players){
+		name = players[id].name
+		if (name != player_name) {
+			makePlayerArea(name)
+		}
+	}
+
+	hr = document.createElement('hr')
+	hr.setAttribute("style", "clear: both;")
+	document.body.appendChild(hr)
+
+	makePlayerArea("Table")
+
+	hr = document.createElement('hr')
+	hr.setAttribute("style", "clear: both;")
+	document.body.appendChild(hr)
+
+	makePlayerArea(player_name)
+}
+
+
+socket.onmessage = function(event) {
+
+	payload = JSON.parse(event.data)
+	if ('game' in payload) {
+		game = payload.game;
+
+		if (!initialized) {
+			makeGameArea(game.players)
+			initialized = true;
+		}
+
+		for (id in game.players) {
+			name = game.players[id].name
+			hand = game.players[id].hand
+
+			populatePlayerArea(name, hand)
+		}
+
+		updateGameArea(game.deck, game.trump, game.table);
+
+	}
+	if ('prompt' in payload) {
+		mode = payload.prompt.prompt;
+		if ('player' in payload.prompt) {
+			turn = payload.prompt.player
+			updatePrompt(player, prompt)
+		} else {
+			turn = null;
+		}
+	}
+};
+
+function send_card(card) {
+	socket.send('{"action":"", "card":"'+card+'"}')
+}
+
+function send_verb(verb) {
+	socket.send('{"action":"'+verb+'"}')
+}
+
+function login(name) {
+	player_name = name;
+	socket.send('{"action":"join","name":"'+player_name+'"}');
+}
+
+</script>
+	<button onclick="login('Ed'); login('Jamie');">FF</button>
+	<input type="text" id="command" value=''  />
+	<button onclick="login(document.getElementById('command').value);">Login</button>
+</body>
+
+</html>
