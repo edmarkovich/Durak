@@ -4,24 +4,29 @@
 		.card {
 			border-style: solid;
 			border-radius: 5px;
+			border-color: green;
 			padding: 5px;
 			margin: 5px;
-			width: 25px;
+			width: 40px;
 			float: left;
 			text-align: center;
 		}
 
 		.back {
-			background-color: black;
 			color: black;
+			background: linear-gradient(black, black);
 		}
 
 		.red {
-			color: red;
+			color: white;
+			background: linear-gradient(to bottom right, black, 15%, darkred, 85%, black);
+
 		}
 
 		.black {
-			color: black;
+			color: white;
+			background: linear-gradient(to bottom right, black, 15%, darkblue, 85%, black);
+
 		}
 
 		.name {
@@ -54,6 +59,7 @@ let socket = new WebSocket("ws://192.168.1.13:5678")
 mode = null;
 turn = null;
 player_name = null;
+initialized = false;
 
 function makePlayerArea(name) {
 	player = document.createElement('div');
@@ -114,8 +120,13 @@ function populatePlayerArea(name, hand) {
 
 	for (card in hand) {
 		span = document.createElement('div');
-		span.setAttribute('class', getCardClass(name, hand[card]))
-		span.innerHTML = '<i onclick="send_card(\''+hand[card]+'\')">'+hand[card]+"</i>"
+		marking = hand[card]
+		span.setAttribute('class', getCardClass(name, marking))
+		span.innerHTML = '<span onclick="send_card(\''+hand[card]+'\')">'
+			+marking[0]
+			+ "<br><B>" + marking.substring(1) + "</B><br>"
+			+marking[0]
+			+"</span>"
 		player.appendChild(span)
 	}
 }
@@ -147,23 +158,19 @@ function updatePrompt() {
 
 socket.onopen = function(e) {
 	makeGameArea();
-	makePlayerArea("Ed");
-	makePlayerArea("Jon");
-	makePlayerArea("Mike");
-	makePlayerArea("Conway");
 
 	log = document.createElement('div')
 	log.setAttribute('style','clear: both; color: pink;')
 	messages = document.createElement('div');
 	messages.setAttribute("class", "messages")
 	log.appendChild(messages);
-	document.body.appendChild(log);
+	//document.body.appendChild(log);
 
 };
 
 socket.onmessage = function(event) {
-	var messages = document.getElementsByClassName('messages')[0]
-	messages.innerHTML = event.data
+	//var messages = document.getElementsByClassName('messages')[0]
+	//messages.innerHTML = event.data
 
 
 	payload = JSON.parse(event.data)
@@ -172,8 +179,12 @@ socket.onmessage = function(event) {
 		for (id in game.players) {
 			name = game.players[id].name
 			hand = game.players[id].hand
+			if (!initialized) {
+				makePlayerArea(name)
+			}
 			populatePlayerArea(name, hand)
 		}
+		initialized = true;
 		updateGameArea(game.deck, game.trump, game.table);
 
 	}
@@ -198,14 +209,11 @@ function send_verb(verb) {
 
 function login(name) {
 	player_name = name;
-	socket.send('{"action":"join","name":"'+name+'"}');
-	/*socket.send('{"action":"join","name":"Jon"}')
-	socket.send('{"action":"join","name":"Mike"}')
-	socket.send('{"action":"join","name":"Conway"}') */
+	socket.send('{"action":"join","name":"'+player_name+'"}');
 }
 
 </script>
-	<!-- <button onclick="login();">FF</button> -->
+	<button onclick="login('ed'); login('mike');">FF</button>
 	<input type="text" id="command" value=''  />
 	<button onclick="login(document.getElementById('command').value);">Login</button>
 </body>
