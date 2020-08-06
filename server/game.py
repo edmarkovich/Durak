@@ -35,13 +35,14 @@ class Game:
     def json(self):
         #TODO -test
 
-        if not hasattr(self, 'players'):
+        if not hasattr(self, 'table'):
             return None;
 
         return {
             'players': self.players.json(),
             'trump': str(self.trump_card),
-            'deck': str(len(self.deck.cards))
+            'deck': str(len(self.deck.cards)),
+            'table': self.table.json()
         }
 
     def __str__(self):
@@ -86,6 +87,7 @@ class Game:
 
         while True:
             game_round = GameRound(self.players, self.attacker, self.defender, self.trump_card.suit)
+            self.table = game_round.table
             outcome = game_round.play()
 
             print("Round is finished. Refilling")
