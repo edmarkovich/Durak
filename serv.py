@@ -46,7 +46,7 @@ class WSThread(threading.Thread):
 wsthread = WSThread()
 wsthread.start()
 
-game = Game(4)
+game = Game(2)
 IOUtil.game = game
 IOUtil.defaultSource = inqueue.get
 IOUtil.defaultDestination = outqueue.put
