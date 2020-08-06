@@ -20,7 +20,6 @@
 		.red {
 			color: white;
 			background: linear-gradient(to bottom right, black, 10%, darkred, 70%, black);
-
 		}
 
 		.black {
@@ -44,9 +43,20 @@
 		}
 
 		.player {
+			border-radius: 5px;
+			border-style: solid;
+			border-color: white;
 			padding: 10px;
 			color: gray;
 			clear: both;
+			overflow: auto;
+			pointer-events: none;
+		}
+
+		.turn {
+			background-color: pink;
+			border-color: green;
+			pointer-events: auto;
 		}
 	</style>
 </head>
@@ -74,9 +84,7 @@ function makePlayerArea(name) {
 
 
 function updateGameArea(deck, trump, table) {
-	console.log("Table")
 	populatePlayerArea("Table", table)
-	console.log("Table DOne")
 	populatePlayerArea("Deck", [trump, deck])
 }
 
@@ -99,7 +107,7 @@ function getCardClass(name, card) {
 
 function populatePlayerArea(name, hand) {
 	player = document.getElementsByClassName(name)[0]
-  player.setAttribute('style', '')
+  player.setAttribute('class', name + " player") //Clear others
 
 	//Get rid of existing cards
 	var children = player.getElementsByClassName('card')
@@ -142,7 +150,7 @@ function updatePrompt() {
 	}
 
 	player = document.getElementsByClassName(turn)[0]
-	player.setAttribute('style', 'color: '+color+';')
+	player.setAttribute('class', turn + " player turn")
 
 	verb_node = document.createElement('div');
 	verb_node.setAttribute('class', 'verb');
@@ -172,6 +180,11 @@ function makeGameArea(players) {
 	document.body.appendChild(hr)
 
 	makePlayerArea("Table")
+
+	hr = document.createElement('hr')
+	hr.setAttribute("style", "clear: both;")
+	document.body.appendChild(hr)
+
 	makePlayerArea(player_name)
 }
 
