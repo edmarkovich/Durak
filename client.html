@@ -14,18 +14,18 @@
 
 		.back {
 			color: black;
-			background: linear-gradient(black, black);
+			background: linear-gradient(to bottom right, gray, black);
 		}
 
 		.red {
 			color: white;
-			background: linear-gradient(to bottom right, black, 15%, darkred, 85%, black);
+			background: linear-gradient(to bottom right, black, 10%, darkred, 70%, black);
 
 		}
 
 		.black {
 			color: white;
-			background: linear-gradient(to bottom right, black, 15%, darkblue, 85%, black);
+			background: linear-gradient(to bottom right, black, 10%, darkblue, 70%, black);
 
 		}
 
@@ -82,17 +82,20 @@ function makeGameArea() {
 }
 
 function updateGameArea(deck, trump, table) {
+	console.log("Table")
 	populatePlayerArea("Table", table)
-	populatePlayerArea("Deck", [deck, trump])
+	console.log("Table DOne")
+	populatePlayerArea("Deck", [trump, deck])
 }
 
 function getCardClass(name, card) {
-	if (name == "Deck") {
-		return "card";
+
+	if (name!=player_name && name != "Table" && name != "Deck") {
+		return "card back";
 	}
 
-	if (name!=player_name && name != "Table") {
-		return "card back";
+	if (name == "Deck" && card[0]>='0' && card[0]<='9') {
+		return "card";
 	}
 
 	if (card[0] == "♥" || card[0] == "♦") {
@@ -122,7 +125,8 @@ function populatePlayerArea(name, hand) {
 		span = document.createElement('div');
 		marking = hand[card]
 		span.setAttribute('class', getCardClass(name, marking))
-		span.innerHTML = '<span onclick="send_card(\''+hand[card]+'\')">'
+		span.setAttribute('onclick', 'send_card(\''+hand[card]+'\')')
+		span.innerHTML = '<span>'
 			+marking[0]
 			+ "<br><B>" + marking.substring(1) + "</B><br>"
 			+marking[0]
@@ -213,7 +217,7 @@ function login(name) {
 }
 
 </script>
-	<button onclick="login('ed'); login('mike');">FF</button>
+	<button onclick="login('Ed'); login('Jamie');">FF</button>
 	<input type="text" id="command" value=''  />
 	<button onclick="login(document.getElementById('command').value);">Login</button>
 </body>
