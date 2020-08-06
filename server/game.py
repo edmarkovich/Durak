@@ -94,6 +94,7 @@ class Game:
             self.players.refill_all(self.attacker, self.defender)
 
             if self.players.is_game_over():
+                IOUtil.send_game_state()
                 print("Game Over")
                 break
 
