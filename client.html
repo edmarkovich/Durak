@@ -11,6 +11,11 @@
 			text-align: center;
 		}
 
+		.back {
+			background-color: black;
+			color: black;
+		}
+
 		.name {
 			float: left;
 			padding: 5px;
@@ -40,6 +45,7 @@ let socket = new WebSocket("ws://192.168.1.13:5678")
 
 mode = null;
 turn = null;
+player_name = null;
 
 function makePlayerArea(name) {
 	player = document.createElement('div');
@@ -80,9 +86,15 @@ function populatePlayerArea(name, hand) {
 		player.removeChild(children[child]);
 	}
 
+	cls = 'card';
+	if (name!=player_name && name != "Table" && name != "Deck") {
+		cls = cls + " back"
+		console.log(name, player_name, cls)
+	}
+
 	for (card in hand) {
 		span = document.createElement('div');
-		span.setAttribute('class', 'card')
+		span.setAttribute('class', cls)
 		span.innerHTML = '<i onclick="send_card(\''+hand[card]+'\')">'+hand[card]+"</i>"
 		player.appendChild(span)
 	}
@@ -157,26 +169,25 @@ socket.onmessage = function(event) {
 };
 
 function send_card(card) {
-	console.log("send", card)
 	socket.send('{"action":"", "card":"'+card+'"}')
 }
 
 function send_verb(verb) {
-	console.log("send", verb)
 	socket.send('{"action":"'+verb+'"}')
 }
 
-function login() {
-	socket.send('{"action":"join","name":"Ed"}')
-	socket.send('{"action":"join","name":"Jon"}')
+function login(name) {
+	player_name = name;
+	socket.send('{"action":"join","name":"'+name+'"}');
+	/*socket.send('{"action":"join","name":"Jon"}')
 	socket.send('{"action":"join","name":"Mike"}')
-	socket.send('{"action":"join","name":"Conway"}')
+	socket.send('{"action":"join","name":"Conway"}') */
 }
 
 </script>
-	<button onclick="login();">FF</button>
-	<input type="text" id="command" value='{"action":"join","name":"Ed"}'  />
-	<button onclick="socket.send(document.getElementById('command').value);">Eh</button>
+	<!-- <button onclick="login();">FF</button> -->
+	<input type="text" id="command" value=''  />
+	<button onclick="login(document.getElementById('command').value);">Login</button>
 </body>
 
 </html>
