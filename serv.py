@@ -16,22 +16,23 @@ outqueue = queue.Queue()
 class WSThread(threading.Thread):
     def __init__(self):
       threading.Thread.__init__(self)
-      self.websocket=None
+      self.websockets=[]
     def run(self):
       async def update(websocket, path):
            print("Serving", websocket)
-           self.websocket = websocket
+           self.websockets.append(websocket)
            async for message in websocket:
              data = message
              inqueue.put(data)
+           self.websockets.remove(websocket)
 
       async def test():
         while True:
            await asyncio.sleep(0.1)
-           if self.websocket:
-            if not outqueue.empty():
+           if not outqueue.empty():
              m = outqueue.get()
-             await self.websocket.send(m)
+             for ws in self.websockets:
+                 await ws.send(m)
 
       loop = asyncio.new_event_loop()
       asyncio.set_event_loop(loop)
