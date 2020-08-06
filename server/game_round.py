@@ -11,10 +11,11 @@ class GameRound:
 
 
     def first_attack(self):
-        move = IOUtil.get_input(prompt="First Attack", player=self.attacker)
+        move = IOUtil.get_input({'prompt':"First attack",
+            "player": self.attacker})
         #TODO: validate message
         card = move["card"]
-        
+
         self.table.attack(card, self.players.players[self.attacker])
 
     def add_in_one(self, attacker):
@@ -22,7 +23,7 @@ class GameRound:
             return "pass"
 
         while True:
-            move = IOUtil.get_input(prompt="Add Cards", player=attacker)
+            move = IOUtil.get_input({"prompt":"Add Cards", "player":attacker})
             #TODO: validate message
 
             if move["action"] == "pass":
@@ -32,7 +33,7 @@ class GameRound:
             if not self.table.attack(card, self.players.players[attacker]):
                 continue
 
-            return "added"                
+            return "added"
 
     def add_in_loop(self, took):
         #TODO: Test
@@ -47,7 +48,7 @@ class GameRound:
             out = self.add_in_one(attacker)
             if out == "pass":
                 if not passer: passer = attacker
-                attacker = self.players.next_attacker(attacker, self.defender)                    
+                attacker = self.players.next_attacker(attacker, self.defender)
                 continue
             if out == "added" and not took:
                 passer = None
@@ -61,7 +62,7 @@ class GameRound:
 
     def defend(self):
         while True:
-            move = IOUtil.get_input(prompt="Defend", player=self.defender)
+            move = IOUtil.get_input({'prompt':"Defend", 'player':self.defender})
             #TODO: validate message
 
             if move["action"] == "take":
@@ -74,7 +75,7 @@ class GameRound:
             #if defender beats 6 cards, or uses all his cards, he won this round
             if self.table.attack_cards == 6 or not self.players.players[self.defender].has_cards():
                 return "beat_all"
-        
+
             return "beat_one"
 
     def play(self):
@@ -82,11 +83,11 @@ class GameRound:
         self.first_attack()
         out = self.defend()
 
-        if out == "beat_all": 
-            return "beat_all"        
+        if out == "beat_all":
+            return "beat_all"
 
         out = self.add_in_loop(out == "took")
         if out == "took":
             self.table.take_pile(self.players.players[self.defender])
-        
+
         return out

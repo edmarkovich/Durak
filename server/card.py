@@ -16,13 +16,13 @@ class Card:
         self.rank = rank
 
     def beats(self, other, trump):
-        
+
         if trump not in Card.suits:
             raise Exception ("Invalid trump: " + trump)
 
         if self == other:
             raise Exception ("Comparing to self" + str(other))
-                
+
         if self.suit == other.suit:
             return self > other
 
@@ -32,13 +32,10 @@ class Card:
         return self.rank == other.rank and self.suit == other.suit
 
     def __lt__(self, other):
-        if self.suit != other.suit:
-            raise Exception("Compare across suits")
+        #if self.suit != other.suit:
+        #    raise Exception("Compare across suits")
 
-        return Card.ranks.index(self.rank) < Card.ranks.index(other.rank) 
-    
+        return Card.ranks.index(self.rank) < Card.ranks.index(other.rank)
+
     def __str__(self):
         return self.suit+self.rank
-
-        
-        

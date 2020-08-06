@@ -8,21 +8,24 @@ class IOUtil:
     game = None
 
     @staticmethod
-    def get_input(prompt = None, player = None):
+    def get_input(prompt, player = None):
+
+        message ={
+            'prompt' : prompt
+        }
 
         if IOUtil.game:
-            print(IOUtil.game)
+            g = IOUtil.game.json()
+            if g: message['game'] = g 
 
-        if prompt:
-            prompt = prompt+"["+str(player)+"] => " 
-            print(prompt,end='')
-            IOUtil.defaultDestination(prompt)
-        
+
+        IOUtil.defaultDestination(json.dumps(message))
+
+
         source = IOUtil.defaultSource
 
         inputA = source()
         input = json.loads(inputA)
-        IOUtil.defaultDestination(inputA)
 
         if "card" in input:
             input["card"] = Card.from_string(input["card"])

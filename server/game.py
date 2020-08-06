@@ -14,15 +14,15 @@ class Game:
             raise Exception("Invalid expected players" + str(expect_players))
 
         self.console = Console.getInstance()
-        self.expect_players = expect_players                 
-            
+        self.expect_players = expect_players
+
     def start(self, game_setup):
         self.players = game_setup.players #TEST
 
         if self.expect_players > len(self.players.players):
             raise Exception("Not enough players")
 
-        
+
         self.deck = game_setup.deck
         self.trump_card = self.deck.peek_last()
 
@@ -32,24 +32,36 @@ class Game:
         self.console.add("Game Started")
         self.console.add("Trump card: "+ str(self.trump_card))
 
+    def json(self):
+        #TODO -test
+
+        if not hasattr(self, 'table'):
+            return None;
+
+        return {
+            'players': self.players.json(self.trump_card.suit),
+            'trump': str(self.trump_card),
+            'deck': str(len(self.deck.cards)),
+            'table': self.table.json()
+        }
 
     def __str__(self):
-        out = ""
+        out = "{"
 
         if hasattr(self, 'players'):
-            out += str(self.players) +"\n"
-    
-        if hasattr(self, 'attacker'):
-            out += "Attacker: " + self.attacker + "\t"
-            out += "Defender: " + self.defender + "\t"
+            out += '"players":'+ str(self.players) +' ,'
+
+        #if hasattr(self, 'attacker'):
+        #    out += "Attacker: " + self.attacker + "\t"
+        #    out += "Defender: " + self.defender + "\t"
 
         if hasattr(self, 'trump_card'):
-            out += "Trump: " + str(self.trump_card) + "\t"
-        
-        if hasattr(self, 'deck'):
-            out += "Deck: " + str(len(self.deck.cards)) + "\t"
+            out += '"trump": "' + str(self.trump_card) + '" ,'
 
-        return out + "\n"
+        if hasattr(self, 'deck'):
+            out += '"deck": ' + str(len(self.deck.cards))
+
+        return out + "}"
 
 
     def set_next_attacker_defender(self, outcome):
@@ -58,9 +70,9 @@ class Game:
             self.attacker = self.defender
         elif outcome == "took":
             self.attacker = self.players.player_on_left(self.defender, False)
-        else: 
+        else:
             raise Exception("Invalid Outcome: ", outcome)
-        
+
         if not self.players.players[self.attacker].has_cards():
             self.attacker = self.players.player_on_left(self.attacker)
         self.defender = self.players.player_on_left(self.attacker)
@@ -72,24 +84,17 @@ class Game:
         game_setup = GameSetup(self.expect_players)
         game_setup.await_all_join()
         self.start(game_setup)
-        print(self)
 
         while True:
             game_round = GameRound(self.players, self.attacker, self.defender, self.trump_card.suit)
+            self.table = game_round.table
             outcome = game_round.play()
 
             print("Round is finished. Refilling")
             self.players.refill_all(self.attacker, self.defender)
-            
+
             if self.players.is_game_over():
                 print("Game Over")
                 break
 
             self.set_next_attacker_defender(outcome)
-
-
-
-
-
-
-
