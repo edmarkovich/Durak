@@ -1,6 +1,7 @@
 import asyncio
 import websockets
 import json
+import os
 
 import threading
 import queue
@@ -25,6 +26,7 @@ class WSThread(threading.Thread):
              data = message
              inqueue.put(data)
            self.websockets.remove(websocket)
+           os._exit(0)
 
       async def test():
         while True:
