@@ -53,14 +53,17 @@ function makePlayerArea(name) {
 }
 
 function makeGameArea() {
-	game = document.createElement('div')
-	game.setAttribute('class', 'game')
+	makePlayerArea("Deck")
+	makePlayerArea("Table")
 
-	trump = document.createElement('span');
-	trump.setAttribute('class', 'trump');
-	game.appendChild(trump)
+	hr = document.createElement('hr')
+	hr.setAttribute("style", "clear: both;")
+	document.body.appendChild(hr)
+}
 
-	document.body.appendChild(game)
+function updateGameArea(deck, trump, table) {
+	populatePlayerArea("Table", table)
+	populatePlayerArea("Deck", [deck, trump])
 }
 
 function populatePlayerArea(name, hand) {
@@ -91,7 +94,7 @@ function updatePrompt() {
 		color = 'red';
 		verb  = '';
 	} else if (mode == "Add Cards") {
-		color = 'pink';
+		color = 'red';
 		verb  = 'pass';
 	}
 	else if (mode == "Defend") {
@@ -111,25 +114,25 @@ function updatePrompt() {
 }
 
 socket.onopen = function(e) {
-	makePlayerArea("Ed")
-	makePlayerArea("Jon")
-	makePlayerArea("Mike")
-	makePlayerArea("Conway")
+	makeGameArea();
+	makePlayerArea("Ed");
+	makePlayerArea("Jon");
+	makePlayerArea("Mike");
+	makePlayerArea("Conway");
 
 	log = document.createElement('div')
 	log.setAttribute('style','clear: both; color: pink;')
-	messages = document.createElement('ul');
-	log.appendChild(messages)
+	messages = document.createElement('div');
+	messages.setAttribute("class", "messages")
+	log.appendChild(messages);
 	document.body.appendChild(log);
 
 };
 
 socket.onmessage = function(event) {
-	var messages = document.getElementsByTagName('ul')[0],
-			message = document.createElement('li'),
-			content = document.createTextNode(event.data);
-	message.appendChild(content);
-	messages.appendChild(message);
+	var messages = document.getElementsByClassName('messages')[0]
+	messages.innerHTML = event.data
+
 
 	payload = JSON.parse(event.data)
 	if ('game' in payload) {
@@ -139,6 +142,8 @@ socket.onmessage = function(event) {
 			hand = game.players[id].hand
 			populatePlayerArea(name, hand)
 		}
+		updateGameArea(game.deck, game.trump, game.table);
+
 	}
 	if ('prompt' in payload) {
 		mode = payload.prompt.prompt;
