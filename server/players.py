@@ -10,9 +10,9 @@ class Players:
         self.console = Console.getInstance()
 
 
-    def json(self):
+    def json(self, trump):
         #TODO -test
-        return list(map(lambda x: {'name': x, 'hand': self.players[x].json()}, self.players))
+        return list(map(lambda x: {'name': x, 'hand': self.players[x].json(trump)}, self.players))
 
     def __str__(self):
 

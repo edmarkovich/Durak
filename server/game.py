@@ -39,7 +39,7 @@ class Game:
             return None;
 
         return {
-            'players': self.players.json(),
+            'players': self.players.json(self.trump_card.suit),
             'trump': str(self.trump_card),
             'deck': str(len(self.deck.cards)),
             'table': self.table.json()
