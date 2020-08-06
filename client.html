@@ -72,14 +72,6 @@ function makePlayerArea(name) {
 	document.body.appendChild(player)
 }
 
-function makeGameArea() {
-	makePlayerArea("Deck")
-	makePlayerArea("Table")
-
-	hr = document.createElement('hr')
-	hr.setAttribute("style", "clear: both;")
-	document.body.appendChild(hr)
-}
 
 function updateGameArea(deck, trump, table) {
 	console.log("Table")
@@ -160,35 +152,48 @@ function updatePrompt() {
 
 }
 
+
 socket.onopen = function(e) {
-	makeGameArea();
-
-	log = document.createElement('div')
-	log.setAttribute('style','clear: both; color: pink;')
-	messages = document.createElement('div');
-	messages.setAttribute("class", "messages")
-	log.appendChild(messages);
-	//document.body.appendChild(log);
-
+	//makeGameArea();
 };
 
-socket.onmessage = function(event) {
-	//var messages = document.getElementsByClassName('messages')[0]
-	//messages.innerHTML = event.data
+function makeGameArea(players) {
+	makePlayerArea("Deck")
 
+	for (id in players){
+		name = players[id].name
+		if (name != player_name) {
+			makePlayerArea(name)
+		}
+	}
+
+	hr = document.createElement('hr')
+	hr.setAttribute("style", "clear: both;")
+	document.body.appendChild(hr)
+
+	makePlayerArea("Table")
+	makePlayerArea(player_name)
+}
+
+
+socket.onmessage = function(event) {
 
 	payload = JSON.parse(event.data)
 	if ('game' in payload) {
 		game = payload.game;
+
+		if (!initialized) {
+			makeGameArea(game.players)
+			initialized = true;
+		}
+
 		for (id in game.players) {
 			name = game.players[id].name
 			hand = game.players[id].hand
-			if (!initialized) {
-				makePlayerArea(name)
-			}
+
 			populatePlayerArea(name, hand)
 		}
-		initialized = true;
+
 		updateGameArea(game.deck, game.trump, game.table);
 
 	}
