@@ -2,6 +2,7 @@ import asyncio
 import websockets
 import json
 import os
+import sys
 
 import http.server
 import socketserver
@@ -11,6 +12,7 @@ import queue
 
 from server.game import Game
 from server.ioutil import IOUtil
+from server.ioutil import RestartException
 
 import time
 
@@ -40,8 +42,8 @@ class WSThread(threading.Thread):
       self.websockets=[]
     def run(self):
       async def update(websocket, path):
-           print("Serving", websocket)
            self.websockets.append(websocket)
+           print("Serving", websocket)
            async for message in websocket:
              data = message
              inqueue.put(data)
@@ -78,14 +80,16 @@ class GameThread(threading.Thread):
                 IOUtil.defaultSource = inqueue.get
                 IOUtil.defaultDestination = outqueue.put
                 game.main_loop()
-            except Exception as e:
-                print ("Caught", e)
+            except RestartException as e:
+                print ("Restarting")
 
-wsthread = WSThread()
-wsthread.start()
 
-httpthread = HTTPThread()
-httpthread.start()
+if len(sys.argv)>1 and sys.argv[1]=="http":
+    httpthread = HTTPThread()
+    httpthread.start()
+else:
+    wsthread = WSThread()
+    wsthread.start()
 
-gamethread = GameThread()
-gamethread.start()
+    gamethread = GameThread()
+    gamethread.start()

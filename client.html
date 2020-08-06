@@ -1,5 +1,7 @@
 <html>
 <head>
+	<meta content="text/html"; charset="utf-8" http-equiv="content-type">
+	<meta content="utf-8" http-equiv="encoding">
 	<style>
 		.card {
 			border-style: solid;
@@ -114,7 +116,6 @@ function getCardClass(name, card, sequence) {
 	if (card[0] == "♥" || card[0] == "♦") {
 		return base+"card red";
 	}
-
 	return base+"card black"
 }
 
@@ -211,6 +212,7 @@ function makeGameArea(players) {
 socket.onmessage = function(event) {
 
 	payload = JSON.parse(event.data)
+
 	if ('game' in payload) {
 		game = payload.game;
 
