@@ -16,6 +16,14 @@
 			color: black;
 		}
 
+		.red {
+			color: red;
+		}
+
+		.black {
+			color: black;
+		}
+
 		.name {
 			float: left;
 			padding: 5px;
@@ -72,6 +80,22 @@ function updateGameArea(deck, trump, table) {
 	populatePlayerArea("Deck", [deck, trump])
 }
 
+function getCardClass(name, card) {
+	if (name == "Deck") {
+		return "card";
+	}
+
+	if (name!=player_name && name != "Table") {
+		return "card back";
+	}
+
+	if (card[0] == "♥" || card[0] == "♦") {
+		return "card red";
+	}
+
+	return "card black"
+}
+
 function populatePlayerArea(name, hand) {
 	player = document.getElementsByClassName(name)[0]
   player.setAttribute('style', '')
@@ -86,15 +110,11 @@ function populatePlayerArea(name, hand) {
 		player.removeChild(children[child]);
 	}
 
-	cls = 'card';
-	if (name!=player_name && name != "Table" && name != "Deck") {
-		cls = cls + " back"
-		console.log(name, player_name, cls)
-	}
+
 
 	for (card in hand) {
 		span = document.createElement('div');
-		span.setAttribute('class', cls)
+		span.setAttribute('class', getCardClass(name, hand[card]))
 		span.innerHTML = '<i onclick="send_card(\''+hand[card]+'\')">'+hand[card]+"</i>"
 		player.appendChild(span)
 	}
