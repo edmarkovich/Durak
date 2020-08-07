@@ -103,9 +103,13 @@ function makePlayerArea(name) {
 
 function updateGameArea(deck, trump, table) {
 	populatePlayerArea("Table", table)
-	//fake_deck = [trump, "X","X","X"]
-	fake_deck = Array.from({length: deck}).map(x => 'X');
-	fake_deck[0] = trump; 
+
+	if (deck == 0) {
+		fake_deck = []
+	} else {	
+		fake_deck = Array.from({length: deck}).map(x => 'X');
+		fake_deck[0] = trump; 
+	}
 	populatePlayerArea("Deck", fake_deck)
 }
 

@@ -1,4 +1,4 @@
-- make trump go away at empty deck
 - animation
 - prompts
 - test on mobile
+- make pass/take more obvious
