@@ -5,8 +5,9 @@
 	<style>
 		.card {
 			border-style: solid;
+			border-width: 1px;
 			border-radius: 5px;
-			border-color: green;
+			border-color: black;
 			padding: 5px;
 			margin: 5px;
 			width: 40px;
@@ -16,8 +17,8 @@
 		}
 
 		.back {
-			color: black;
-			background: linear-gradient(to bottom right, gray, black);
+			color: white;
+			background: linear-gradient(to bottom right, gold, black);
 		}
 
 		.red {
@@ -36,6 +37,11 @@
 
 		.attack {
 			transform: rotate(0deg);
+		}
+
+		.trump {
+			transform: rotate(270deg);
+			z-index: -1;
 		}
 
 		.name {
@@ -97,7 +103,10 @@ function makePlayerArea(name) {
 
 function updateGameArea(deck, trump, table) {
 	populatePlayerArea("Table", table)
-	populatePlayerArea("Deck", [trump, deck])
+	//fake_deck = [trump, "X","X","X"]
+	fake_deck = Array.from({length: deck}).map(x => 'X');
+	fake_deck[0] = trump; 
+	populatePlayerArea("Deck", fake_deck)
 }
 
 function getCardClass(name, card, sequence) {
@@ -106,11 +115,17 @@ function getCardClass(name, card, sequence) {
 		return "card back";
 	}
 
-	if (name == "Deck" && card[0]>='0' && card[0]<='9') {
-		return "card";
-	}
-
 	base = ""
+
+	if (name == "Deck") {
+		if (card[0] == 'X' || (card[0]>='0' && card[0]<='9')) {
+			return "card back";
+		} else {
+			base = "trump ";
+		}
+	} 
+
+	
 	if (name == "Table") { base = (sequence % 2 == 1) ? 'defended ' : 'attack '}
 
 	if (card[0] == "♥" || card[0] == "♦") {
@@ -121,7 +136,7 @@ function getCardClass(name, card, sequence) {
 
 function populatePlayerArea(name, hand) {
 	player = document.getElementsByClassName(name)[0]
-  player.setAttribute('class', name + " player") //Clear others
+  	player.setAttribute('class', name + " player") //Clear others
 
 	//Get rid of existing cards
 	var children = player.getElementsByClassName('card')
@@ -141,16 +156,23 @@ function populatePlayerArea(name, hand) {
 		span.style.left = 100 + (65* card);
 		if (name == "Table"){ //} && card % 2 == 1) {
 			span.style.left = 100 + (65*card/2);// - 35;
-		}
+		} else if (name == "Deck" && card >= 1) {
+			span.style.left = 133 + 5*card;
+		} 
+
 
 		span.setAttribute('class', getCardClass(name, marking, card))
 		span.style.top = 0;
 		span.setAttribute('onclick', 'send_card(\''+hand[card]+'\')')
-		span.innerHTML = '<span>'
-			+marking[0]
-			+ "<br><B>" + marking.substring(1) + "</B><br>"
-			+marking[0]
-			+"</span>"
+		if (name != "Deck" || card == 0) {
+			span.innerHTML = '<span>'
+				+marking[0]
+				+ "<br><B>" + marking.substring(1) + "</B><br>"
+				+marking[0]
+				+"</span>"
+		} else {
+			span.innerHTML = "<span>&nbsp;<br>X<br>&nbsp;</span>"
+		}
 		player.appendChild(span)
 	}
 }

@@ -1,7 +1,4 @@
-- turn trump sideways
 - make trump go away at empty deck
-- deck viz improvement (stack/count)
 - animation
 - prompts
-- avoid scroll bar
 - test on mobile
