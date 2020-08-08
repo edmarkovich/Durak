@@ -94,8 +94,31 @@
 			width: 500px;
 		}
 
+		.new_card {
+			border-style: solid;
+			border-width: 1px;
+			border-radius: 5px;
+			border-color: black;
+			padding: 5px;
+			margin: 5px;
+			width: 40px;
+			float: left;
+			text-align: center;
+			position: absolute;
+			transform-origin: top left;
+
+		}
+
 		.new_trump {
 
+		}
+
+		.new_red {
+			color: white;
+			background: linear-gradient(to bottom right, black, 10%, darkred, 70%, black);
+			tr1ansform: rotate(90deg);
+			tra1nsition: transform 1s;
+			tran1sform-style: preserve-3d;
 		}
 	</style>
 </head>
@@ -110,31 +133,13 @@ function new_makeGameArea() {
 	return table;
 }
 
-function new_get_fly_offset(element, coords) {
-	rect = element.getBoundingClientRect();
-	if (coords == null ) {
-		targetX = rect.left
-		targetY = rect.top
-		rotate = 0
-	} else {
-		targetX = coords[0]// - rect.left
-		targetY = coords[1]// - rect.top
-		rotate = coords[2]
-	}
-	return [targetX, targetY, rotate]
-}
 
-async function new_fly(element, from, to, speed) {
 
-	from = new_get_fly_offset(element, from)
-	to   = new_get_fly_offset(element, to)				
-
+async function new_fly(element, to, speed, rotation) {
 
 	keys = [
-		//{ transform: 'translate3d('+from[0]+'px,'+from[1]+'px,0px) rotate('+from[2]+'deg)'},
-		{ transform: 'translate3d('+to[0]+'px,'+to[1]+'px,0px) rotate('+to[2]+'deg)'},  
+		{ transform: 'translate3d('+to[0]+'px,'+to[1]+'px,0px) '+rotation},  
 	]
-	console.log(keys)
 	animation = element.animate(keys, {
 		duration: speed,
 		iterations: 1,
@@ -152,7 +157,7 @@ async function new_fly(element, from, to, speed) {
 
 	card = document.createElement('div');
 	card.innerHTML = "&nbsp;<br><br>&nbsp;"
-	card.classList.add("card")
+	card.classList.add("new_card")
 	card.classList.add("deck")
 	table.appendChild(card);
 
@@ -160,11 +165,10 @@ async function new_fly(element, from, to, speed) {
 	if (offset==0) {
 		//card.classList.add("new_trump")		
 		card.classList.add("red")
-		card.style.transform ='rotate(270deg)'
-		await new_fly(card, [0,0,0], [deck_start+(2*offset), 250, 270], 100)
+		await new_fly(card, [deck_start+30+(2*offset), 262], 200, "rotate3d(0,0,1,90deg) rotate3d(0,1,0,180deg)")
 	} else {
 		card.classList.add("back")
-		await new_fly(card, [0,0,0], [deck_start+30+(2*offset), 193,0], 50)
+		await new_fly(card, [deck_start+(2*offset), 200], 50, "")
 	}
 }
 
@@ -182,9 +186,11 @@ async function new_deal_one_card(player, offset) {
 	top_card = cards[cards.length-1]
 	top_card.classList.toggle("back")
 	top_card.classList.toggle("deck")
-	top_card.classList.toggle("red")
-	rect =top_card.getBoundingClientRect()
-	await new_fly(top_card, null, [100+60*offset,400,0],100)
+	top_card.classList.toggle("new_red")
+	
+	await new_fly(top_card, [100+60*offset,400],200,"rotate3d(0,1,0,180deg)")
+	//await new_fly(top_card, [100+60*offset,400,90],100)
+
 }
 
 async function new_deal_hand(player, cards) {
