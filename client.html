@@ -41,7 +41,7 @@
 
 		.trump {
 			transform: rotate(270deg);
-			z-index: -1;
+			z-index11: -1;
 			animation-name: example;
 			animation-duration: 1s;
 		}
@@ -84,11 +84,85 @@
 			border-color: green;
 			pointer-events: auto;
 		}
+
+		.new_table {
+			background-color: green;
+			border-radius: 10px;
+			display: inline-block;
+			height: 500px;
+			width: 500px;
+		}
+
+		.new_trump {
+
+		}
 	</style>
 </head>
 
 <body>
 <script>
+
+function new_makeGameArea() {
+	table = document.createElement('div')
+	table.classList.add("new_table")
+	document.body.appendChild(table);
+	return table;
+}
+
+async function new_fly(element, X, Y, rotate, speed) {
+
+				
+	rect = element.getBoundingClientRect();
+	targetX = X - rect.left
+	targetY = Y
+
+	animation = element.animate([
+		{ transform: 'translate3d('+600+'px,'+0+'px,0px) rotate('+0+'deg)'},
+		{ transform: 'translate3d('+targetX+'px,'+targetY+'px,0px) rotate('+rotate+'deg)'}   
+	], {
+		duration: speed,
+		iterations: 1,
+		fill: "forwards",
+		iterationComposite: "accumulate"
+	})
+
+	await animation.finished
+	//animation.persist()
+
+}
+
+ async function new_placeDeckCard(table, trump_card, offset) {
+	const deck_start=360
+
+	card = document.createElement('div');
+	card.innerHTML = "&nbsp;<br><br>&nbsp;"
+	card.classList.add("card")
+	table.appendChild(card);
+
+	if (offset==0) {
+		//card.classList.add("new_trump")		
+		card.classList.add("red")
+		card.style.transform ='rotate(270deg)'
+		await new_fly(card, deck_start+(2*offset), 200, 270, 500)
+	} else {
+		card.classList.add("back")
+		await new_fly(card, deck_start+30+(2*offset), 200,0, 50)
+	}
+
+}
+
+async function new_placeDeck(table, trump_card, deck) {
+	for (i=0; i<deck; i++) {
+		await new_placeDeckCard(table, trump_card, i)
+		//await new Promise( resolve => setTimeout(resolve, 50))
+	}
+
+}
+
+
+table = new_makeGameArea();
+new_placeDeck(table, "X", 20)
+
 
 let socket = new WebSocket("ws://192.168.1.13:5678")
 
