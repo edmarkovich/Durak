@@ -42,7 +42,15 @@
 		.trump {
 			transform: rotate(270deg);
 			z-index: -1;
+			animation-name: example;
+			animation-duration: 1s;
 		}
+
+		@keyframes example{
+			from {transform: rotate(180deg)}
+			to {transform: rotate(270deg)}
+		}
+
 
 		.name {
 			float: left;
@@ -167,7 +175,7 @@ function populatePlayerArea(name, hand) {
 
 		span.setAttribute('class', getCardClass(name, marking, card))
 		span.style.top = 0;
-		span.setAttribute('onclick', 'send_card(\''+hand[card]+'\')')
+		span.setAttribute('onclick', 'send_card(this, \''+hand[card]+'\')')
 		if (name != "Deck" || card == 0) {
 			span.innerHTML = '<span>'
 				+marking[0]
@@ -268,7 +276,7 @@ socket.onmessage = function(event) {
 	}
 };
 
-function send_card(card) {
+function send_card(element, card) {
 	socket.send('{"action":"", "card":"'+card+'"}')
 }
 
