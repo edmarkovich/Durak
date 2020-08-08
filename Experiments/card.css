@@ -3,6 +3,9 @@
     --card_height: calc(350px / var(--card_scale));
     --card_width: calc(250px / var(--card_scale));
 }
+.body {
+    overflow-y: hidden;
+}
 
 .new_card {
     border-style: solid;
@@ -14,16 +17,15 @@
     float: left;
     text-align: center;
     position: absolute;
-    transform-origin: top left;
-
+    transform: translate(-200%,700%);
 }
-
 
 
 .back {
     color: white;
-    background: linear-gradient(to bottom right, gold, black);
+    background: linear-gradient(to bottom right, black, 10%, gold, 70%, black);
 }
+
 
 
 .new_red {

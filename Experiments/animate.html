@@ -7,41 +7,11 @@
     <body>
         <script>
 
-
-
-            async function new_deck() {
-                for (i=0; i<36; i++) {
-                    node=document.createElement("div");
-                    node.setAttribute("class", "new_card back");
-                    document.body.appendChild(node)
-
-                    mathX = "calc((1.2 * 6 * var(--card_width)) - " + 0.5*i+ "px)"
-                    mathY = "calc(var(--card_height) * "+3+ " - " + 0.5*i+ "px)"
-                    move(node, mathX, mathY, 800)
-                    await sleep(20);
-                }
-                await sleep(800)
-            }
-
-            async function deal_one(player_row, number_cards) {
-                
-                for (i =0; i<number_cards; i++) {
-                    nodes = document.getElementsByClassName("back")
-                    node = nodes[nodes.length-1]
-
-                    await node.classList.add("new_red")
-                    await node.classList.remove("back")
-                    mathX = "calc((1.2 * var(--card_width)) * "+i+ ")"
-                    mathY = "calc(var(--card_height) * "+player_row+ ")"
-                    move(node, mathX, mathY,500)
-                    await sleep(20)
-                }
-            }
-
             async function simulate() {
-                await new_deck();
+                await new_deck();;
+                await put_trump("X")
                 await deal_one(0, 6);
-                await deal_one(6, 6);
+                await deal_one(6, 6)
             }
 
             simulate()
