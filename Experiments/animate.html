@@ -1,26 +1,13 @@
 <html>
     <head>
             <link rel="stylesheet" href="card.css">
+            <script type="text/javascript" src="card.js"></script>
+
     </head>
     <body>
         <script>
 
-            function sleep(ms) {
-                return new Promise(resolve => setTimeout(resolve, ms));
-            }
 
-            async function move(element, targetX, targetY, speed) {
-
-                animation = element.animate([
-                    { transform: 'translate3d('+targetX+','+targetY+',0px)'},   
-                ], {
-                    duration: speed,
-                    iterations: 1,
-                    fill: "forwards",
-                })
-
-                await animation.finished 
-               }
 
             async function new_deck() {
                 for (i=0; i<36; i++) {
@@ -30,10 +17,10 @@
 
                     mathX = "calc((1.2 * 6 * var(--card_width)) - " + 0.5*i+ "px)"
                     mathY = "calc(var(--card_height) * "+3+ " - " + 0.5*i+ "px)"
-                    move(node, mathX, mathY, 1000)
-                    await sleep(50);
+                    move(node, mathX, mathY, 800)
+                    await sleep(20);
                 }
-                await sleep(1000)
+                await sleep(800)
             }
 
             async function deal_one(player_row, number_cards) {
@@ -47,7 +34,7 @@
                     mathX = "calc((1.2 * var(--card_width)) * "+i+ ")"
                     mathY = "calc(var(--card_height) * "+player_row+ ")"
                     move(node, mathX, mathY,500)
-                    await sleep(100)
+                    await sleep(20)
                 }
             }
 
