@@ -14,6 +14,7 @@
 			float: left;
 			text-align: center;
 			position: absolute;
+			transform-origin: top left;
 		}
 
 		.back {
@@ -109,17 +110,32 @@ function new_makeGameArea() {
 	return table;
 }
 
-async function new_fly(element, X, Y, rotate, speed) {
-
-				
+function new_get_fly_offset(element, coords) {
 	rect = element.getBoundingClientRect();
-	targetX = X - rect.left
-	targetY = Y
+	if (coords == null ) {
+		targetX = rect.left
+		targetY = rect.top
+		rotate = 0
+	} else {
+		targetX = coords[0]// - rect.left
+		targetY = coords[1]// - rect.top
+		rotate = coords[2]
+	}
+	return [targetX, targetY, rotate]
+}
 
-	animation = element.animate([
-		{ transform: 'translate3d('+600+'px,'+0+'px,0px) rotate('+0+'deg)'},
-		{ transform: 'translate3d('+targetX+'px,'+targetY+'px,0px) rotate('+rotate+'deg)'}   
-	], {
+async function new_fly(element, from, to, speed) {
+
+	from = new_get_fly_offset(element, from)
+	to   = new_get_fly_offset(element, to)				
+
+
+	keys = [
+		//{ transform: 'translate3d('+from[0]+'px,'+from[1]+'px,0px) rotate('+from[2]+'deg)'},
+		{ transform: 'translate3d('+to[0]+'px,'+to[1]+'px,0px) rotate('+to[2]+'deg)'},  
+	]
+	console.log(keys)
+	animation = element.animate(keys, {
 		duration: speed,
 		iterations: 1,
 		fill: "forwards",
@@ -137,31 +153,63 @@ async function new_fly(element, X, Y, rotate, speed) {
 	card = document.createElement('div');
 	card.innerHTML = "&nbsp;<br><br>&nbsp;"
 	card.classList.add("card")
+	card.classList.add("deck")
 	table.appendChild(card);
+
 
 	if (offset==0) {
 		//card.classList.add("new_trump")		
 		card.classList.add("red")
 		card.style.transform ='rotate(270deg)'
-		await new_fly(card, deck_start+(2*offset), 200, 270, 500)
+		await new_fly(card, [0,0,0], [deck_start+(2*offset), 250, 270], 100)
 	} else {
 		card.classList.add("back")
-		await new_fly(card, deck_start+30+(2*offset), 200,0, 50)
+		await new_fly(card, [0,0,0], [deck_start+30+(2*offset), 193,0], 50)
 	}
-
 }
+
 
 async function new_placeDeck(table, trump_card, deck) {
 	for (i=0; i<deck; i++) {
 		await new_placeDeckCard(table, trump_card, i)
-		//await new Promise( resolve => setTimeout(resolve, 50))
 	}
 
 }
 
 
-table = new_makeGameArea();
-new_placeDeck(table, "X", 20)
+async function new_deal_one_card(player, offset) {
+	cards = document.getElementsByClassName("deck");
+	top_card = cards[cards.length-1]
+	top_card.classList.toggle("back")
+	top_card.classList.toggle("deck")
+	top_card.classList.toggle("red")
+	rect =top_card.getBoundingClientRect()
+	await new_fly(top_card, null, [100+60*offset,400,0],100)
+}
+
+async function new_deal_hand(player, cards) {
+	for(i=0;i<cards;i++) {
+		await new_deal_one_card(player, i)
+	}
+}
+
+
+async function init() {
+	table = new_makeGameArea();
+	await new_placeDeck(table, "X", 20)
+	await new_deal_hand("Ed", 6)
+}
+
+init()
+
+
+
+
+
+
+
+
+
 
 
 let socket = new WebSocket("ws://192.168.1.13:5678")
