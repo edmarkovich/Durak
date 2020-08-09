@@ -105,16 +105,29 @@ async function deal_one(player_row, cards) {
     }
 }
 
+state = {
+    table: {
+        last_attack_slot: -1,
+        zIndex: 100
+    }
+}
+
 async function play_own(card) {
     node = document.getElementById(card);
-    animate_transform(node, getTransform(2,0,2,0) + "rotate3d(0,0,1,360deg)", 500)
+    state.table.last_attack_slot ++
+    node.style.zIndex=state.table.zIndex++
+    animate_transform(node, getTransform(2 + state.table.last_attack_slot,0,2,0) + "rotate3d(0,0,1,360deg)", 500)
     await sleep(1000)
 }
 
+
+
 async function play_other(card) {
     node = document.getElementsByClassName("his_card")[0]
+    node.classList.remove("his_card")
     make_it_a_card(node, card)
+    node.style.zIndex=state.table.zIndex++
     flip_card(node)
-    animate_transform(node, getTransform(2,10,2,10) + "rotate3d(0,0,1,400deg)", 500)
+    animate_transform(node, getTransform(2+state.table.last_attack_slot,10,2,15) + "rotate3d(0,0,1,400deg)", 500)
     await sleep(1000)
 }
