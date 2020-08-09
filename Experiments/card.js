@@ -48,12 +48,17 @@ async function new_deck() {
     }
 }
 
-function flip_card(container) {
+function flip_card(container, reverse) {
     front = container.getElementsByClassName("front")[0];
     back = container.getElementsByClassName("back")[0];
 
-    animate_transform(front, "rotate3d(0,1,0,0deg)", 500);
-    animate_transform(back, "rotate3d(0,1,0,-180deg)", 500);
+    if (reverse) {
+        animate_transform(front, "rotate3d(0,1,0,-180deg)", 300);
+        animate_transform(back, "rotate3d(0,1,0,0deg)", 300);
+    } else {
+        animate_transform(front, "rotate3d(0,1,0,0deg)", 300);
+        animate_transform(back, "rotate3d(0,1,0,-180deg)", 300);
+    }
 }
 
 async function put_trump(trump_card) {
@@ -133,19 +138,11 @@ async function play_other(card) {
     await sleep(1000)
 }
 
-function flip_card_back(container) {
-    front = container.getElementsByClassName("front")[0];
-    back = container.getElementsByClassName("back")[0];
-
-    animate_transform(front, "rotate3d(0,1,0,-180deg)", 300);
-    animate_transform(back, "rotate3d(0,1,0,0deg)", 300);
-}
-
 async function clear_table() {
     for (i in state.table.cards) {
         card = state.table.cards[i];
         node = document.getElementById(card);
-        flip_card_back(node)
+        flip_card(node, true)
         animate_transform(node, getTransform(9,0,2,0), 300)
     }
     state.table.cards = []
