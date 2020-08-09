@@ -71,7 +71,7 @@ async function put_trump(trump_card) {
     await sleep(600)
 
     mathX = getTransformX(0,10);
-    mathY = "calc(var(--card_height) * "+2.0+ " + " + 10 + "px)"
+    mathY = getTransformY(2,10);
     animate_transform(node, "translate3d("+mathX+", "+mathY+", 0px) rotate3d(0,0,1,90deg)", 500);
     await sleep(600)
     
@@ -80,7 +80,7 @@ async function put_trump(trump_card) {
     for (i=1; i<nodes.length; i++) {
         node = nodes[i]
         mathX = getTransformX(0,-1);
-        mathY = "calc(var(--card_height) * "+2.0+ ")"
+        mathY = getTransformY(2,0)
         animate_transform(node, "translate3d("+mathX+", "+mathY+", 0px)", 200);
         await sleep(50)
     } 
@@ -102,7 +102,11 @@ function take_card_from_deck(card) {
 }
 
 function getTransformX(column, offset) {
-    return( "calc((1.2 * " + column + " * var(--card_width)) + " + offset + "px)" )
+    return "calc((1.2 * " + column + " * var(--card_width)) + " + offset + "px)" 
+}
+
+function getTransformY(row, offset) {
+    return "calc((var(--card_height) * "+row+ ") + " + offset + "px)" 
 }
 
 async function deal_one(player_row, cards) {
@@ -114,7 +118,7 @@ async function deal_one(player_row, cards) {
             flip_card(node)
         }
         mathX = getTransformX(i+1,0);
-        mathY = "calc(var(--card_height) * "+(player_row)+ ")"
+        mathY = getTransformY(player_row,0);
         animate_transform(node, "translate3d("+mathX+", "+mathY+", 0px)", 700);
 
         await sleep(100)
