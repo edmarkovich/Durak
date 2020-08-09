@@ -99,16 +99,13 @@ function take_card_from_deck(card) {
     return node
 }
 
-function getTransformX(column, offset) {
-    return "calc((1.2 * " + column + " * var(--card_width)) + " + offset + "px)" 
-}
-
-function getTransformY(row, offset) {
-    return "calc((var(--card_height) * "+row+ ") + " + offset + "px)" 
-}
 
 function getTransform(column, column_offset, row, row_offset) {
-    return "translate3d("+getTransformX(column, column_offset)+", "+getTransformY(row, row_offset)+", 0px)"
+    return "translate3d("
+        +"calc((1.2 * " + column + " * var(--card_width)) + " + column_offset + "px)"
+        +", "
+        +"calc((var(--card_height) * "+row+ ") + " + row_offset + "px)" 
+        +", 0px)"
 }
 
 
