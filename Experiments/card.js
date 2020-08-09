@@ -86,6 +86,7 @@ function take_card_from_deck() {
 function make_it_a_card(node, card) {
     node.getElementsByClassName("front")[0].innerHTML = card_to_unicode(card)
     if (card[0] == '♥' || card[0] == '♦') { node.classList.add("red"); } 
+    node.id = card;
 }
 
 async function deal_one(player_row, cards) {
@@ -97,4 +98,11 @@ async function deal_one(player_row, cards) {
         animate_transform(node, getTransform(i+1, 0, player_row, 0), 700)
         await sleep(100)
     }
+}
+
+async function play(card) {
+    node = document.getElementById(card);
+    console.log(node)
+    animate_transform(node, getTransform(2,0,2,0) + "rotate3d(0,0,1,360deg)", 500)
+    await sleep(1111)
 }
