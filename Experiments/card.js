@@ -47,21 +47,18 @@ function card_to_unicode(card) {
 async function new_deck() {
     for (i=0; i<36; i++) {
 
+        back = document.createElement("div")
+        back.classList.add("back")
+        back.innerHTML = "&#127136;"
+
+        front = document.createElement("div")
+        front.classList.add("front")
+        
         inner = document.createElement("div")
         inner.setAttribute("class", "card-container deck")
 
-        b = document.createElement("div")
-        b.classList.add("back")
-        b.innerHTML = "<span>&#127136;</span>"
-
-
-        a = document.createElement("div")
-        a.classList.add("front")
-        //a.innerHTML = '<span>&#127146;</span>'
-        a.innerHTML=card_to_unicode("♦9")
-
-        inner.appendChild(b)
-        inner.appendChild(a)
+        inner.appendChild(back)
+        inner.appendChild(front)
 
         document.body.appendChild(inner)
     }
@@ -87,9 +84,7 @@ async function put_trump(trump_card) {
     mathX = "calc((1.2 * 0 * var(--card_width)) + 40px)"
     mathY = "calc(var(--card_height) * "+2.0+ " + " + 10 + "px)"
     move_and_transform(node, mathX, mathY,500,"rotate3d(0,0,1,90deg)")
-
     await sleep(600)
-    
     
 
     //Put the deck over it
