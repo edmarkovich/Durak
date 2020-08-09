@@ -23,6 +23,25 @@ async function animate_rotateY(element, speed, degrees) {
     })    
 }
 
+function card_to_unicode(suit, rank) {
+    switch (suit) {
+        case '♠': base = 127137; break;
+        case '♥': base = 127153; break;
+        case '♦': base = 127169; break;
+        case '♣': base = 127185; break;
+    }
+
+    switch (rank) {
+        case 'A': offset = 0; break;
+        case 'J': offset = 10; break;
+        case 'Q': offset = 11; break;
+        case 'K': offset = 12; break;
+        default: offset = parseInt(rank) -1;
+    }
+
+    return "&#"+(base+offset)+";";
+}
+
 async function new_deck() {
     for (i=0; i<36; i++) {
 
@@ -36,7 +55,8 @@ async function new_deck() {
 
         a = document.createElement("div")
         a.classList.add("front")
-        a.innerHTML = '<span>&#127146;</span>'
+        //a.innerHTML = '<span>&#127146;</span>'
+        a.innerHTML=card_to_unicode("♦", "9")
 
         inner.appendChild(b)
         inner.appendChild(a)
