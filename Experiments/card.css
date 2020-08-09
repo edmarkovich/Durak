@@ -33,6 +33,7 @@
 .back {
     backg1round-image: linear-gradient(to right bottom, #f1c40f, #e67e22);
     background-color: white;
+    color: navy;
 }
 
 .card-container {
@@ -44,6 +45,9 @@
     transform: rotateY(-180deg);
     background-color: white;
     backgr1ound-image: linear-gradient(to right bottom, #2ecc71, #229955);
+}
 
+.red {
+    color: red;
 }
 
