@@ -23,6 +23,16 @@ async function animate_rotateY(element, speed, degrees) {
     })    
 }
 
+async function animate_transform(element, transform,speed) {
+    animation = element.animate([
+        { transform: transform},   
+    ], {
+        duration: speed,
+        iterations: 1,
+        fill: "forwards",
+    })     
+}
+
 function card_to_unicode(card) {
     suit = card[0]
     rank = card.substring(1)
@@ -83,7 +93,7 @@ async function put_trump(trump_card) {
 
     mathX = "calc((1.2 * 0 * var(--card_width)) + 40px)"
     mathY = "calc(var(--card_height) * "+2.0+ " + " + 10 + "px)"
-    move_and_transform(node, mathX, mathY,500,"rotate3d(0,0,1,90deg)")
+    //move_and_transform(node, mathX, mathY,500,"rotate3d(0,0,1,90deg)")
     await sleep(600)
     
 
@@ -98,27 +108,24 @@ async function put_trump(trump_card) {
     await sleep(200)
 }
 
-function get_top_of_deck() {
+function take_card_from_deck(card) {
     nodes = document.getElementsByClassName("deck")
     node = nodes[nodes.length-1]
+    node.classList.remove("deck")
+
+    // Make it be the actual card
+    node.getElementsByClassName("front")[0].innerHTML = card_to_unicode(card)
+    if (card[0] == '♥' || card[0] == '♦') {
+        node.classList.add("red");
+    } 
+
     return node
 }
 
 async function deal_one(player_row, cards) {
     
-    number_cards = cards.length
-
-    for (i = number_cards-1; i>= 0; i--) {
-        node = get_top_of_deck()
-
-        await node.classList.remove("deck")
-
-        // Make it be the actual card
-        node.getElementsByClassName("front")[0].innerHTML = card_to_unicode(cards[i])
-        if (cards[i][0] == '♥' || cards[i][0] == '♦') {
-            node.classList.add("red");
-        } 
-
+    for (i = cards.length-1; i>= 0; i--) {
+        node = take_card_from_deck(cards[i])
 
         if (player_row==4) {
             flip_card(node)
