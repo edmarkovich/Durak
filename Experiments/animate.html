@@ -16,8 +16,8 @@
                 await deal_one(0, ['♠6','♠10','♥J','♦Q','♣K','♣A']);
                 await deal_one(4, ['♠6','♠10','♥J','♦Q','♣K','♣A']);
                 await sleep(1000)
-                await play('♠10')
-            
+                await play_own('♠10')
+                await play_other('♥7')
             }
 
             simulate()

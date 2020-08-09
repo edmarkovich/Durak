@@ -92,17 +92,29 @@ function make_it_a_card(node, card) {
 async function deal_one(player_row, cards) {
     for (i = cards.length-1; i>= 0; i--) {
         node = take_card_from_deck()
-        make_it_a_card(node, cards[i])
+        
+        if (player_row==4) { 
+            make_it_a_card(node, cards[i])
+            flip_card(node) 
+        } else {
+            node.classList.add("his_card")
+        }
 
-        if (player_row==4) { flip_card(node) }
         animate_transform(node, getTransform(i+1, 0, player_row, 0), 700)
         await sleep(100)
     }
 }
 
-async function play(card) {
+async function play_own(card) {
     node = document.getElementById(card);
-    console.log(node)
     animate_transform(node, getTransform(2,0,2,0) + "rotate3d(0,0,1,360deg)", 500)
-    await sleep(1111)
+    await sleep(1000)
+}
+
+async function play_other(card) {
+    node = document.getElementsByClassName("his_card")[0]
+    make_it_a_card(node, card)
+    flip_card(node)
+    animate_transform(node, getTransform(2,20,2,0) + "rotate3d(0,0,1,370deg)", 500)
+    await sleep(1000)
 }
