@@ -8,10 +8,13 @@
         <script>
 
             async function simulate() {
-                await new_deck();;
+                await new_deck()
+                
                 await put_trump("X")
+                
+                
                 await deal_one(0, 6);
-                await deal_one(6, 6)
+                await deal_one(5, 6)
             }
 
             simulate()
