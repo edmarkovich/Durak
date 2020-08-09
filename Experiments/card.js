@@ -59,6 +59,7 @@ function flip_card(container) {
 async function put_trump(trump_card) {
     nodes = document.getElementsByClassName("card-container")
     node = nodes[0]
+    make_it_a_card(node, trump_card);
 
     //Flip, turn and move turmp
     flip_card(node)
@@ -75,21 +76,22 @@ async function put_trump(trump_card) {
     await sleep(200)
 }
 
-function take_card_from_deck(card) {
+function take_card_from_deck() {
     nodes = document.getElementsByClassName("deck")
     node = nodes[nodes.length-1]
     node.classList.remove("deck")
+    return node;
+}
 
-    // Make it be the actual card
+function make_it_a_card(node, card) {
     node.getElementsByClassName("front")[0].innerHTML = card_to_unicode(card)
     if (card[0] == '♥' || card[0] == '♦') { node.classList.add("red"); } 
-
-    return node
 }
 
 async function deal_one(player_row, cards) {
     for (i = cards.length-1; i>= 0; i--) {
-        node = take_card_from_deck(cards[i])
+        node = take_card_from_deck()
+        make_it_a_card(node, cards[i])
 
         if (player_row==4) { flip_card(node) }
         animate_transform(node, getTransform(i+1, 0, player_row, 0), 700)
