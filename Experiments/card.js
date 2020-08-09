@@ -115,6 +115,6 @@ async function play_other(card) {
     node = document.getElementsByClassName("his_card")[0]
     make_it_a_card(node, card)
     flip_card(node)
-    animate_transform(node, getTransform(2,20,2,0) + "rotate3d(0,0,1,370deg)", 500)
+    animate_transform(node, getTransform(2,10,2,10) + "rotate3d(0,0,1,400deg)", 500)
     await sleep(1000)
 }
