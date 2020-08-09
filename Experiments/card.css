@@ -1,6 +1,6 @@
 :root {
     --card_scale: 3;
-    --card_height: calc(350px / var(--card_scale));
+    --card_height: calc(400px / var(--card_scale));
     --card_width: calc(250px / var(--card_scale));
 }
 
@@ -12,7 +12,6 @@
 
 .front, .back {
     box-sizing: border-box;
-    padding: 2rem;
     border-radius: 14px;
     box-shadow: 5px 5px 5px rgba(0, 0, 0, .25);
 
@@ -21,11 +20,19 @@
     left: 0;
     backface-visibility: hidden;
     overflow: hidden;
+
+    font-size: 600%;
+    text-align: center;
+    vertical-align: middle;
+    
+    margin:0px;
+    padding:0px;
 }
 
 
 .back {
-    background-image: linear-gradient(to right bottom, #f1c40f, #e67e22);
+    backg1round-image: linear-gradient(to right bottom, #f1c40f, #e67e22);
+    background-color: white;
 }
 
 .card-container {
@@ -35,6 +42,8 @@
 
 .front {
     transform: rotateY(-180deg);
-    background-image: linear-gradient(to right bottom, #2ecc71, #229955);
+    background-color: white;
+    backgr1ound-image: linear-gradient(to right bottom, #2ecc71, #229955);
+
 }
 

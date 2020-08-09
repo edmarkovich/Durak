@@ -31,11 +31,12 @@ async function new_deck() {
 
         b = document.createElement("div")
         b.classList.add("back")
-        b.innerHTML = ""
+        b.innerHTML = "<span>&#127136;</span>"
+
 
         a = document.createElement("div")
         a.classList.add("front")
-        a.innerHTML = "X"
+        a.innerHTML = '<span>&#127146;</span>'
 
         inner.appendChild(b)
         inner.appendChild(a)
