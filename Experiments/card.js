@@ -2,26 +2,6 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function move_and_transform(element, targetX, targetY, speed, extra) {
-
-    animation = element.animate([
-        { transform: 'translate3d('+targetX+','+targetY+',0px) '+extra},   
-    ], {
-        duration: speed,
-        iterations: 1,
-        fill: "forwards",
-    })
-}
-
-async function animate_rotateY(element, speed, degrees) {
-    animation = element.animate([
-        { transform: 'rotateY('+degrees+ 'deg)'},   
-    ], {
-        duration: speed,
-        iterations: 1,
-        fill: "forwards",
-    })    
-}
 
 async function animate_transform(element, transform,speed) {
     animation = element.animate([
@@ -78,8 +58,8 @@ function flip_card(container) {
     front = node.getElementsByClassName("front")[0];
     back = node.getElementsByClassName("back")[0];
 
-    animate_rotateY(front, 500, 0)
-    animate_rotateY(back, 500, -180)
+    animate_transform(front, "rotate3d(0,1,0,0deg)", 500);
+    animate_transform(back, "rotate3d(0,1,0,-180deg)", 500);
 }
 
 async function put_trump(trump_card) {
@@ -93,7 +73,7 @@ async function put_trump(trump_card) {
 
     mathX = "calc((1.2 * 0 * var(--card_width)) + 40px)"
     mathY = "calc(var(--card_height) * "+2.0+ " + " + 10 + "px)"
-    //move_and_transform(node, mathX, mathY,500,"rotate3d(0,0,1,90deg)")
+    animate_transform(node, "translate3d("+mathX+", "+mathY+", 0px) rotate3d(0,0,1,90deg)", 500);
     await sleep(600)
     
 
@@ -102,7 +82,7 @@ async function put_trump(trump_card) {
         node = nodes[i]
         mathX = "calc((1.2 * 0 * var(--card_width)) - " + 1 + "px)"
         mathY = "calc(var(--card_height) * "+2.0+ ")"
-        move_and_transform(node, mathX, mathY,200,"")
+        animate_transform(node, "translate3d("+mathX+", "+mathY+", 0px)", 200);
         await sleep(50)
     } 
     await sleep(200)
@@ -132,7 +112,8 @@ async function deal_one(player_row, cards) {
         }
         mathX = "calc(1.2 * var(--card_width) * "+(i+1)+ ")"
         mathY = "calc(var(--card_height) * "+(player_row)+ ")"
-        move_and_transform(node, mathX, mathY,700,"")
+        animate_transform(node, "translate3d("+mathX+", "+mathY+", 0px)", 700);
+
         await sleep(100)
     }
 }
