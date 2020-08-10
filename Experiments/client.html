@@ -15,9 +15,9 @@
 
             let socket = new WebSocket("ws://192.168.1.13:5678")
             socket.onopen = function(e) {
-                state.my_name = "Ed"; //prompt("Player Name"); 
+                state.my_name = prompt("Player Name"); 
                 socket.send('{"action":"join","name":"'+state.my_name+'"}');
-                socket.send('{"action":"join","name":"Other"}');
+                //socket.send('{"action":"join","name":"Other"}');
             }
 
             socket.onmessage = async function(event) {
@@ -51,6 +51,10 @@
                     } 
                     
                 }
+            }
+
+            function send_card(card) {
+	            socket.send('{"action":"", "card":"'+card+'"}')
             }
         </script>
 

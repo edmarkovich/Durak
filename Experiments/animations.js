@@ -98,6 +98,8 @@ function make_it_a_card(node, card) {
     inner.innerHTML = card_to_unicode(card)
     front.appendChild(inner)
     if (card[0] == '♥' || card[0] == '♦') { node.classList.add("red"); } 
+    node.setAttribute('onclick', 'send_card(\''+card+'\')')
+
     node.id = card;
 }
 
