@@ -51,6 +51,23 @@ async function new_deck() {
     }
 }
 
+function make_verb_card(verb) {
+    if (verb==null) {
+        verbs = document.getElementsByClassName("verb")
+        if (verbs.length>0) { document.body.removeChild(verbs[0]) }
+        return;
+    }
+    container = document.createElement("div")
+    container.setAttribute("class", "card-container verb")
+    inner = document.createElement("div")
+    inner.classList.add("card-inner")
+    inner.innerHTML=verb
+    container.appendChild(inner);
+
+    animate_transform(container, getTransform(1, 0, 4, 0), 100)
+    document.body.appendChild(container)
+}
+
 function flip_card(container, reverse) {
     front = container.getElementsByClassName("front")[0];
     back = container.getElementsByClassName("back")[0];
@@ -65,7 +82,7 @@ function flip_card(container, reverse) {
 }
 
 async function put_trump(trump_card) {
-    nodes = document.getElementsByClassName("card-container")
+    nodes = document.getElementsByClassName("deck")
     node = nodes[0]
     make_it_a_card(node, trump_card);
 
@@ -112,6 +129,7 @@ async function glow_hand(state) {
         document.documentElement.style.setProperty('--mine_click', "none");
     }
 }
+
 
 async function refill_my_hand(new_hand) {
     cards_to_add = new_hand.filter(x => !animation_state.hand.includes(x) );

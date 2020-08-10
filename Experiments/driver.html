@@ -8,13 +8,19 @@
         <script>
 
             async function simulate() {
+                
+
                 await new_deck()
                 await put_trump("♥K")
                 
+
+
                 await refill_other_hand(6);
                 await refill_my_hand(['♠6','♠10','♥J','♦Q','♣K','♣A']);
+                make_verb_card("Take")
                 await glow_hand(true)
                 await sleep(1000)
+                make_verb_card(null)
 
 
                 await play_own('♠10',"Add")
