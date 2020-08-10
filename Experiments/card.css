@@ -5,7 +5,7 @@
 }
 
 body {
-    background-image: url("white_wood.jpg");
+    background-image: url("assets/white_wood.jpg");
     background-size: cover;
 }
 
@@ -48,11 +48,11 @@ body {
     width: calc(var(--card_width) + 10px);
     height: calc(var(--card_height) + 10px);
 
-    background-image: url("front.jpg");
+    background-image: url("assets/front.jpg");
     background-size: 100% 100%;
 
     border-radius: 10px;
-    box-shadow: 5px 5px 5px rgba(0, 0, 0, .25);
+    box-shadow: -5px 5px 5px rgba(0, 0, 0, .25);
 }
 
 .front {
@@ -62,7 +62,7 @@ body {
 
 .back {
     color: blue;
-    background-image: url("back.png");
+    background-image: url("assets/back.png");
     background-size: 100% 100%;
 }
 
