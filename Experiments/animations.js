@@ -52,20 +52,29 @@ async function new_deck() {
 }
 
 function make_verb_card(verb) {
-    if (verb==null) {
-        verbs = document.getElementsByClassName("verb")
-        if (verbs.length>0) { document.body.removeChild(verbs[0]) }
-        return;
+    let node = null
+    let nodes = document.getElementsByClassName("verb")
+    if (nodes.length==0) {
+        node = document.createElement("div")
+        node.setAttribute("class", "card-container verb hidden")
+    
+        inner = document.createElement("div")
+        inner.classList.add("card-inner")
+        node.appendChild(inner);
+        document.body.appendChild(node)
+    } else {
+        node = nodes[0]
     }
-    container = document.createElement("div")
-    container.setAttribute("class", "card-container verb")
-    inner = document.createElement("div")
-    inner.classList.add("card-inner")
-    inner.innerHTML = '<i onclick="send_verb(\''+verb+'\')">'+verb+"</i>"
-    container.appendChild(inner);
 
-    animate_transform(container, getTransform(1, 0, 4, 0), 100)
-    document.body.appendChild(container)
+    if (verb==null){
+        node.classList.add("hidden")
+    } else {
+        node.setAttribute("onclick", "send_verb(\'"+verb+"\')")
+        node.getElementsByClassName("card-inner")[0].innerHTML =(verb == "pass")?"done":verb
+        node.classList.remove("hidden")
+        animate_transform(node, 
+            getTransform(animation_state.hand.length+2, 0, 4, 0), 0)
+    }    
 }
 
 function flip_card(container, reverse) {
@@ -82,6 +91,8 @@ function flip_card(container, reverse) {
 }
 
 async function put_trump(trump_card) {
+    animation_state.trump =trump_card[0]
+
     nodes = document.getElementsByClassName("deck")
     node = nodes[0]
     make_it_a_card(node, trump_card);
@@ -109,6 +120,7 @@ function take_card_from_deck() {
 }
 
 function make_it_a_card(node, card) {
+    node.id = card;
     front = node.getElementsByClassName("front")[0]
     inner = document.createElement("div")
     inner.classList.add("card-inner")
@@ -131,23 +143,54 @@ async function glow_hand(state) {
 }
 
 
+async function arrange_my_hand(new_hand) {
+
+    function rank2int(card){
+        let a_rank =0;
+        switch (card.substring(1)) {
+            case 'J': a_rank = 11; break;
+            case 'Q': a_rank = 12; break;
+            case 'K': a_rank = 13; break;
+            case 'A': a_rank = 14; break;
+            default: a_rank = parseInt(card.substring(1));
+        }
+        return a_rank
+    }
+    new_hand.sort(function(a,b){
+        a_suit = a[0];
+        a_rank = rank2int(a)
+        b_suit = b[0];
+        b_rank = rank2int(b)
+
+        if (a_suit == animation_state.trump && b_suit != animation_state.trump) { return 1}
+        if (b_suit == animation_state.trump && a_suit != animation_state.trump) { return -1}
+        if (a_rank == b_rank) { return a_suit > b_suit?1:-1}
+        return (a_rank > b_rank)?1:-1;
+    })
+
+    for (i=0; i<new_hand.length;++i) {
+        node = document.getElementById(new_hand[i]);
+        if (!node) continue;
+        animate_transform(node, getTransform(i+2, 0, 4, 0), 500)
+    }
+    await sleep(600)
+}
+
 async function refill_my_hand(new_hand) {
+    //await arrange_my_hand(new_hand);
     cards_to_add = new_hand.filter(x => !animation_state.hand.includes(x) );
     for (i = 0; i< cards_to_add.length; i++) {
         node = take_card_from_deck()
         make_it_a_card(node, cards_to_add[i]);
         flip_card(node); 
         node.classList.add("mine");
-        idx = animation_state.hand.indexOf(null);
-        if (idx !=-1) {
-            animation_state.hand[idx] = cards_to_add[i]
-        } else {
             idx = animation_state.hand.length
             animation_state.hand.push(cards_to_add[i])
-        }
         animate_transform(node, getTransform(idx+2, 0, 4, 0), 700)
         await sleep(100)
     }
+    await sleep(1000)
+    await arrange_my_hand(new_hand);
 }
 
 async function refill_other_hand(new_hand_size) {
@@ -166,16 +209,18 @@ let animation_state = {
         cards: []
     },
     hand: [],
-    other_hand: 0
+    other_hand: 0,
+    trump: null,
 }
 
 async function play_own(card, mode) {
     node = document.getElementById(card);
     node.classList.remove("mine");
     
-    animation_state.hand[animation_state.hand.indexOf(card)] = null; //Mark empty slot in hand
-
-    await card_to_table(node,mode,card);
+    animation_state.hand.splice(animation_state.hand.indexOf(card),1)
+    
+    await card_to_table(node,mode,card)
+    await arrange_my_hand(animation_state.hand)
 }
 
 async function play_other(card, mode) {
@@ -197,7 +242,7 @@ async function card_to_table(node,mode,card) {
         animation_state.table.last_attack_slot ++
         animate_transform(node, getTransform(2 + animation_state.table.last_attack_slot,0,2,0), 500)
     }
-    await sleep(1000)
+    await sleep(300)
 }
 
 async function clear_table() {

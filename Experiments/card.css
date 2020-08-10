@@ -90,5 +90,8 @@ body {
     font-weight: normal;
 
     text-transform: lowercase;
+}
 
+.hidden {
+    visibility: hidden;
 }
