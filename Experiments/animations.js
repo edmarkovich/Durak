@@ -153,31 +153,26 @@ let animation_state = {
 
 async function play_own(card, mode) {
     node = document.getElementById(card);
-    node.style.zIndex=animation_state.table.zIndex++
-    animation_state.table.cards.push(card);
     node.classList.remove("mine");
     
     animation_state.hand[animation_state.hand.indexOf(card)] = null; //Mark empty slot in hand
 
-    if (mode=="Defend") {
-        animate_transform(node, getTransform(2+animation_state.table.last_attack_slot,10,2,15) + "rotate3d(0,0,1,400deg)", 500) 
-    } else {
-        animation_state.table.last_attack_slot ++
-        animate_transform(node, getTransform(2 + animation_state.table.last_attack_slot,0,2,0), 500)
-    }
-    await sleep(1000)
+    await card_to_table(node,mode,card);
 }
 
 async function play_other(card, mode) {
     node = document.getElementsByClassName("his_card")[0]
     node.classList.remove("his_card")
     make_it_a_card(node, card)
-    node.style.zIndex=animation_state.table.zIndex++
-    animation_state.table.cards.push(card);
     flip_card(node)
-
     animation_state.other_hand --;
 
+    await card_to_table(node,mode,card);
+}
+
+async function card_to_table(node,mode,card) {
+    node.style.zIndex=animation_state.table.zIndex++
+    animation_state.table.cards.push(card);
     if (mode=="Defend") {
         animate_transform(node, getTransform(2+animation_state.table.last_attack_slot,10,2,15) + "rotate3d(0,0,1,400deg)", 500) 
     } else {
