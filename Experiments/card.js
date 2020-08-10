@@ -94,34 +94,31 @@ function make_it_a_card(node, card) {
     node.id = card;
 }
 
-async function deal_one(player_row, old_hand, new_hand) {
-
-    old_hand = state.hand;
-    cards_to_add = new_hand.filter(x => !old_hand.includes(x) );
-
+async function refill_my_hand(new_hand) {
+    cards_to_add = new_hand.filter(x => !state.hand.includes(x) );
     for (i = 0; i< cards_to_add.length; i++) {
         node = take_card_from_deck()
-
-        if (player_row==4) { 
-            make_it_a_card(node, cards_to_add[i]);
-            flip_card(node); 
-            idx = state.hand.indexOf(null);
-            if (idx !=-1) {
-                state.hand[idx] = cards_to_add[i]
-            } else {
-                idx = state.hand.length
-                state.hand.push(cards_to_add[i])
-            }
+        make_it_a_card(node, cards_to_add[i]);
+        flip_card(node); 
+        idx = state.hand.indexOf(null);
+        if (idx !=-1) {
+            state.hand[idx] = cards_to_add[i]
         } else {
-            node.classList.add("his_card")
-            idx = state.other_hand
-            state.other_hand ++
+            idx = state.hand.length
+            state.hand.push(cards_to_add[i])
         }
-
-        animate_transform(node, getTransform(idx+1, 0, player_row, 0), 1700)
+        animate_transform(node, getTransform(idx+1, 0, 4, 0), 700)
         await sleep(100)
     }
-    
+}
+
+async function refill_other_hand(new_hand_size) {
+    while (new_hand_size != state.other_hand) {
+        node = take_card_from_deck()
+        node.classList.add("his_card")
+        animate_transform(node, getTransform(++state.other_hand, 0, 0, 0), 700)
+        await sleep(100)
+    }
 }
 
 state = {
@@ -140,8 +137,7 @@ async function play_own(card) {
     node.style.zIndex=state.table.zIndex++
     state.table.cards.push(card);
     
-    idx = state.hand.indexOf(card)
-    state.hand[idx] = null
+    state.hand[state.hand.indexOf(card)] = null; //Mark empty slot in hand
 
     animate_transform(node, getTransform(2 + state.table.last_attack_slot,0,2,0) + "rotate3d(0,0,1,360deg)", 500)
     await sleep(1000)
@@ -170,4 +166,5 @@ async function clear_table() {
     }
     state.table.cards = []
     state.table.last_attack_slot=-1
+    await sleep(400);
 }

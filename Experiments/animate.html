@@ -13,8 +13,8 @@
                 await put_trump("♥K")
                 
                 
-                await deal_one(0, [], ['♠6','♠10','♥J','♦Q','♣K','♣A']);
-                await deal_one(4, [], ['♠6','♠10','♥J','♦Q','♣K','♣A']);
+                await refill_other_hand(6);
+                await refill_my_hand(['♠6','♠10','♥J','♦Q','♣K','♣A']);
                 await sleep(1000)
                 await play_own('♠10')
                 await play_other('♥7')
@@ -29,8 +29,8 @@
                 await play_own('♣A')
                 await play_other('♥10')
                 await clear_table()
-                await deal_one(0, [], ['♠2','♠3','♠4','♠5','♣K','♠7']);
-                await deal_one(4, [], ['♠2','♠3','♠4','♠5','♣K','♠7']);
+                await refill_other_hand(6);
+                await refill_my_hand(['♠2','♠3','♠4','♠5','♣K','♠7']);
             }
 
             simulate()
