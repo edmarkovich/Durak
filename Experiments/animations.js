@@ -73,8 +73,8 @@ async function put_trump(trump_card) {
     flip_card(node)
     await sleep(120)
     animate_transform(node, getTransform(0, 50, 2, 10)+"rotate3d(0,0,1,90deg)", 500)
-    await sleep(600)
-    ;
+    await sleep(600);
+
     //Put the deck over trump
     for (i=1; i<nodes.length; i++) {
         node = nodes[i]
@@ -101,12 +101,21 @@ function make_it_a_card(node, card) {
     node.id = card;
 }
 
+async function glow_hand(state) {
+    if (state) { 
+        document.documentElement.style.setProperty('--mine_highlight', "0 0 15px 5px lightblue");
+    } else {
+        document.documentElement.style.setProperty('--mine_highlight', "none");
+    }
+}
+
 async function refill_my_hand(new_hand) {
     cards_to_add = new_hand.filter(x => !animation_state.hand.includes(x) );
     for (i = 0; i< cards_to_add.length; i++) {
         node = take_card_from_deck()
         make_it_a_card(node, cards_to_add[i]);
         flip_card(node); 
+        node.classList.add("mine");
         idx = animation_state.hand.indexOf(null);
         if (idx !=-1) {
             animation_state.hand[idx] = cards_to_add[i]
@@ -143,6 +152,7 @@ async function play_own(card) {
     animation_state.table.last_attack_slot ++
     node.style.zIndex=animation_state.table.zIndex++
     animation_state.table.cards.push(card);
+    node.classList.remove("mine");
     
     animation_state.hand[animation_state.hand.indexOf(card)] = null; //Mark empty slot in hand
 

@@ -27,7 +27,7 @@
                 if ('prompt' in payload) {
                     mode = payload.prompt.prompt;
 		            if ('player' in payload.prompt) {
-                        console.log(payload.prompt.player)
+                       glow_hand(payload.prompt.player == state.my_name)
                     }
                 }
 

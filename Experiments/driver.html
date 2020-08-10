@@ -13,8 +13,9 @@
                 
                 await refill_other_hand(6);
                 await refill_my_hand(['♠6','♠10','♥J','♦Q','♣K','♣A']);
-
+                await glow_hand(true)
                 await sleep(1000)
+
 
                 await play_own('♠10')
                 await play_other('♥7')
@@ -33,10 +34,14 @@
                 await clear_table()
                 await sleep(1000)
                 
+                await glow_hand(false)
+                await sleep(1000)
+
                 await refill_other_hand(9);
                 await refill_my_hand(['♠2','♠3','♠4','♠5','♣K','♠7','♠8']);
-                await sleep(1000);
-
+                await glow_hand(true)
+                await sleep(1000)
+                
                 await play_own('♠2');
                 await play_other('♣2')
                 await play_own('♠3');
