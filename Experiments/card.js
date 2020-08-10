@@ -35,16 +35,22 @@ async function new_deck() {
     for (i=0; i<36; i++) {
         back = document.createElement("div")
         back.classList.add("back")
-        back.innerHTML = "&#127136;"
+
+        inner = document.createElement("div")
+        inner.classList.add("card-inner")
+        inner.innerHTML = "&#127136;"
+        back.appendChild(inner)
 
         front = document.createElement("div")
         front.classList.add("front")
         
-        inner = document.createElement("div")
-        inner.setAttribute("class", "card-container deck")
-        inner.appendChild(back)
-        inner.appendChild(front)
-        document.body.appendChild(inner)
+        container = document.createElement("div")
+        container.setAttribute("class", "card-container deck")
+        
+        container.appendChild(back)
+        container.appendChild(front)
+
+        document.body.appendChild(container)
     }
 }
 
@@ -71,7 +77,7 @@ async function put_trump(trump_card) {
     await sleep(120)
     animate_transform(node, getTransform(0, 50, 2, 10)+"rotate3d(0,0,1,90deg)", 500)
     await sleep(600)
-    
+    ;
     //Put the deck over trump
     for (i=1; i<nodes.length; i++) {
         node = nodes[i]
@@ -89,7 +95,11 @@ function take_card_from_deck() {
 }
 
 function make_it_a_card(node, card) {
-    node.getElementsByClassName("front")[0].innerHTML = card_to_unicode(card)
+    front = node.getElementsByClassName("front")[0]
+    inner = document.createElement("div")
+    inner.classList.add("card-inner")
+    inner.innerHTML = card_to_unicode(card)
+    front.appendChild(inner)
     if (card[0] == '♥' || card[0] == '♦') { node.classList.add("red"); } 
     node.id = card;
 }

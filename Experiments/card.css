@@ -1,7 +1,7 @@
 :root {
-    --card_scale: 3;
-    --card_height: calc(400px / var(--card_scale));
-    --card_width: calc(250px / var(--card_scale));
+    --card_scale: 2.5;
+    --card_height: calc(378px / var(--card_scale));
+    --card_width: calc(245px / var(--card_scale));
 }
 
 body {
@@ -13,8 +13,16 @@ body {
     height: var(--card_height);
 }
 
+.card-inner {
+    position: relative;
+    top: calc(-126px / var(--card_scale));
+    left: calc(-19px / var(--card_scale));
+
+}
+
 
 .front, .back {
+
     border-radius: 10px;
     box-shadow: 5px 5px 5px rgba(0, 0, 0, .25);
 
@@ -22,9 +30,11 @@ body {
 
     backface-visibility: hidden;
 
-    font-size: 600%;
+    font-size: calc(2700% / var(--card_scale));
     text-align: center;
     background-color: white;
+
+    overflow: hidden;
 }
 
 .card-container {
