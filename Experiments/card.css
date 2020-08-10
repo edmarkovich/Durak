@@ -4,6 +4,10 @@
     --card_width: calc(250px / var(--card_scale));
 }
 
+body {
+    background-image: url("white_wood.jpg");
+}
+
 .card-container, .front, .back {
     width: var(--card_width);
     height: var(--card_height);
