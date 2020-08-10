@@ -9,10 +9,6 @@ body {
     background-size: cover;
 }
 
-.card-container, .front, .back {
-
-}
-
 .card-inner {
     position: relative;
     top: calc(-126px / var(--card_scale));
