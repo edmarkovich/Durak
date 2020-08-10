@@ -1,7 +1,7 @@
 :root {
     --card_scale: 2.5;
     --card_height: calc(378px / var(--card_scale));
-    --card_width: calc(245px / var(--card_scale));
+    --card_width: calc(244px / var(--card_scale));
 }
 
 body {
@@ -10,8 +10,7 @@ body {
 }
 
 .card-container, .front, .back {
-    width: var(--card_width);
-    height: var(--card_height);
+
 }
 
 .card-inner {
@@ -25,16 +24,19 @@ body {
 
 .front, .back {
 
-    border-radius: 10px;
-    box-shadow: 5px 5px 5px rgba(0, 0, 0, .25);
-
     position: absolute;
+    top:5;
+    left:5;
+
+    width: var(--card_width);
+    height: var(--card_height);
+
+
 
     backface-visibility: hidden;
 
     font-size: calc(2700% / var(--card_scale));
     text-align: center;
-    background-color: white;
 
     overflow: hidden;
 }
@@ -42,12 +44,19 @@ body {
 .card-container {
     position: absolute;
     transform: translateX(-150%);
+
+    width: calc(var(--card_width) + 10px);
+    height: calc(var(--card_height) + 10px);
+
+    background-image: url("front.jpg");
+    background-size: 100% 100%;
+
+    border-radius: 10px;
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, .25);
 }
 
 .front {
     transform: rotateY(-180deg);
-    background-image: url("front.jpg");
-    background-size: 100% 100%;
 }
 
 
