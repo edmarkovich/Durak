@@ -61,7 +61,7 @@ function make_verb_card(verb) {
     container.setAttribute("class", "card-container verb")
     inner = document.createElement("div")
     inner.classList.add("card-inner")
-    inner.innerHTML=verb
+    inner.innerHTML = '<i onclick="send_verb(\''+verb+'\')">'+verb+"</i>"
     container.appendChild(inner);
 
     animate_transform(container, getTransform(1, 0, 4, 0), 100)

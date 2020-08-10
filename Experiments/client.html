@@ -27,7 +27,19 @@
                 if ('prompt' in payload) {
                     state.mode = payload.prompt.prompt;
 		            if ('player' in payload.prompt) {
-                       glow_hand(payload.prompt.player == state.my_name)
+                        if (payload.prompt.player == state.my_name) {
+                            glow_hand(true)
+                            console.log(state.mode)
+                            if (state.mode == 'Defend') { make_verb_card('take') }
+                            else if (state.mode == 'First attack') { make_verb_card(null) }
+                            else if (state.mode == 'Add Cards') { make_verb_card('pass') }
+                            else {make_verb_card(state.mode)}
+
+                        } else {
+                            glow_hand(false);
+                            make_verb_card(null);
+                        }
+
                     }
                 }
 
@@ -55,6 +67,8 @@
                     
 
                     if (game.table.length==0) {
+
+                        clear_table()
                         for (id in game.players) {
                             name = game.players[id].name
                             hand = game.players[id].hand
@@ -73,6 +87,10 @@
 
             function send_card(card) {
 	            socket.send('{"action":"", "card":"'+card+'"}')
+            }
+
+            function send_verb(verb) {
+	            socket.send('{"action":"'+verb+'"}')
             }
         </script>
 
