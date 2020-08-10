@@ -1,0 +1,58 @@
+<html>
+    <head>
+            <meta content="text/html"; charset="utf-8" http-equiv="content-type">
+            <meta content="utf-8" http-equiv="encoding">
+            <link rel="stylesheet" href="card.css">
+            <script type="text/javascript" src="animations.js"></script>
+
+    </head>
+    <body>
+        <script>
+
+            state = {
+                started: false
+            }
+
+            let socket = new WebSocket("ws://192.168.1.13:5678")
+            socket.onopen = function(e) {
+                state.my_name = "Ed"; //prompt("Player Name"); 
+                socket.send('{"action":"join","name":"'+state.my_name+'"}');
+                socket.send('{"action":"join","name":"Other"}');
+            }
+
+            socket.onmessage = async function(event) {
+                payload = JSON.parse(event.data)
+                console.log(payload)
+
+                if ('prompt' in payload) {
+                    mode = payload.prompt.prompt;
+		            if ('player' in payload.prompt) {
+                        console.log(payload.prompt.player)
+                    }
+                }
+
+                if ('game' in payload) {
+                    game = payload.game
+                    if(!state.started) {
+                        state.started = true;
+                        await new_deck()
+                        await put_trump(game.trump)
+                    }
+
+                    for (id in game.players) {
+                        name = game.players[id].name
+                        hand = game.players[id].hand
+
+                        if (name == state.my_name) {
+                            await refill_my_hand(hand);
+                        } else {
+                            await refill_other_hand(hand.length)
+                        }
+                    } 
+                    
+                }
+            }
+        </script>
+
+    </body>
+</html>

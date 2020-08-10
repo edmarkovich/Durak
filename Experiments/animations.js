@@ -102,17 +102,17 @@ function make_it_a_card(node, card) {
 }
 
 async function refill_my_hand(new_hand) {
-    cards_to_add = new_hand.filter(x => !state.hand.includes(x) );
+    cards_to_add = new_hand.filter(x => !animation_state.hand.includes(x) );
     for (i = 0; i< cards_to_add.length; i++) {
         node = take_card_from_deck()
         make_it_a_card(node, cards_to_add[i]);
         flip_card(node); 
-        idx = state.hand.indexOf(null);
+        idx = animation_state.hand.indexOf(null);
         if (idx !=-1) {
-            state.hand[idx] = cards_to_add[i]
+            animation_state.hand[idx] = cards_to_add[i]
         } else {
-            idx = state.hand.length
-            state.hand.push(cards_to_add[i])
+            idx = animation_state.hand.length
+            animation_state.hand.push(cards_to_add[i])
         }
         animate_transform(node, getTransform(idx+2, 0, 4, 0), 700)
         await sleep(100)
@@ -120,15 +120,15 @@ async function refill_my_hand(new_hand) {
 }
 
 async function refill_other_hand(new_hand_size) {
-    while (new_hand_size != state.other_hand) {
+    while (new_hand_size != animation_state.other_hand) {
         node = take_card_from_deck()
         node.classList.add("his_card")
-        animate_transform(node, getTransform(1+ ++state.other_hand, 0, 0, 0), 700)
+        animate_transform(node, getTransform(1+ ++animation_state.other_hand, 0, 0, 0), 700)
         await sleep(100)
     }
 }
 
-state = {
+let animation_state = {
     table: {
         last_attack_slot: -1,
         zIndex: 100,
@@ -140,13 +140,13 @@ state = {
 
 async function play_own(card) {
     node = document.getElementById(card);
-    state.table.last_attack_slot ++
-    node.style.zIndex=state.table.zIndex++
-    state.table.cards.push(card);
+    animation_state.table.last_attack_slot ++
+    node.style.zIndex=animation_state.table.zIndex++
+    animation_state.table.cards.push(card);
     
-    state.hand[state.hand.indexOf(card)] = null; //Mark empty slot in hand
+    animation_state.hand[animation_state.hand.indexOf(card)] = null; //Mark empty slot in hand
 
-    animate_transform(node, getTransform(2 + state.table.last_attack_slot,0,2,0) + "rotate3d(0,0,0,360deg)", 500)
+    animate_transform(node, getTransform(2 + animation_state.table.last_attack_slot,0,2,0) + "rotate3d(0,0,0,360deg)", 500)
     await sleep(1000)
 }
 
@@ -154,24 +154,24 @@ async function play_other(card) {
     node = document.getElementsByClassName("his_card")[0]
     node.classList.remove("his_card")
     make_it_a_card(node, card)
-    node.style.zIndex=state.table.zIndex++
-    state.table.cards.push(card);
+    node.style.zIndex=animation_state.table.zIndex++
+    animation_state.table.cards.push(card);
     flip_card(node)
 
-    state.other_hand --;
+    animation_state.other_hand --;
 
-    animate_transform(node, getTransform(2+state.table.last_attack_slot,10,2,15) + "rotate3d(0,0,1,400deg)", 500)
+    animate_transform(node, getTransform(2+animation_state.table.last_attack_slot,10,2,15) + "rotate3d(0,0,1,400deg)", 500)
     await sleep(1000)
 }
 
 async function clear_table() {
-    for (i in state.table.cards) {
-        card = state.table.cards[i];
+    for (i in animation_state.table.cards) {
+        card = animation_state.table.cards[i];
         node = document.getElementById(card);
         flip_card(node, true)
         animate_transform(node, getTransform(9,0,2,0), 300)
     }
-    state.table.cards = []
-    state.table.last_attack_slot=-1
+    animation_state.table.cards = []
+    animation_state.table.last_attack_slot=-1
     await sleep(400);
 }
