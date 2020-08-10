@@ -3,6 +3,7 @@
     --card_height: calc(378px / var(--card_scale));
     --card_width: calc(244px / var(--card_scale));
     --mine_highlight: none;
+    --mine_click: none;
 }
 
 body {
@@ -69,4 +70,5 @@ body {
 
 .mine {
     box-shadow: var(--mine_highlight);
+    pointer-events: var(--mine_click); ;
 }

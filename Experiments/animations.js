@@ -106,8 +106,10 @@ function make_it_a_card(node, card) {
 async function glow_hand(state) {
     if (state) { 
         document.documentElement.style.setProperty('--mine_highlight', "0 0 15px 5px lightblue");
+        document.documentElement.style.setProperty('--mine_click', "all");
     } else {
         document.documentElement.style.setProperty('--mine_highlight', "none");
+        document.documentElement.style.setProperty('--mine_click', "none");
     }
 }
 
@@ -149,20 +151,24 @@ let animation_state = {
     other_hand: 0
 }
 
-async function play_own(card) {
+async function play_own(card, mode) {
     node = document.getElementById(card);
-    animation_state.table.last_attack_slot ++
     node.style.zIndex=animation_state.table.zIndex++
     animation_state.table.cards.push(card);
     node.classList.remove("mine");
     
     animation_state.hand[animation_state.hand.indexOf(card)] = null; //Mark empty slot in hand
 
-    animate_transform(node, getTransform(2 + animation_state.table.last_attack_slot,0,2,0) + "rotate3d(0,0,0,360deg)", 500)
+    if (mode=="Defend") {
+        animate_transform(node, getTransform(2+animation_state.table.last_attack_slot,10,2,15) + "rotate3d(0,0,1,400deg)", 500) 
+    } else {
+        animation_state.table.last_attack_slot ++
+        animate_transform(node, getTransform(2 + animation_state.table.last_attack_slot,0,2,0), 500)
+    }
     await sleep(1000)
 }
 
-async function play_other(card) {
+async function play_other(card, mode) {
     node = document.getElementsByClassName("his_card")[0]
     node.classList.remove("his_card")
     make_it_a_card(node, card)
@@ -172,7 +178,12 @@ async function play_other(card) {
 
     animation_state.other_hand --;
 
-    animate_transform(node, getTransform(2+animation_state.table.last_attack_slot,10,2,15) + "rotate3d(0,0,1,400deg)", 500)
+    if (mode=="Defend") {
+        animate_transform(node, getTransform(2+animation_state.table.last_attack_slot,10,2,15) + "rotate3d(0,0,1,400deg)", 500) 
+    } else {
+        animation_state.table.last_attack_slot ++
+        animate_transform(node, getTransform(2 + animation_state.table.last_attack_slot,0,2,0), 500)
+    }
     await sleep(1000)
 }
 
