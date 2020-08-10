@@ -9,19 +9,20 @@
 
             async function simulate() {
                 await new_deck()
-                
                 await put_trump("♥K")
-                
                 
                 await refill_other_hand(6);
                 await refill_my_hand(['♠6','♠10','♥J','♦Q','♣K','♣A']);
                 await sleep(1000)
+
                 await play_own('♠10')
                 await play_other('♥7')
                 await play_own('♦Q')
                 await play_other('♥6')
+                
                 await clear_table()
                 await sleep(1000)
+                
                 await play_own('♠6')
                 await play_other('♥8')
                 await play_own('♥J')
@@ -29,8 +30,25 @@
                 await play_own('♣A')
                 await play_other('♥10')
                 await clear_table()
+                await sleep(1000)
+                
                 await refill_other_hand(6);
-                await refill_my_hand(['♠2','♠3','♠4','♠5','♣K','♠7']);
+                await refill_my_hand(['♠2','♠3','♠4','♠5','♣K','♠7','♠8']);
+                await sleep(1000);
+
+                await play_own('♠2');
+                await play_other('♣2')
+                await play_own('♠3');
+                await play_other('♣3')
+                await play_own('♠4');
+                await play_other('♣4')
+                await play_own('♠5');
+                await play_other('♣5')
+                await play_own('♠7');
+                await play_other('♣6')
+                await play_own('♠8');
+                await play_other('♣7')
+                await clear_table();
             }
 
             simulate()

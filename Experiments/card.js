@@ -107,7 +107,7 @@ async function refill_my_hand(new_hand) {
             idx = state.hand.length
             state.hand.push(cards_to_add[i])
         }
-        animate_transform(node, getTransform(idx+1, 0, 4, 0), 700)
+        animate_transform(node, getTransform(idx+2, 0, 4, 0), 700)
         await sleep(100)
     }
 }
@@ -116,7 +116,7 @@ async function refill_other_hand(new_hand_size) {
     while (new_hand_size != state.other_hand) {
         node = take_card_from_deck()
         node.classList.add("his_card")
-        animate_transform(node, getTransform(++state.other_hand, 0, 0, 0), 700)
+        animate_transform(node, getTransform(1+ ++state.other_hand, 0, 0, 0), 700)
         await sleep(100)
     }
 }
