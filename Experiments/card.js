@@ -15,6 +15,8 @@ function getTransform(column, column_offset, row, row_offset) {
 }
 
 function card_to_unicode(card) {
+    var base;
+    var offset;
     switch (card[0]) {
         case '♠': base = 127137; break;
         case '♥': base = 127153; break;

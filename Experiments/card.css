@@ -18,7 +18,7 @@ body {
     position: relative;
     top: calc(-126px / var(--card_scale));
     left: calc(-19px / var(--card_scale));
-    filter: blur(0.5px);
+    filter: blur(0.3px);
     opacity: .9;
 }
 
