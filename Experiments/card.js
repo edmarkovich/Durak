@@ -146,7 +146,7 @@ async function play_own(card) {
     
     state.hand[state.hand.indexOf(card)] = null; //Mark empty slot in hand
 
-    animate_transform(node, getTransform(2 + state.table.last_attack_slot,0,2,0) + "rotate3d(0,0,1,360deg)", 500)
+    animate_transform(node, getTransform(2 + state.table.last_attack_slot,0,2,0) + "rotate3d(0,0,0,360deg)", 500)
     await sleep(1000)
 }
 
