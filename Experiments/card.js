@@ -94,20 +94,34 @@ function make_it_a_card(node, card) {
     node.id = card;
 }
 
-async function deal_one(player_row, cards) {
-    for (i = cards.length-1; i>= 0; i--) {
+async function deal_one(player_row, old_hand, new_hand) {
+
+    old_hand = state.hand;
+    cards_to_add = new_hand.filter(x => !old_hand.includes(x) );
+
+    for (i = 0; i< cards_to_add.length; i++) {
         node = take_card_from_deck()
-        
+
         if (player_row==4) { 
-            make_it_a_card(node, cards[i])
-            flip_card(node) 
+            make_it_a_card(node, cards_to_add[i]);
+            flip_card(node); 
+            idx = state.hand.indexOf(null);
+            if (idx !=-1) {
+                state.hand[idx] = cards_to_add[i]
+            } else {
+                idx = state.hand.length
+                state.hand.push(cards_to_add[i])
+            }
         } else {
             node.classList.add("his_card")
+            idx = state.other_hand
+            state.other_hand ++
         }
 
-        animate_transform(node, getTransform(i+1, 0, player_row, 0), 700)
+        animate_transform(node, getTransform(idx+1, 0, player_row, 0), 1700)
         await sleep(100)
     }
+    
 }
 
 state = {
@@ -115,7 +129,9 @@ state = {
         last_attack_slot: -1,
         zIndex: 100,
         cards: []
-    }
+    },
+    hand: [],
+    other_hand: 0
 }
 
 async function play_own(card) {
@@ -123,6 +139,10 @@ async function play_own(card) {
     state.table.last_attack_slot ++
     node.style.zIndex=state.table.zIndex++
     state.table.cards.push(card);
+    
+    idx = state.hand.indexOf(card)
+    state.hand[idx] = null
+
     animate_transform(node, getTransform(2 + state.table.last_attack_slot,0,2,0) + "rotate3d(0,0,1,360deg)", 500)
     await sleep(1000)
 }
@@ -134,6 +154,9 @@ async function play_other(card) {
     node.style.zIndex=state.table.zIndex++
     state.table.cards.push(card);
     flip_card(node)
+
+    state.other_hand --;
+
     animate_transform(node, getTransform(2+state.table.last_attack_slot,10,2,15) + "rotate3d(0,0,1,400deg)", 500)
     await sleep(1000)
 }
