@@ -6,6 +6,7 @@
 
 body {
     background-image: url("white_wood.jpg");
+    background-size: cover;
 }
 
 .card-container, .front, .back {
@@ -17,7 +18,8 @@ body {
     position: relative;
     top: calc(-126px / var(--card_scale));
     left: calc(-19px / var(--card_scale));
-
+    filter: blur(0.5px);
+    opacity: .9;
 }
 
 
@@ -44,14 +46,18 @@ body {
 
 .front {
     transform: rotateY(-180deg);
+    background-image: url("front.jpg");
+    background-size: 100% 100%;
 }
 
 
 .back {
     color: blue;
+    background-image: url("back.png");
+    background-size: 100% 100%;
 }
 
 .red {
-    color: red;
+    color: red;;
 }
 

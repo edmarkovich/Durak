@@ -36,11 +36,6 @@ async function new_deck() {
         back = document.createElement("div")
         back.classList.add("back")
 
-        inner = document.createElement("div")
-        inner.classList.add("card-inner")
-        inner.innerHTML = "&#127136;"
-        back.appendChild(inner)
-
         front = document.createElement("div")
         front.classList.add("front")
         
