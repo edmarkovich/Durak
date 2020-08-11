@@ -100,7 +100,8 @@ async function put_trump(trump_card) {
     //Flip, turn and move turmp
     flip_card(node)
     await sleep(120)
-    animate_transform(node, getTransform(0, 50, 2, 10)+"rotate3d(0,0,1,90deg)", 500)
+    //animate_transform(node, getTransform(0, 50, 2, 10)+"rotate3d(0,0,1,90deg)", 500)
+    animate_transform(node, getTransform(0, -50, 2, 10), 500)
     await sleep(600);
 
     //Put the deck over trump
@@ -132,6 +133,7 @@ function take_card_from_deck(card) {
     }
 
     let nodes = document.getElementsByClassName("deck")
+    console.log("Deck remaining:", nodes.length-1)
     node = nodes[nodes.length-1]
     node.classList.remove("deck")
     return node;
@@ -182,7 +184,7 @@ async function arrange_my_hand(new_hand) {
 
         if (a_suit == animation_state.trump && b_suit != animation_state.trump) { return 1}
         if (b_suit == animation_state.trump && a_suit != animation_state.trump) { return -1}
-        if (a_rank == b_rank) { return a_suit > b_suit?1:-1}
+        if (a_rank == b_rank) { return 0; /*return a_suit > b_suit?1:-1*/}
         return (a_rank > b_rank)?1:-1;
     })
 
@@ -221,7 +223,7 @@ async function refill_other_hand(new_hand) {
             }
         }
 
-        node = take_card_from_deck()
+        node = take_card_from_deck(card)
         node.classList.add("his_card")
         animate_transform(node, getTransform(1+ ++animation_state.other_hand, 0, 0, 0), 700)
         await sleep(100)
