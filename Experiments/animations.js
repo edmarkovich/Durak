@@ -125,7 +125,7 @@ function take_card_from_deck(card) {
     let node = nodes[nodes.length-1]
     if (card == animation_state.trump_card) {
         node = nodes[0];
-        flip_card(node,true)
+        flip_card(node,false)
     }
 
     node.classList.remove("deck")
