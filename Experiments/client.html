@@ -9,7 +9,7 @@
     <body>
         <script>
 
-            state = {
+            let state = {
                 game: null
             }
 
@@ -21,7 +21,7 @@
             }
 
             socket.onmessage = async function(event) {
-                payload = JSON.parse(event.data)
+                let payload = JSON.parse(event.data)
                 console.log(payload)
 
                 if ('prompt' in payload) {
@@ -43,15 +43,15 @@
                 }
 
                 if ('game' in payload) {
-                    game = payload.game
+                    let game = payload.game
                     if(!state.game) {
                         await new_deck()
                         await put_trump(game.trump)
                     }
 
-                    table_to_add = game.table.filter(x => !state.game.table.includes(x) );
-                    for (i=0; i<table_to_add.length; i++) {
-                        for (j=0; j<state.game.players.length; j++) {
+                    let table_to_add = game.table.filter(x => !state.game.table.includes(x) );
+                    for (let i=0; i<table_to_add.length; i++) {
+                        for (let j=0; j<state.game.players.length; j++) {
                             if (state.game.players[j].hand.indexOf(table_to_add[i]) != -1) {
                                 if (state.game.players[j].name == state.my_name) {
                                     play_own(table_to_add[i], state.mode);

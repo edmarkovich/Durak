@@ -1,7 +1,10 @@
+/* eslint-disable no-unused-vars */
+"use strict";
+
 function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms));}
 
 async function animate_transform(element, transform,speed) {
-    animation = element.animate([ { transform: transform}], {
+    element.animate([ { transform: transform}], {
         duration: speed,
         iterations: 1,
         fill: "forwards",
@@ -34,14 +37,14 @@ function card_to_unicode(card) {
 }
 
 async function new_deck() {
-    for (i=0; i<36; i++) {
-        back = document.createElement("div")
+    for (let i=0; i<36; i++) {
+        let back = document.createElement("div")
         back.classList.add("back")
 
-        front = document.createElement("div")
+        let front = document.createElement("div")
         front.classList.add("front")
         
-        container = document.createElement("div")
+        let container = document.createElement("div")
         container.setAttribute("class", "card-container deck")
         
         container.appendChild(back)
@@ -58,7 +61,7 @@ function make_verb_card(verb) {
         node = document.createElement("div")
         node.setAttribute("class", "card-container verb hidden")
     
-        inner = document.createElement("div")
+        let inner = document.createElement("div")
         inner.classList.add("card-inner")
         node.appendChild(inner);
         document.body.appendChild(node)
@@ -69,7 +72,7 @@ function make_verb_card(verb) {
     if (verb==null){
         node.classList.add("hidden")
     } else {
-        node.setAttribute("onclick", "send_verb(\'"+verb+"\')")
+        node.setAttribute("onclick", "send_verb('"+verb+"')")
         node.getElementsByClassName("card-inner")[0].innerHTML =(verb == "pass")?"done":verb
         node.classList.remove("hidden")
         animate_transform(node, 
@@ -78,8 +81,8 @@ function make_verb_card(verb) {
 }
 
 function flip_card(container, reverse) {
-    front = container.getElementsByClassName("front")[0];
-    back = container.getElementsByClassName("back")[0];
+    let front = container.getElementsByClassName("front")[0];
+    let back = container.getElementsByClassName("back")[0];
 
     if (reverse) {
         animate_transform(front, "rotate3d(0,1,0,-180deg)", 300);
@@ -93,21 +96,21 @@ function flip_card(container, reverse) {
 async function put_trump(trump_card) {
     animation_state.trump =trump_card[0]
 
-    nodes = document.getElementsByClassName("deck")
-    node = nodes[0]
+    let nodes = document.getElementsByClassName("deck")
+    let node = nodes[0]
     make_it_a_card(node, trump_card);
 
     //Flip, turn and move turmp
     flip_card(node)
     await sleep(120)
     //animate_transform(node, getTransform(0, 50, 2, 10)+"rotate3d(0,0,1,90deg)", 500)
-    animate_transform(node, getTransform(0, -50, 2, 10), 500)
+    animate_transform(node, getTransform(0, 0, 2, 10), 500)
     await sleep(600);
 
     //Put the deck over trump
-    for (i=1; i<nodes.length; i++) {
+    for (let i=1; i<nodes.length; i++) {
         node = nodes[i]
-        animate_transform(node, getTransform(0, -1, 2, 0), 200)
+        animate_transform(node, getTransform(0, 80, 2, 0), 200)
         await sleep(50)
     } 
     await sleep(200)
@@ -141,8 +144,8 @@ function take_card_from_deck(card) {
 
 function make_it_a_card(node, card) {
     node.id = card;
-    front = node.getElementsByClassName("front")[0]
-    inner = document.createElement("div")
+    let front = node.getElementsByClassName("front")[0]
+    let inner = document.createElement("div")
     inner.classList.add("card-inner")
     inner.innerHTML = card_to_unicode(card)
     front.appendChild(inner)
@@ -177,10 +180,10 @@ async function arrange_my_hand(new_hand) {
         return a_rank
     }
     new_hand.sort(function(a,b){
-        a_suit = a[0];
-        a_rank = rank2int(a)
-        b_suit = b[0];
-        b_rank = rank2int(b)
+        let a_suit = a[0];
+        let a_rank = rank2int(a)
+        let b_suit = b[0];
+        let b_rank = rank2int(b)
 
         if (a_suit == animation_state.trump && b_suit != animation_state.trump) { return 1}
         if (b_suit == animation_state.trump && a_suit != animation_state.trump) { return -1}
@@ -188,8 +191,8 @@ async function arrange_my_hand(new_hand) {
         return (a_rank > b_rank)?1:-1;
     })
 
-    for (i=0; i<new_hand.length;++i) {
-        node = document.getElementById(new_hand[i]);
+    for (let i=0; i<new_hand.length;++i) {
+        let node = document.getElementById(new_hand[i]);
         if (!node) continue;
         animate_transform(node, getTransform(i+2, 0, 4, 0), 500)
     }
@@ -198,13 +201,13 @@ async function arrange_my_hand(new_hand) {
 
 async function refill_my_hand(new_hand) {
     //await arrange_my_hand(new_hand);
-    cards_to_add = new_hand.filter(x => !animation_state.hand.includes(x) );
-    for (i = 0; i< cards_to_add.length; i++) {
-        node = take_card_from_deck(cards_to_add[i])
+    let cards_to_add = new_hand.filter(x => !animation_state.hand.includes(x) );
+    for (let i = 0; i< cards_to_add.length; i++) {
+        let node = take_card_from_deck(cards_to_add[i])
         make_it_a_card(node, cards_to_add[i]);
         flip_card(node); 
         node.classList.add("mine");
-            idx = animation_state.hand.length
+            let idx = animation_state.hand.length
             animation_state.hand.push(cards_to_add[i])
         animate_transform(node, getTransform(idx+2, 0, 4, 0), 700)
         await sleep(100)
@@ -223,7 +226,7 @@ async function refill_other_hand(new_hand) {
             }
         }
 
-        node = take_card_from_deck(card)
+        let node = take_card_from_deck(card)
         node.classList.add("his_card")
         animate_transform(node, getTransform(1+ ++animation_state.other_hand, 0, 0, 0), 700)
         await sleep(100)
@@ -243,7 +246,7 @@ let animation_state = {
 }
 
 async function play_own(card, mode) {
-    node = document.getElementById(card);
+    let node = document.getElementById(card);
     node.classList.remove("mine");
     
     animation_state.hand.splice(animation_state.hand.indexOf(card),1)
@@ -253,7 +256,7 @@ async function play_own(card, mode) {
 }
 
 async function play_other(card, mode) {
-    node = document.getElementsByClassName("his_card")[0]
+    let node = document.getElementsByClassName("his_card")[0]
     node.classList.remove("his_card")
     make_it_a_card(node, card)
     flip_card(node)
@@ -275,9 +278,9 @@ async function card_to_table(node,mode,card) {
 }
 
 async function clear_table() {
-    for (i in animation_state.table.cards) {
-        card = animation_state.table.cards[i];
-        node = document.getElementById(card);
+    for (let i in animation_state.table.cards) {
+        let card = animation_state.table.cards[i];
+        let node = document.getElementById(card);
         flip_card(node, true)
         animate_transform(node, getTransform(9,0,2,0), 300)
     }
