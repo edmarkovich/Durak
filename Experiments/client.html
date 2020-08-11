@@ -29,7 +29,6 @@
 		            if ('player' in payload.prompt) {
                         if (payload.prompt.player == state.my_name) {
                             glow_hand(true)
-                            console.log(state.mode)
                             if (state.mode == 'Defend') { make_verb_card('take') }
                             else if (state.mode == 'First attack') { make_verb_card(null) }
                             else if (state.mode == 'Add Cards') { make_verb_card('pass') }
@@ -51,7 +50,6 @@
                     }
 
                     table_to_add = game.table.filter(x => !state.game.table.includes(x) );
-                    console.log(table_to_add)
                     for (i=0; i<table_to_add.length; i++) {
                         for (j=0; j<state.game.players.length; j++) {
                             if (state.game.players[j].hand.indexOf(table_to_add[i]) != -1) {
@@ -63,22 +61,19 @@
                             }
                         }
                     }
-
                     
-
                     if (game.table.length==0) {
-
-                        clear_table()
                         for (id in game.players) {
-                            name = game.players[id].name
-                            hand = game.players[id].hand
+                            let name = game.players[id].name
+                            let hand = game.players[id].hand
 
                             if (name == state.my_name) {
                                 await refill_my_hand(hand);
                             } else {
-                                await refill_other_hand(hand.length)
+                                await refill_other_hand(hand)
                             }
-                        } 
+                        }
+                        await clear_table() 
                     }
                     state.game = game
                     

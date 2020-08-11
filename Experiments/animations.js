@@ -112,8 +112,26 @@ async function put_trump(trump_card) {
     await sleep(200)
 }
 
-function take_card_from_deck() {
-    nodes = document.getElementsByClassName("deck")
+function take_from_table(card) {
+    let idx = animation_state.table.cards.indexOf(card)
+    if (idx != -1) {
+        animation_state.table.cards.splice(idx,1)
+        document.getElementById(card);
+        return document.getElementById(card);
+    }
+
+    return null
+}
+
+function take_card_from_deck(card) {
+
+    let node = take_from_table(card)
+    if (node) { 
+        console.log("Take a table card",card)
+        return node;
+    }
+
+    let nodes = document.getElementsByClassName("deck")
     node = nodes[nodes.length-1]
     node.classList.remove("deck")
     return node;
@@ -180,7 +198,7 @@ async function refill_my_hand(new_hand) {
     //await arrange_my_hand(new_hand);
     cards_to_add = new_hand.filter(x => !animation_state.hand.includes(x) );
     for (i = 0; i< cards_to_add.length; i++) {
-        node = take_card_from_deck()
+        node = take_card_from_deck(cards_to_add[i])
         make_it_a_card(node, cards_to_add[i]);
         flip_card(node); 
         node.classList.add("mine");
@@ -193,13 +211,22 @@ async function refill_my_hand(new_hand) {
     await arrange_my_hand(new_hand);
 }
 
-async function refill_other_hand(new_hand_size) {
-    while (new_hand_size != animation_state.other_hand) {
+async function refill_other_hand(new_hand) {
+    while (new_hand.length != animation_state.other_hand) {
+        let card = null
+        for (let i=0; i<new_hand.length; i++) {
+            let idx = animation_state.table.cards.indexOf(new_hand[i]) 
+            if (idx != -1) {
+                card = new_hand[i]
+            }
+        }
+
         node = take_card_from_deck()
         node.classList.add("his_card")
         animate_transform(node, getTransform(1+ ++animation_state.other_hand, 0, 0, 0), 700)
         await sleep(100)
     }
+    await sleep(1000)
 }
 
 let animation_state = {
