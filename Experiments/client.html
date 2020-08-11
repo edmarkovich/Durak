@@ -63,17 +63,21 @@
                     }
                     
                     if (game.table.length==0) {
+                        let my_hand = null
+                        let other_hand = null
                         for (id in game.players) {
                             let name = game.players[id].name
                             let hand = game.players[id].hand
 
                             if (name == state.my_name) {
-                                await refill_my_hand(hand);
+                                my_hand = hand
                             } else {
-                                await refill_other_hand(hand)
+                                other_hand = hand
                             }
                         }
-                        await clear_table() 
+                        await clear_table(my_hand,other_hand) 
+                        await refill_my_hand(my_hand);
+                        await refill_other_hand(other_hand)
                     }
                     state.game = game
                     

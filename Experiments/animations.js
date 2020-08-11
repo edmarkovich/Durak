@@ -95,10 +95,11 @@ function flip_card(container, reverse) {
 
 async function put_trump(trump_card) {
     animation_state.trump =trump_card[0]
+    animation_state.trump_card = trump_card
 
     let nodes = document.getElementsByClassName("deck")
     let node = nodes[0]
-    make_it_a_card(node, trump_card);
+    make_it_a_card(node, animation_state.trump_card);
 
     //Flip, turn and move turmp
     flip_card(node)
@@ -116,27 +117,17 @@ async function put_trump(trump_card) {
     await sleep(200)
 }
 
-function take_from_table(card) {
-    let idx = animation_state.table.cards.indexOf(card)
-    if (idx != -1) {
-        animation_state.table.cards.splice(idx,1)
-        document.getElementById(card);
-        return document.getElementById(card);
-    }
-
-    return null
-}
 
 function take_card_from_deck(card) {
 
-    let node = take_from_table(card)
-    if (node) { 
-        return node;
-    }
-
     let nodes = document.getElementsByClassName("deck")
     console.log("Deck remaining:", nodes.length-1)
-    node = nodes[nodes.length-1]
+    let node = nodes[nodes.length-1]
+    if (card == animation_state.trump_card) {
+        node = nodes[0];
+        flip_card(node,true)
+    }
+
     node.classList.remove("deck")
     return node;
 }
@@ -151,7 +142,6 @@ function make_it_a_card(node, card) {
     if (card[0] == '♥' || card[0] == '♦') { node.classList.add("red"); } 
     node.setAttribute('onclick', 'send_card(\''+card+'\')')
 
-    node.id = card;
 }
 
 async function glow_hand(state) {
@@ -204,10 +194,7 @@ async function refill_my_hand(new_hand) {
         let node = take_card_from_deck(cards_to_add[i])
         make_it_a_card(node, cards_to_add[i]);
         flip_card(node); 
-        node.classList.add("mine");
-
-        animation_state.hand.push(cards_to_add[i])
-        animate_transform(node, getTransform(animation_state.hand.length+1, 0, 4, 0), 700)
+        await put_in_my_hand(node, cards_to_add[i]);
         await sleep(100)
     }
     await sleep(1000)
@@ -216,24 +203,9 @@ async function refill_my_hand(new_hand) {
 
  function refill_other_hand(new_hand) {
     while (new_hand.length != animation_state.other_hand) {
-        let node = null
-        for (let i=0; i<new_hand.length; i++) {
-            let idx = animation_state.table.cards.indexOf(new_hand[i]) 
-            if (idx != -1) {
-                node = take_from_table(new_hand[i])
-                node.removeAttribute("id")
-                node.removeAttribute("onclick")
-                node.setAttribute("class", "card-container")
-                flip_card(node,SVGComponentTransferFunctionElement)
-                break;
-            }
-        }
+        let node = take_card_from_deck(null)
+        put_in_other_hand(node);
 
-        if(!node) {
-            node = take_card_from_deck(null)
-        }
-        node.classList.add("his_card")
-        animate_transform(node, getTransform(1+ ++animation_state.other_hand, 0, 0, 0), 700)
         //await sleep(100)
     }
     sleep(1000)
@@ -260,18 +232,20 @@ async function play_own(card, mode) {
 }
 
 function play_other(card, mode) {
-    let node = document.getElementsByClassName("his_card")[0]
+    let node = document.getElementById(""+(animation_state.other_hand-1))
     node.classList.remove("his_card")
     make_it_a_card(node, card)
     flip_card(node)
     animation_state.other_hand --;
 
     card_to_table(node,mode,card);
+    
 }
 
 async function card_to_table(node,mode,card) {
     node.style.zIndex=animation_state.table.zIndex++
     animation_state.table.cards.push(card);
+    node.classList.add("table")
     if (mode=="Defend") {
         animate_transform(node, getTransform(2+animation_state.table.last_attack_slot,10,2,15) + "rotate3d(0,0,1,400deg)", 500) 
     } else {
@@ -281,12 +255,42 @@ async function card_to_table(node,mode,card) {
     await sleep(300)
 }
 
-async function clear_table() {
-    for (let i in animation_state.table.cards) {
-        let card = animation_state.table.cards[i];
-        let node = document.getElementById(card);
-        flip_card(node, true)
-        animate_transform(node, getTransform(9,0,2,0), 300)
+function put_in_my_hand(node,card) {
+    node.classList.add("mine");
+    animation_state.hand.push(card)
+    animate_transform(node, getTransform(animation_state.hand.length+1, 0, 4, 0), 700)
+}
+
+function put_in_other_hand(node) {
+    node.classList.add("his_card")
+    node.id = animation_state.other_hand
+    animate_transform(node, getTransform(1+ ++animation_state.other_hand, 0, 0, 0), 700)
+}
+
+async function clear_table(my_hand, other_hand) {
+    //for (let i in animation_state.table.cards) {
+    while (document.getElementsByClassName("table").length>0) {
+        let node = document.getElementsByClassName("table")[0]
+        let card = node.id;
+        node.classList.remove("table")
+
+        if (my_hand.indexOf(card) != -1) {
+            put_in_my_hand(node,card)
+        } else if (other_hand.indexOf(card) != -1) {
+            let inner = node.getElementsByClassName("front")[0].getElementsByClassName("card-inner")[0];
+            node.getElementsByClassName("front")[0].removeChild(inner)
+            node.removeAttribute("id")
+            node.removeAttribute("onclick")
+            node.setAttribute("class", "card-container")
+            flip_card(node,true)
+            put_in_other_hand(node)
+        } else {
+            // Put in the done pile
+            flip_card(node, true)
+            animate_transform(node, getTransform(9,0,2,0), 300)
+        }
+
+
     }
     animation_state.table.cards = []
     animation_state.table.last_attack_slot=-1
