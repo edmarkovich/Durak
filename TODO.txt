@@ -1,4 +1,5 @@
-- animation
-- prompts
 - test on mobile
-- make pass/take more obvious
+- space out cards
+- verb slide with hand
+- blue glow LATER
+- server restart

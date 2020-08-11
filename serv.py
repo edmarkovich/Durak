@@ -26,7 +26,8 @@ class HTTPThread(threading.Thread):
     def run(self):
         class S(http.server.SimpleHTTPRequestHandler):
             def do_GET(self):
-                self.path = '/client.html'
+                print(self.path)
+                #self.path = '/client.html'
                 return http.server.SimpleHTTPRequestHandler.do_GET(self)
 
         S.allow_reuse_address = True

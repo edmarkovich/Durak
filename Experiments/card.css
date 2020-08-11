@@ -1,0 +1,98 @@
+:root {
+    --card_scale: 2.5;
+    --card_height: calc(378px / var(--card_scale));
+    --card_width: calc(244px / var(--card_scale));
+    --mine_highlight: none;
+    --mine_click: none;
+}
+
+body {
+    background-image: url("assets/white_wood.jpg");
+    background-size: cover;
+}
+
+.card-inner {
+    position: relative;
+    top: calc(-126px / var(--card_scale));
+    left: calc(-19px / var(--card_scale));
+    filter: blur(0.3px);
+    opacity: .9;
+}
+
+
+.front, .back {
+
+    position: absolute;
+    top:5;
+    left:5;
+
+    width: var(--card_width);
+    height: var(--card_height);
+
+
+
+    backface-visibility: hidden;
+
+    font-size: calc(2700% / var(--card_scale));
+    text-align: center;
+
+    overflow: hidden;
+}
+
+.card-container {
+    position: absolute;
+    transform: translateX(-150%);
+
+    width: calc(var(--card_width) + 10px);
+    height: calc(var(--card_height) + 10px);
+
+    background-image: url("assets/front.jpg");
+    background-size: 100% 100%;
+
+    border-radius: 10px;
+    box-shadow: -5px 5px 5px rgba(0, 0, 0, .25);
+}
+
+.front {
+    transform: rotateY(-180deg);
+}
+
+
+.back {
+    color: blue;
+    background-image: url("assets/back.png");
+    background-size: 100% 100%;
+}
+
+.red {
+    color: red;;
+}
+
+.mine {
+    box-shadow: var(--mine_highlight);
+    pointer-events: var(--mine_click); ;
+}
+
+.verb {
+    box-shadow: var(--mine_highlight);
+    pointer-events: var(--mine_click); ;
+}
+
+.verb .card-inner {
+    position: relative;
+    text-align: center;
+    top: 50px;
+    left: 0px;
+    font-style: italic;
+
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 250%;
+    font-weight: normal;
+
+    text-transform: lowercase;
+}
+
+.hidden {
+    visibility: hidden;
+}
