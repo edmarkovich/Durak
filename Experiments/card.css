@@ -23,8 +23,8 @@ body {
 .front, .back {
 
     position: absolute;
-    top:5;
-    left:5;
+    top:0;   /*was 5*/
+    left:0;
 
     width: var(--card_width);
     height: var(--card_height);
@@ -45,7 +45,12 @@ body {
 }
 
 .card-container {
+    width: calc(0px + var(--card_width)); /* was 10px */
+    height: calc(0px + var(--card_height));
     position: absolute;
+    padding: 0px;
+    margin: 0px;
+    border-radius: 10px;
 }
 
 .front {
@@ -69,9 +74,7 @@ body {
 }
 
 .highlight {
-    border-style: solid;
-    border-color: red;
-    border-width: 5px;
+    box-shadow: 0 0 15px 5px lightblue;
 }
 
 .verb {

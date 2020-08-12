@@ -15,32 +15,13 @@
 
             let socket = new WebSocket("ws://192.168.1.13:5678")
             socket.onopen = function(e) {
-                state.my_name = "X"; //prompt("Player Name"); 
+                state.my_name = prompt("Player Name"); 
                 socket.send('{"action":"join","name":"'+state.my_name+'"}');
-                socket.send('{"action":"join","name":"Other"}');
+                //socket.send('{"action":"join","name":"Other"}');
             }
 
             socket.onmessage = async function(event) {
                 let payload = JSON.parse(event.data)
-
-                if ('prompt' in payload) {
-                    return
-                    state.mode = payload.prompt.prompt;
-		            if ('player' in payload.prompt) {
-                        if (payload.prompt.player == state.my_name) {
-                            glow_hand(true)
-                            if (state.mode == 'Defend') { make_verb_card('take') }
-                            else if (state.mode == 'First attack') { make_verb_card(null) }
-                            else if (state.mode == 'Add Cards') { make_verb_card('pass') }
-                            else {make_verb_card(state.mode)}
-
-                        } else {
-                            glow_hand(false);
-                            make_verb_card(null);
-                        }
-
-                    }
-                }
 
                 if ('game' in payload) {
 
@@ -82,6 +63,23 @@
                     }
                     state.game = game
                     
+                }
+
+                if ('prompt' in payload) {
+                    state.mode = payload.prompt.prompt;
+		            if ('player' in payload.prompt) {
+                        if (payload.prompt.player == state.my_name) {
+                            glow_hand(true)
+                            if (state.mode == 'Defend') { make_verb_card('take') }
+                            else if (state.mode == 'First attack') { make_verb_card(null) }
+                            else if (state.mode == 'Add Cards') { make_verb_card('pass') }
+                            else {make_verb_card(state.mode)}
+
+                        } else {
+                            glow_hand(false);
+                            make_verb_card(null);
+                        }
+                    }
                 }
             }
 
