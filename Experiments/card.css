@@ -48,6 +48,7 @@ body {
     width: calc(0px + var(--card_width)); /* was 10px */
     height: calc(0px + var(--card_height));
     position: absolute;
+    transform: translateX(-150%);
     padding: 0px;
     margin: 0px;
     border-radius: 10px;

@@ -193,6 +193,30 @@ async function refill_other_hand(new_hand) {
 
 }
 
+async function card_to_table(node,mode,card) {
+    node.style.zIndex=animation_state.table.zIndex++
+    animation_state.table.cards.push(card);
+    node.classList.add("table")
+
+    if (mode=="Defend") {
+        await animate_transform(node, getTransform(2+animation_state.table.last_attack_slot,10,2,15) + "rotate3d(0,0,1,400deg)", 500).finished
+    } else {
+        animation_state.table.last_attack_slot ++
+       await animate_transform(node, getTransform(2 + animation_state.table.last_attack_slot,0,2,0), 500).finished
+    }
+    //await sleep(300)
+}
+
+async function play_own(card, mode) {
+    let node = document.getElementById(card);
+    console.log(node)
+    node.classList.remove("mine");
+    node.classList.remove("highlight");    
+    animation_state.hand.splice(animation_state.hand.indexOf(card),1)
+    
+    await card_to_table(node,mode,card)
+    await arrange_my_hand(animation_state.hand)
+}
 
 
 
@@ -280,15 +304,7 @@ let animation_state = {
     trump: null,
 }
 
-async function play_own(card, mode) {
-    let node = document.getElementById(card);
-    node.classList.remove("mine");
-    node.classList.remove("highlight");    
-    animation_state.hand.splice(animation_state.hand.indexOf(card),1)
-    
-    await card_to_table(node,mode,card)
-    await arrange_my_hand(animation_state.hand)
-}
+
 
 function play_other(card, mode) {
     let node = document.getElementById(""+(animation_state.other_hand-1))
@@ -302,19 +318,7 @@ function play_other(card, mode) {
     
 }
 
-async function card_to_table(node,mode,card) {
-    node.style.zIndex=animation_state.table.zIndex++
-    animation_state.table.cards.push(card);
-    node.classList.add("table")
 
-    if (mode=="Defend") {
-        await animate_transform(node, getTransform(2+animation_state.table.last_attack_slot,10,2,15) + "rotate3d(0,0,1,400deg)", 500) 
-    } else {
-        animation_state.table.last_attack_slot ++
-        await animate_transform(node, getTransform(2 + animation_state.table.last_attack_slot,0,2,0), 500)
-    }
-    //await sleep(300)
-}
 
 
 
