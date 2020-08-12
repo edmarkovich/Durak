@@ -112,11 +112,11 @@ async function flip_card(container, reverse) {
     let b=null
 
     if (reverse) {
-        a=animate_transform(front, "rotate3d(0,1,0,-180deg)", 200);
-        b=animate_transform(back, "rotate3d(0,1,0,0deg)", 200);
+        a=animate_transform(front, "rotate3d(0,1,0,-180deg)", 150);
+        b=animate_transform(back, "rotate3d(0,1,0,0deg)", 150);
     } else {
-        a=animate_transform(front, "rotate3d(0,1,0,0deg)", 200);
-        b=animate_transform(back, "rotate3d(0,1,0,-180deg)", 200);
+        a=animate_transform(front, "rotate3d(0,1,0,0deg)", 150);
+        b=animate_transform(back, "rotate3d(0,1,0,-180deg)", 150);
     }
     await a.finished
     await b.finished
@@ -125,7 +125,6 @@ async function flip_card(container, reverse) {
 function put_in_my_hand(node,card) {
     node.classList.add("mine");
     animation_state.hand.push(card)
-    return animate_transform(node, getTransform(animation_state.hand.length+1, 0, 4, 0), 700)
 }
 
 async function put_in_other_hand(node) {
@@ -134,7 +133,8 @@ async function put_in_other_hand(node) {
     return animate_transform(node, getTransform(1+ ++animation_state.other_hand, 0, 0, 0), 500)
 }
 
-async function arrange_my_hand(new_hand) {
+
+function hand_sort(a,b) {
 
     function rank2int(card){
         let a_rank =0;
@@ -147,25 +147,29 @@ async function arrange_my_hand(new_hand) {
         }
         return a_rank
     }
-    new_hand.sort(function(a,b){
-        let a_suit = a[0];
-        let a_rank = rank2int(a)
-        let b_suit = b[0];
-        let b_rank = rank2int(b)
 
-        if (a_suit == animation_state.trump && b_suit != animation_state.trump) { return 1}
-        if (b_suit == animation_state.trump && a_suit != animation_state.trump) { return -1}
-        if (a_rank == b_rank) { return 0; }
-        return (a_rank > b_rank)?1:-1;
-    })
+    let a_suit = a[0];
+    let a_rank = rank2int(a)
+    let b_suit = b[0];
+    let b_rank = rank2int(b)
 
+    if (a_suit == animation_state.trump && b_suit != animation_state.trump) { return 1}
+    if (b_suit == animation_state.trump && a_suit != animation_state.trump) { return -1}
+    if (a_rank == b_rank) { return (a_suit > b_suit)?1:-1; }
+    return (a_rank > b_rank)?1:-1;
+    
+}
+
+
+async function arrange_my_hand(new_hand) {
+    new_hand.sort(hand_sort)
     let waits = []
     for (let i=0; i<new_hand.length;++i) {
         let node = document.getElementById(new_hand[i]);
         if (!node) continue;
         waits.push( animate_transform(node, getTransform(i+2, 0, 4, 0), 500))
     }
-    //for (let i=0; i<waits.length; ++i) { await waits[i].finished  }
+    for (let i=0; i<waits.length; ++i) { await waits[i].finished  }
 }
 
 async function refill_my_hand(new_hand) {
@@ -174,19 +178,19 @@ async function refill_my_hand(new_hand) {
     for (let i = 0; i< cards_to_add.length; i++) {
         let node = take_card_from_deck(cards_to_add[i])
         make_it_a_card(node, cards_to_add[i]);
-        waits.push(put_in_my_hand(node, cards_to_add[i]))
+        put_in_my_hand(node, cards_to_add[i])//)
+        waits.push(arrange_my_hand(new_hand))
         await flip_card(node); 
-
     }
-    for (let i=0; i<waits.length; ++i) { await waits[i].finished  }
-    await arrange_my_hand(new_hand);
+    await Promise.all(waits)
 }
 
 async function refill_other_hand(new_hand) {
     let waits =[]
     while (new_hand.length != animation_state.other_hand) {
         let node = take_card_from_deck(null)
-        waits.push( put_in_other_hand(node))
+        waits.push( 
+            put_in_other_hand(node))
         await sleep(150)
     }
     for (let i=0; i<waits.length; ++i) { await waits[i].finished  }
@@ -216,7 +220,15 @@ async function play_own(card, mode) {
     await arrange_my_hand(animation_state.hand)
 }
 
-
+function play_other(card, mode) {
+    let node = document.getElementById(""+(animation_state.other_hand-1))
+    node.classList.remove("his_card")
+    node.classList.remove("highlight"); 
+    make_it_a_card(node, card)
+    flip_card(node)
+    animation_state.other_hand --;
+    card_to_table(node,mode,card);
+}
 
 function make_verb_card(verb) {
     let node = null
@@ -319,17 +331,7 @@ let animation_state = {
 
 
 
-function play_other(card, mode) {
-    let node = document.getElementById(""+(animation_state.other_hand-1))
-    node.classList.remove("his_card")
-    node.classList.remove("highlight"); 
-    make_it_a_card(node, card)
-    flip_card(node)
-    animation_state.other_hand --;
 
-    card_to_table(node,mode,card);
-    
-}
 
 
 
@@ -346,6 +348,9 @@ async function clear_table(my_hand, other_hand) {
 
         if (my_hand.indexOf(card) != -1) {
             put_in_my_hand(node,card)
+
+            await arrange_my_hand(my_hand);
+
         } else if (other_hand.indexOf(card) != -1) {
             let inner = node.getElementsByClassName("front")[0].getElementsByClassName("card-inner")[0];
             node.getElementsByClassName("front")[0].removeChild(inner)

@@ -20,7 +20,15 @@
                 //socket.send('{"action":"join","name":"Other"}');
             }
 
+            running = false;
             socket.onmessage = async function(event) {
+
+
+                while (running) {
+                    await sleep(100)
+                }
+                running = true;
+
                 let payload = JSON.parse(event.data)
 
                 glow_hand("clear");
@@ -83,6 +91,7 @@
                         }
                     }
                 }
+                running = false;
             }
 
             function send_card(card) {
