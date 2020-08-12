@@ -1,7 +1,4 @@
-
 - test on mobile
-
-
 - space out cards
 - verb slide with hand
 - blue glow LATER
