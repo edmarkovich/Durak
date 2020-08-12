@@ -18,16 +18,11 @@ class IOUtil:
                  return {'game': g}
         return {}
 
-    @staticmethod
-    def send_game_state():
-        IOUtil.defaultDestination(json.dumps(IOUtil.get_game_data()))
 
     @staticmethod
     def get_input(prompt, player = None):
 
-        IOUtil.send_game_state()
-
-        message = {} #IOUtil.get_game_data()
+        message = IOUtil.get_game_data()
         message['prompt'] = prompt
 
         IOUtil.defaultDestination(json.dumps(message))
