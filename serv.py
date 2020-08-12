@@ -39,35 +39,44 @@ class HTTPThread(threading.Thread):
 
 class WSThread(threading.Thread):
     def __init__(self):
-      threading.Thread.__init__(self)
-      self.websockets=[]
+        threading.Thread.__init__(self)
+        self.websockets=[]
+        self.end_mode=False
     def run(self):
-      async def update(websocket, path):
-           self.websockets.append(websocket)
-           print("Serving", websocket)
-           async for message in websocket:
-             data = message
-             inqueue.put(data)
-           self.websockets.remove(websocket)
-           inqueue.put("Die")
+        async def inbound_messaging(websocket, path):
+            if len(self.websockets) == 0:
+                print("First client, restarting the game")
+                inqueue.put("Die")
+                self.end_mode=False
+            if self.end_mode:
+                print("End mode in progress")
+                return
 
-      async def test():
-        while True:
-           await asyncio.sleep(0.1)
-           if not outqueue.empty():
-             m = outqueue.get()
-             for ws in self.websockets:
-                 await ws.send(m)
+            self.websockets.append(websocket)
+            async for message in websocket:
+                data = message
+                inqueue.put(data)
+            self.websockets.remove(websocket)
+            print("Disconect", len(self.websockets), "remain", websocket)
+            self.end_mode=True
 
-      loop = asyncio.new_event_loop()
-      asyncio.set_event_loop(loop)
+        async def outbound_messaging():
+            while True:
+                await asyncio.sleep(0.1)
+                if not outqueue.empty():
+                    m = outqueue.get()
+                    for ws in self.websockets:
+                        await ws.send(m)
 
-      start_server = websockets.serve(update, "192.168.1.13", 5678)
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
 
-      asyncio.ensure_future(start_server)
-      asyncio.ensure_future(test())
-      asyncio.get_event_loop().run_forever()
-      print("WSThread Done")
+        start_server = websockets.serve(inbound_messaging, "192.168.1.13", 5678)
+
+        asyncio.ensure_future(start_server)
+        asyncio.ensure_future(outbound_messaging())
+        asyncio.get_event_loop().run_forever()
+        print("WSThread Done")
 
 class GameThread(threading.Thread):
     def __init__(self):
