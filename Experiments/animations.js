@@ -190,7 +190,6 @@ async function refill_other_hand(new_hand) {
         await sleep(150)
     }
     for (let i=0; i<waits.length; ++i) { await waits[i].finished  }
-
 }
 
 async function card_to_table(node,mode,card) {
@@ -209,7 +208,6 @@ async function card_to_table(node,mode,card) {
 
 async function play_own(card, mode) {
     let node = document.getElementById(card);
-    console.log(node)
     node.classList.remove("mine");
     node.classList.remove("highlight");    
     animation_state.hand.splice(animation_state.hand.indexOf(card),1)
@@ -256,47 +254,52 @@ function make_verb_card(verb) {
     }    
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 async function glow_hand(state) {
-    if (state) { 
+    let nodes =  document.getElementsByClassName("his_card")
+    for (let i =0; i<nodes.length; ++i) {
+        nodes[i].classList.remove("highlight")
+    } 
+
+    if (state=="me") { 
         document.documentElement.style.setProperty('--mine_highlight', "0 0 15px 5px lightblue");
         document.documentElement.style.setProperty('--mine_click', "all");
 
-        let nodes =  document.getElementsByClassName("his_card")
-        for (let i =0; i<nodes.length; ++i) {
-            nodes[i].classList.remove("highlight")
-        } 
-    } else {
+
+    } else if (state == "other") {
         document.documentElement.style.setProperty('--mine_highlight', "none");
         document.documentElement.style.setProperty('--mine_click', "none");
 
         let nodes =  document.getElementsByClassName("his_card")
+
+
         for (let i =0; i<nodes.length; ++i) {
             nodes[i].classList.add("highlight")
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
