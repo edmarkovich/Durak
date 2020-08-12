@@ -15,16 +15,16 @@
 
             let socket = new WebSocket("ws://192.168.1.13:5678")
             socket.onopen = function(e) {
-                state.my_name = prompt("Player Name"); 
+                state.my_name = "X"; //prompt("Player Name"); 
                 socket.send('{"action":"join","name":"'+state.my_name+'"}');
-                //socket.send('{"action":"join","name":"Other"}');
+                socket.send('{"action":"join","name":"Other"}');
             }
 
             socket.onmessage = async function(event) {
                 let payload = JSON.parse(event.data)
-                console.log(payload)
 
                 if ('prompt' in payload) {
+                    return
                     state.mode = payload.prompt.prompt;
 		            if ('player' in payload.prompt) {
                         if (payload.prompt.player == state.my_name) {
@@ -43,6 +43,7 @@
                 }
 
                 if ('game' in payload) {
+
                     let game = payload.game
                     if(!state.game) {
                         await new_deck()
@@ -54,9 +55,9 @@
                         for (let j=0; j<state.game.players.length; j++) {
                             if (state.game.players[j].hand.indexOf(table_to_add[i]) != -1) {
                                 if (state.game.players[j].name == state.my_name) {
-                                    play_own(table_to_add[i], state.mode);
+                                    await play_own(table_to_add[i], state.mode);
                                 } else {
-                                    play_other(table_to_add[i], state.mode);
+                                    await play_other(table_to_add[i], state.mode);
                                 }
                             }
                         }
