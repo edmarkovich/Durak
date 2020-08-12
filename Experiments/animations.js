@@ -184,7 +184,9 @@ async function refill_other_hand(new_hand) {
     let waits =[]
     while (new_hand.length != animation_state.other_hand) {
         let node = await take_card_from_deck(null)
-        flip_card(node,true)
+
+        await make_deck_card(node);
+
         waits.push( put_in_other_hand(node))
         await sleep(150)
     }
@@ -324,6 +326,17 @@ let animation_state = {
 }
 
 
+async function make_deck_card(node) {
+    let inner = node.getElementsByClassName("front")[0].getElementsByClassName("card-inner")[0];
+    if (inner) {
+        node.getElementsByClassName("front")[0].removeChild(inner)
+    }
+    node.removeAttribute("id")
+    node.removeAttribute("onclick")
+    node.setAttribute("class", "card-container")
+    flip_card(node,true)
+}
+
 
 async function clear_table(my_hand, other_hand) {
     let waits = []
@@ -338,20 +351,16 @@ async function clear_table(my_hand, other_hand) {
             waits.push(arrange_my_hand(my_hand));
 
         } else if (other_hand.indexOf(card) != -1) {
-            let inner = node.getElementsByClassName("front")[0].getElementsByClassName("card-inner")[0];
-            node.getElementsByClassName("front")[0].removeChild(inner)
-            node.removeAttribute("id")
-            node.removeAttribute("onclick")
-            node.setAttribute("class", "card-container")
-            flip_card(node,true)
-            put_in_other_hand(node)
+            await make_deck_card(node)
+            waits.push(put_in_other_hand(node))
         } else {
             // Put in the done pile
             flip_card(node, true)
-            animate_transform(node, getTransform(9,0,2,0), 300)
+            waits.push(animate_transform(node, getTransform(9,0,2,0), 300))
         }
-        await Promise.all(waits)
+        
     }
+    await Promise.all(waits)
     animation_state.table.cards = []
     animation_state.table.last_attack_slot=-1
 }
