@@ -80,14 +80,10 @@ async function put_trump(trump_card) {
     await sleep(100)
 }
 
-function take_card_from_deck(card) {
+async function take_card_from_deck(card) {
 
     let nodes = document.getElementsByClassName("deck")
     let node = nodes[nodes.length-1]
-    if (card == animation_state.trump_card) {
-        node = nodes[0];
-        flip_card(node,false)
-    }
 
     node.classList.remove("deck")
     return node;
@@ -118,8 +114,7 @@ async function flip_card(container, reverse) {
         a=animate_transform(front, "rotate3d(0,1,0,0deg)", 150);
         b=animate_transform(back, "rotate3d(0,1,0,-180deg)", 150);
     }
-    await a.finished
-    await b.finished
+    await Promise.all([ a.finished ,     await b.finished] )
 }
 
 function put_in_my_hand(node,card) {
@@ -130,7 +125,7 @@ function put_in_my_hand(node,card) {
 async function put_in_other_hand(node) {
     node.classList.add("his_card")
     node.id = animation_state.other_hand
-    return animate_transform(node, getTransform(1+ ++animation_state.other_hand, 0, 0, 0), 500)
+    return animate_transform(node, getTransform(1+ ++animation_state.other_hand, 0, 0, 0), 500).finished
 }
 
 
@@ -176,7 +171,7 @@ async function refill_my_hand(new_hand) {
     let cards_to_add = new_hand.filter(x => !animation_state.hand.includes(x) );
     let waits = []
     for (let i = 0; i< cards_to_add.length; i++) {
-        let node = take_card_from_deck(cards_to_add[i])
+        let node = await take_card_from_deck(cards_to_add[i])
         make_it_a_card(node, cards_to_add[i]);
         put_in_my_hand(node, cards_to_add[i])//)
         waits.push(arrange_my_hand(new_hand))
@@ -188,12 +183,12 @@ async function refill_my_hand(new_hand) {
 async function refill_other_hand(new_hand) {
     let waits =[]
     while (new_hand.length != animation_state.other_hand) {
-        let node = take_card_from_deck(null)
-        waits.push( 
-            put_in_other_hand(node))
+        let node = await take_card_from_deck(null)
+        flip_card(node,true)
+        waits.push( put_in_other_hand(node))
         await sleep(150)
     }
-    for (let i=0; i<waits.length; ++i) { await waits[i].finished  }
+    await Promise.all(waits)
 }
 
 async function card_to_table(node,mode,card) {
