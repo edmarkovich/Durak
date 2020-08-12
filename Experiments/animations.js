@@ -162,7 +162,7 @@ async function arrange_my_hand(new_hand) {
     for (let i=0; i<new_hand.length;++i) {
         let node = document.getElementById(new_hand[i]);
         if (!node) continue;
-        waits.push( animate_transform(node, getTransform(i+2, 0, 4, 0), 500))
+        waits.push( animate_transform(node, getTransform(i+2, 0, 4, 0), 300))
     }
     for (let i=0; i<waits.length; ++i) { await waits[i].finished  }
 }
@@ -173,7 +173,7 @@ async function refill_my_hand(new_hand) {
     for (let i = 0; i< cards_to_add.length; i++) {
         let node = await take_card_from_deck(cards_to_add[i])
         make_it_a_card(node, cards_to_add[i]);
-        put_in_my_hand(node, cards_to_add[i])//)
+        put_in_my_hand(node, cards_to_add[i]);
         waits.push(arrange_my_hand(new_hand))
         await flip_card(node); 
     }
@@ -202,7 +202,6 @@ async function card_to_table(node,mode,card) {
         animation_state.table.last_attack_slot ++
        await animate_transform(node, getTransform(2 + animation_state.table.last_attack_slot,0,2,0), 500).finished
     }
-    //await sleep(300)
 }
 
 async function play_own(card, mode) {
@@ -326,16 +325,8 @@ let animation_state = {
 
 
 
-
-
-
-
-
-
-
-
 async function clear_table(my_hand, other_hand) {
-    //for (let i in animation_state.table.cards) {
+    let waits = []
     while (document.getElementsByClassName("table").length>0) {
         let node = document.getElementsByClassName("table")[0]
         let card = node.id;
@@ -344,7 +335,7 @@ async function clear_table(my_hand, other_hand) {
         if (my_hand.indexOf(card) != -1) {
             put_in_my_hand(node,card)
 
-            await arrange_my_hand(my_hand);
+            waits.push(arrange_my_hand(my_hand));
 
         } else if (other_hand.indexOf(card) != -1) {
             let inner = node.getElementsByClassName("front")[0].getElementsByClassName("card-inner")[0];
@@ -359,10 +350,8 @@ async function clear_table(my_hand, other_hand) {
             flip_card(node, true)
             animate_transform(node, getTransform(9,0,2,0), 300)
         }
-
-
+        await Promise.all(waits)
     }
     animation_state.table.cards = []
     animation_state.table.last_attack_slot=-1
-    await sleep(400);
 }
