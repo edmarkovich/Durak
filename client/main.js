@@ -1,12 +1,14 @@
-import {glow_hand, sleep, make_verb_card, new_deck, put_trump,
-play_other,play_own, clear_table,refill_my_hand,refill_other_hand} from "./animations.js";
+import {glow_hand, sleep, make_verb_card, 
+play_other,play_own, clear_table,refill_my_hand,refill_other_hand,
+animation_state} from "./animations.js";
+import {Deck} from "./deck.js"
 
             let state = {
                 game: null
             }
 
             let socket = new WebSocket("ws://192.168.1.13:5678")
-            socket.onopen = function(e) {
+            socket.onopen = function() {
                 state.my_name = prompt("Player Name"); 
                 socket.send('{"action":"join","name":"'+state.my_name+'"}');
                 //socket.send('{"action":"join","name":"Other"}');
@@ -30,8 +32,10 @@ play_other,play_own, clear_table,refill_my_hand,refill_other_hand} from "./anima
 
                     let game = payload.game
                     if(!state.game) {
-                        await new_deck()
-                        await put_trump(game.trump)
+                        await Deck.new_deck()
+                        animation_state.trump =game.trump[0]
+                        animation_state.trump_card = game.trump
+                        await Deck.put_trump(game.trump)
                     }
 
                     let table_to_add = game.table.filter(x => !state.game.table.includes(x) );

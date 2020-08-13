@@ -1,71 +1,9 @@
 /* eslint-disable no-unused-vars */
 
 import { Card } from './card.js';
+import { Deck } from './deck.js'
 
 export function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms));}
-
-
-
-function getTransform(column, column_offset, row, row_offset) {
-    return "translate3d("
-        +"calc((1.2 * " + column + " * var(--card_width)) + " + column_offset + "px), "
-        +"calc((var(--card_height) * "+row+ ") + " + row_offset + "px), 0px)" 
-}
-
- export async function new_deck() {
-    let waits = []
-    for (let i=0; i<36; i++) {
-        let back = document.createElement("div")
-        back.classList.add("back")
-
-        let front = document.createElement("div")
-        front.classList.add("front")
-        
-        let container = document.createElement("div")
-        container.setAttribute("class", "card-container deck")
-        
-        container.appendChild(back)
-        container.appendChild(front)
-
-        document.body.appendChild(container)
-
-        waits.push(Card.animate_transform(container, getTransform(1, 0, 2, 0),500))
-    }
-    for (let i=0; i<waits.length; ++i) { await waits[i].finished  }
-}
-
-export async function put_trump(trump_card) {
-    animation_state.trump =trump_card[0]
-    animation_state.trump_card = trump_card
-
-    let nodes = document.getElementsByClassName("deck")
-    let node = nodes[0]
-    Card.make_it_a_card(node, animation_state.trump_card);
-
-    //Flip, turn and move turmp
-    Card.flip_card(node)
-    await Card.animate_transform(node, getTransform(0, 0, 2, 10), 500).finished
-
-    //Put the deck over trump
-    let waits = [];
-    for (let i=1; i<nodes.length; i++) {
-        node = nodes[i]
-        waits.push(Card.animate_transform(node, getTransform(0, 70, 2, -50), 500))
-    } 
-    for (let i=0; i<waits.length; ++i) { await waits[i].finished  }
-    await sleep(100)
-}
-
-async function take_card_from_deck(card) {
-
-    let nodes = document.getElementsByClassName("deck")
-    let node = nodes[nodes.length-1]
-
-    node.classList.remove("deck")
-    return node;
-}
-
-
 
 
 
@@ -77,7 +15,7 @@ function put_in_my_hand(node,card) {
 async function put_in_other_hand(node) {
     node.classList.add("his_card")
     node.id = animation_state.other_hand
-    return Card.animate_transform(node, getTransform(1+ ++animation_state.other_hand, 0, 0, 0), 500).finished
+    return Card.animate_transform(node, Card.getTransform(1+ ++animation_state.other_hand, 0, 0, 0), 500).finished
 }
 
 
@@ -114,7 +52,7 @@ async function arrange_my_hand(new_hand) {
     for (let i=0; i<new_hand.length;++i) {
         let node = document.getElementById(new_hand[i]);
         if (!node) continue;
-        waits.push(Card.animate_transform(node, getTransform(i+2, 0, 4, 0), 300))
+        waits.push(Card.animate_transform(node, Card.getTransform(i+2, 0, 4, 0), 300))
     }
     for (let i=0; i<waits.length; ++i) { await waits[i].finished  }
 }
@@ -123,7 +61,7 @@ export async function refill_my_hand(new_hand) {
     let cards_to_add = new_hand.filter(x => !animation_state.hand.includes(x) );
     let waits = []
     for (let i = 0; i< cards_to_add.length; i++) {
-        let node = await take_card_from_deck(cards_to_add[i])
+        let node = await Deck.take_card_from_deck(cards_to_add[i])
         Card.make_it_a_card(node, cards_to_add[i]);
         put_in_my_hand(node, cards_to_add[i]);
         waits.push(arrange_my_hand(new_hand))
@@ -135,7 +73,7 @@ export async function refill_my_hand(new_hand) {
 export async function refill_other_hand(new_hand) {
     let waits =[]
     while (new_hand.length != animation_state.other_hand) {
-        let node = await take_card_from_deck(null)
+        let node = await Deck.take_card_from_deck(null)
 
         await make_deck_card(node);
 
@@ -151,10 +89,10 @@ async function card_to_table(node,mode,card) {
     node.classList.add("table")
 
     if (mode=="Defend") {
-        await Card.animate_transform(node, getTransform(2+animation_state.table.last_attack_slot,10,2,15) + "rotate3d(0,0,1,400deg)", 500).finished
+        await Card.animate_transform(node, Card.getTransform(2+animation_state.table.last_attack_slot,10,2,15) + "rotate3d(0,0,1,400deg)", 500).finished
     } else {
         animation_state.table.last_attack_slot ++
-       await Card.animate_transform(node, getTransform(2 + animation_state.table.last_attack_slot,0,2,0), 500).finished
+       await Card.animate_transform(node, Card.getTransform(2 + animation_state.table.last_attack_slot,0,2,0), 500).finished
     }
 }
 
@@ -210,7 +148,7 @@ export function make_verb_card(verb) {
         node.getElementsByClassName("front")[0].getElementsByClassName("card-inner")[0].innerHTML =(verb == "pass")?"done":verb
         node.classList.remove("hidden")
         Card.animate_transform(node, 
-            getTransform(animation_state.hand.length+2, 0, 4, 0), 0)
+            Card.getTransform(animation_state.hand.length+2, 0, 4, 0), 0)
     }    
 }
 
@@ -266,7 +204,7 @@ export async function glow_hand(state) {
 
 
 
-let animation_state = {
+export let animation_state = {
     table: {
         last_attack_slot: -1,
         zIndex: 100,
@@ -308,7 +246,7 @@ export async function clear_table(my_hand, other_hand) {
         } else {
             // Put in the done pile
             Card.flip_card(node, true)
-            waits.push(Card.animate_transform(node, getTransform(9,0,2,0), 300))
+            waits.push(Card.animate_transform(node, Card.getTransform(9,0,2,0), 300))
         }
         
     }

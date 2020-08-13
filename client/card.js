@@ -57,4 +57,10 @@ export class Card {
         return anim;
     }
 
+    static getTransform(column, column_offset, row, row_offset) {
+        return "translate3d("
+            +"calc((1.2 * " + column + " * var(--card_width)) + " + column_offset + "px), "
+            +"calc((var(--card_height) * "+row+ ") + " + row_offset + "px), 0px)" 
+    }
+
 }
