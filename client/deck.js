@@ -1,5 +1,5 @@
 import {Card} from "./card.js"
-import {sleep} from "./animations.js"
+import {sleep, animate_transform} from "./utils.js"
 
 export class Deck {
     static async new_deck() {
@@ -19,7 +19,7 @@ export class Deck {
 
             document.body.appendChild(container)
 
-            waits.push(Card.animate_transform(container, Card.getTransform(1, 0, 2, 0),500))
+            waits.push(animate_transform(container, Card.getTransform(1, 0, 2, 0),500))
         }
         for (let i=0; i<waits.length; ++i) { await waits[i].finished  }
     }
@@ -32,13 +32,13 @@ export class Deck {
     
         //Flip, turn and move turmp
         Card.flip_card(node)
-        await Card.animate_transform(node, Card.getTransform(0, 0, 2, 10), 500).finished
+        await animate_transform(node, Card.getTransform(0, 0, 2, 10), 500).finished
     
         //Put the deck over trump
         let waits = [];
         for (let i=1; i<nodes.length; i++) {
             node = nodes[i]
-            waits.push(Card.animate_transform(node, Card.getTransform(0, 70, 2, -50), 500))
+            waits.push(animate_transform(node, Card.getTransform(0, 70, 2, -50), 500))
         } 
         for (let i=0; i<waits.length; ++i) { await waits[i].finished  }
         await sleep(100)

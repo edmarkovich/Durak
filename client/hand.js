@@ -1,18 +1,19 @@
-import { animation_state, sleep } from './animations.js';
+import { sleep, animate_transform } from './utils.js';
 import { Card } from "./card.js";
 import { Deck } from "./deck.js";
+import { Table } from "./table.js"
 
 export class Hand {
 
     static put_in_my_hand(node, card) {
         node.classList.add("mine");
-        animation_state.hand.push(card);
+        Table.state.hand.push(card);
     }
 
     static async put_in_other_hand(node) {
         node.classList.add("his_card")
-        node.id = animation_state.other_hand
-        return Card.animate_transform(node, Card.getTransform(1+ ++animation_state.other_hand, 0, 0, 0), 500).finished
+        node.id = Table.state.other_hand
+        return animate_transform(node, Card.getTransform(1+ ++Table.state.other_hand, 0, 0, 0), 500).finished
     }
 
     static hand_sort(a,b) {
@@ -34,8 +35,8 @@ export class Hand {
         let b_suit = b[0];
         let b_rank = rank2int(b)
 
-        if (a_suit == animation_state.trump && b_suit != animation_state.trump) { return 1}
-        if (b_suit == animation_state.trump && a_suit != animation_state.trump) { return -1}
+        if (a_suit == Table.state.trump && b_suit != Table.state.trump) { return 1}
+        if (b_suit == Table.state.trump && a_suit != Table.state.trump) { return -1}
         if (a_rank == b_rank) { return (a_suit > b_suit)?1:-1; }
         return (a_rank > b_rank)?1:-1;
         
@@ -48,13 +49,13 @@ export class Hand {
         for (let i=0; i<new_hand.length;++i) {
             let node = document.getElementById(new_hand[i]);
             if (!node) continue;
-            waits.push(Card.animate_transform(node, Card.getTransform(i+2, 0, 4, 0), 300))
+            waits.push(animate_transform(node, Card.getTransform(i+2, 0, 4, 0), 300))
         }
         for (let i=0; i<waits.length; ++i) { await waits[i].finished  }
     }
 
     static async refill_my_hand(new_hand) {
-        let cards_to_add = new_hand.filter(x => !animation_state.hand.includes(x) );
+        let cards_to_add = new_hand.filter(x => !Table.state.hand.includes(x) );
         let waits = []
         for (let i = 0; i< cards_to_add.length; i++) {
             let node = await Deck.take_card_from_deck(cards_to_add[i])
@@ -68,7 +69,7 @@ export class Hand {
 
     static async refill_other_hand(new_hand) {
         let waits =[]
-        while (new_hand.length != animation_state.other_hand) {
+        while (new_hand.length != Table.state.other_hand) {
             let node = await Deck.take_card_from_deck(null)
 
             await Card.make_deck_card(node);

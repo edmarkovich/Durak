@@ -1,4 +1,4 @@
-import {sleep, animation_state} from "./animations.js";
+import {sleep} from "./utils.js";
 import {Deck} from "./deck.js"
 import {Hand} from "./hand.js"
 import {Table} from "./table.js"
@@ -33,8 +33,8 @@ import {Card} from  "./card.js"
                     let game = payload.game
                     if(!state.game) {
                         await Deck.new_deck()
-                        animation_state.trump =game.trump[0]
-                        animation_state.trump_card = game.trump
+                        Table.state.trump =game.trump[0]
+                        Table.state.trump_card = game.trump
                         await Deck.put_trump(game.trump)
                     }
 
