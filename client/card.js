@@ -63,4 +63,15 @@ export class Card {
             +"calc((var(--card_height) * "+row+ ") + " + row_offset + "px), 0px)" 
     }
 
+    static async make_deck_card(node) {
+        let inner = node.getElementsByClassName("front")[0].getElementsByClassName("card-inner")[0];
+        if (inner) {
+            node.getElementsByClassName("front")[0].removeChild(inner)
+        }
+        node.removeAttribute("id")
+        node.removeAttribute("onclick")
+        node.setAttribute("class", "card-container")
+        Card.flip_card(node,true)
+    }
+
 }

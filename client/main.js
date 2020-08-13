@@ -1,7 +1,8 @@
-import {glow_hand, sleep, make_verb_card, 
-play_other,play_own, clear_table,refill_my_hand,refill_other_hand,
+import {sleep, make_verb_card, 
+play_other,play_own, clear_table,
 animation_state} from "./animations.js";
 import {Deck} from "./deck.js"
+import {Hand} from "./hand.js"
 
             let state = {
                 game: null
@@ -25,7 +26,7 @@ import {Deck} from "./deck.js"
 
                 let payload = JSON.parse(event.data)
 
-                glow_hand("clear");
+                Hand.glow_hand("clear");
                 make_verb_card(null);
 
                 if ('game' in payload) {
@@ -65,8 +66,8 @@ import {Deck} from "./deck.js"
                             }
                         }
                         await clear_table(my_hand,other_hand) 
-                        await refill_my_hand(my_hand);
-                        await refill_other_hand(other_hand)
+                        await Hand.refill_my_hand(my_hand);
+                        await Hand.refill_other_hand(other_hand)
                     }
                     state.game = game
                     
@@ -76,14 +77,14 @@ import {Deck} from "./deck.js"
                     state.mode = payload.prompt.prompt;
                    if ('player' in payload.prompt) {
                         if (payload.prompt.player == state.my_name) {
-                            glow_hand("me");
+                            Hand.glow_hand("me");
                             if (state.mode == 'Defend') { make_verb_card('take') }
                             else if (state.mode == 'First attack') { make_verb_card(null) }
                             else if (state.mode == 'Add Cards') { make_verb_card('pass') }
                             else {make_verb_card(state.mode)}
 
                         } else {
-                            glow_hand("other")
+                            Hand.glow_hand("other")
                         }
                     }
                 }
