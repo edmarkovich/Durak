@@ -70,7 +70,7 @@ play_other,play_own, clear_table,refill_my_hand,refill_other_hand} from "./anima
 
                 if ('prompt' in payload) {
                     state.mode = payload.prompt.prompt;
-		            if ('player' in payload.prompt) {
+                   if ('player' in payload.prompt) {
                         if (payload.prompt.player == state.my_name) {
                             glow_hand("me");
                             if (state.mode == 'Defend') { make_verb_card('take') }
