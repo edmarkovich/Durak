@@ -44,4 +44,24 @@ export class Table {
         animation_state.table.cards = []
         animation_state.table.last_attack_slot=-1
     }
+
+    static async play_own(card, mode) {
+        let node = document.getElementById(card);
+        node.classList.remove("mine");
+        node.classList.remove("highlight");    
+        animation_state.hand.splice(animation_state.hand.indexOf(card),1)
+        
+        await Table.card_to_table(node,mode,card)
+        await Hand.arrange_my_hand(animation_state.hand)
+    }
+    
+    static play_other(card, mode) {
+        let node = document.getElementById(""+(animation_state.other_hand-1))
+        node.classList.remove("his_card")
+        node.classList.remove("highlight"); 
+        Card.make_it_a_card(node, card)
+        Card.flip_card(node)
+        animation_state.other_hand --;
+        Table.card_to_table(node,mode,card);
+    }
 }

@@ -1,3 +1,4 @@
+import { animation_state } from './animations.js';
 
 export class Card {
 
@@ -74,4 +75,39 @@ export class Card {
         Card.flip_card(node,true)
     }
 
+    static make_verb_card(verb) {
+        let node = null
+        let nodes = document.getElementsByClassName("verb")
+        if (nodes.length==0) {
+            node = document.createElement("div")
+            node.setAttribute("class", "card-container verb hidden")
+    
+            let inner = document.createElement("div")
+            inner.classList.add("card-inner")
+    
+            let front = document.createElement("div");
+            front.setAttribute("class","front")
+    
+            let back = document.createElement("div");
+            back.setAttribute("class","back")
+            node.appendChild(back);
+            node.appendChild(front);
+    
+            front.appendChild(inner)
+            document.body.appendChild(node)
+            Card.flip_card(node)
+        } else {
+            node = nodes[0]
+        }
+    
+        if (verb==null){
+            node.classList.add("hidden")
+        } else {
+            node.setAttribute("onclick", "send_verb('"+verb+"')")
+            node.getElementsByClassName("front")[0].getElementsByClassName("card-inner")[0].innerHTML =(verb == "pass")?"done":verb
+            node.classList.remove("hidden")
+            Card.animate_transform(node, 
+                Card.getTransform(animation_state.hand.length+2, 0, 4, 0), 0)
+        }    
+    }
 }

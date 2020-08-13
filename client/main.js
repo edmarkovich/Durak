@@ -1,7 +1,8 @@
-import {sleep, make_verb_card, play_other,play_own, animation_state} from "./animations.js";
+import {sleep, animation_state} from "./animations.js";
 import {Deck} from "./deck.js"
 import {Hand} from "./hand.js"
 import {Table} from "./table.js"
+import {Card} from  "./card.js"
 
             let state = {
                 game: null
@@ -11,7 +12,6 @@ import {Table} from "./table.js"
             socket.onopen = function() {
                 state.my_name = prompt("Player Name"); 
                 socket.send('{"action":"join","name":"'+state.my_name+'"}');
-                //socket.send('{"action":"join","name":"Other"}');
             }
 
             var running = false;
@@ -26,7 +26,7 @@ import {Table} from "./table.js"
                 let payload = JSON.parse(event.data)
 
                 Hand.glow_hand("clear");
-                make_verb_card(null);
+                Card.make_verb_card(null);
 
                 if ('game' in payload) {
 
@@ -43,9 +43,9 @@ import {Table} from "./table.js"
                         for (let j=0; j<state.game.players.length; j++) {
                             if (state.game.players[j].hand.indexOf(table_to_add[i]) != -1) {
                                 if (state.game.players[j].name == state.my_name) {
-                                    await play_own(table_to_add[i], state.mode);
+                                    await Table.play_own(table_to_add[i], state.mode);
                                 } else {
-                                    await play_other(table_to_add[i], state.mode);
+                                    await Table.play_other(table_to_add[i], state.mode);
                                 }
                             }
                         }
@@ -77,10 +77,10 @@ import {Table} from "./table.js"
                    if ('player' in payload.prompt) {
                         if (payload.prompt.player == state.my_name) {
                             Hand.glow_hand("me");
-                            if (state.mode == 'Defend') { make_verb_card('take') }
-                            else if (state.mode == 'First attack') { make_verb_card(null) }
-                            else if (state.mode == 'Add Cards') { make_verb_card('pass') }
-                            else {make_verb_card(state.mode)}
+                            if (state.mode == 'Defend') { Card.make_verb_card('take') }
+                            else if (state.mode == 'First attack') { Card.make_verb_card(null) }
+                            else if (state.mode == 'Add Cards') { Card.make_verb_card('pass') }
+                            else {Card.make_verb_card(state.mode)}
 
                         } else {
                             Hand.glow_hand("other")
