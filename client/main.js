@@ -1,8 +1,7 @@
-import {sleep, make_verb_card, 
-play_other,play_own, clear_table,
-animation_state} from "./animations.js";
+import {sleep, make_verb_card, play_other,play_own, animation_state} from "./animations.js";
 import {Deck} from "./deck.js"
 import {Hand} from "./hand.js"
+import {Table} from "./table.js"
 
             let state = {
                 game: null
@@ -65,7 +64,7 @@ import {Hand} from "./hand.js"
                                 other_hand = hand
                             }
                         }
-                        await clear_table(my_hand,other_hand) 
+                        await Table.clear_table(my_hand,other_hand) 
                         await Hand.refill_my_hand(my_hand);
                         await Hand.refill_other_hand(other_hand)
                     }
