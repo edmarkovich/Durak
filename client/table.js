@@ -18,7 +18,7 @@ export class Table {
         }
     }
 
-    static async clear_table(my_hand, other_hand) {
+    static async clear(my_hand, other_hand) {
         let waits = []
         while (document.getElementsByClassName("table").length>0) {
             let node = document.getElementsByClassName("table")[0]

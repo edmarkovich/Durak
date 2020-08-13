@@ -28,7 +28,7 @@
                 await play_own('♦Q',"Add")
                 await play_other('♥6',"Defend")
                 
-                await clear_table()
+                await clear()
                 await sleep(1000)
                 
                 await play_own('♠6',"Add")
@@ -37,7 +37,7 @@
                 await play_other('♥9', "Defend")
                 await play_own('♣A',"Add")
                 await play_other('♥10', "Defend")
-                await clear_table()
+                await clear()
                 await sleep(1000)
                 
                 await glow_hand(false)
@@ -60,7 +60,7 @@
                 await play_other('♣6', "Defend")
                 await play_own('♠8',"Add");
                 await play_other('♣7', "Defend")
-                await clear_table();
+                await clear();
             }
 
             simulate()

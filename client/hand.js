@@ -89,8 +89,6 @@ export class Hand {
         if (state=="me") { 
             document.documentElement.style.setProperty('--mine_highlight', "0 0 15px 5px lightblue");
             document.documentElement.style.setProperty('--mine_click', "all");
-
-
         } else if (state == "other") {
             document.documentElement.style.setProperty('--mine_highlight', "none");
             document.documentElement.style.setProperty('--mine_click', "none");
