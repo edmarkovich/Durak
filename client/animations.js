@@ -1,6 +1,8 @@
 /* eslint-disable no-unused-vars */
 
-function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms));}
+import { Card } from './card.js';
+
+export function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms));}
 
 function animate_transform(element, transform,speed) {
     let anim = element.animate([ { transform: transform}], {
@@ -17,26 +19,7 @@ function getTransform(column, column_offset, row, row_offset) {
         +"calc((var(--card_height) * "+row+ ") + " + row_offset + "px), 0px)" 
 }
 
-function card_to_unicode(card) {
-    var base;
-    var offset;
-    switch (card[0]) {
-        case '♠': base = 127137; break;
-        case '♥': base = 127153; break;
-        case '♦': base = 127169; break;
-        case '♣': base = 127185; break;
-    }
-    switch (card.substring(1)) {
-        case 'A': offset = 0; break;
-        case 'J': offset = 10; break;
-        case 'Q': offset = 12; break;
-        case 'K': offset = 13; break;
-        default: offset = parseInt(card.substring(1)) -1;
-    }
-    return "&#"+(base+offset)+";";
-}
-
- async function new_deck() {
+ export async function new_deck() {
     let waits = []
     for (let i=0; i<36; i++) {
         let back = document.createElement("div")
@@ -58,7 +41,7 @@ function card_to_unicode(card) {
     for (let i=0; i<waits.length; ++i) { await waits[i].finished  }
 }
 
-async function put_trump(trump_card) {
+export async function put_trump(trump_card) {
     animation_state.trump =trump_card[0]
     animation_state.trump_card = trump_card
 
@@ -94,7 +77,7 @@ function make_it_a_card(node, card) {
     let front = node.getElementsByClassName("front")[0]
     let inner = document.createElement("div")
     inner.classList.add("card-inner")
-    inner.innerHTML = card_to_unicode(card)
+    inner.innerHTML = Card.card_to_unicode(card)
     front.appendChild(inner)
     if (card[0] == '♥' || card[0] == '♦') { node.classList.add("red"); } 
     node.setAttribute('onclick', 'send_card(\''+card+'\')')
@@ -167,7 +150,7 @@ async function arrange_my_hand(new_hand) {
     for (let i=0; i<waits.length; ++i) { await waits[i].finished  }
 }
 
-async function refill_my_hand(new_hand) {
+export async function refill_my_hand(new_hand) {
     let cards_to_add = new_hand.filter(x => !animation_state.hand.includes(x) );
     let waits = []
     for (let i = 0; i< cards_to_add.length; i++) {
@@ -180,7 +163,7 @@ async function refill_my_hand(new_hand) {
     await Promise.all(waits)
 }
 
-async function refill_other_hand(new_hand) {
+export async function refill_other_hand(new_hand) {
     let waits =[]
     while (new_hand.length != animation_state.other_hand) {
         let node = await take_card_from_deck(null)
@@ -206,7 +189,7 @@ async function card_to_table(node,mode,card) {
     }
 }
 
-async function play_own(card, mode) {
+export async function play_own(card, mode) {
     let node = document.getElementById(card);
     node.classList.remove("mine");
     node.classList.remove("highlight");    
@@ -216,7 +199,7 @@ async function play_own(card, mode) {
     await arrange_my_hand(animation_state.hand)
 }
 
-function play_other(card, mode) {
+export function play_other(card, mode) {
     let node = document.getElementById(""+(animation_state.other_hand-1))
     node.classList.remove("his_card")
     node.classList.remove("highlight"); 
@@ -226,7 +209,7 @@ function play_other(card, mode) {
     card_to_table(node,mode,card);
 }
 
-function make_verb_card(verb) {
+export function make_verb_card(verb) {
     let node = null
     let nodes = document.getElementsByClassName("verb")
     if (nodes.length==0) {
@@ -262,7 +245,7 @@ function make_verb_card(verb) {
     }    
 }
 
-async function glow_hand(state) {
+export async function glow_hand(state) {
     let nodes =  document.getElementsByClassName("his_card")
     for (let i =0; i<nodes.length; ++i) {
         nodes[i].classList.remove("highlight")
@@ -338,7 +321,7 @@ async function make_deck_card(node) {
 }
 
 
-async function clear_table(my_hand, other_hand) {
+export async function clear_table(my_hand, other_hand) {
     let waits = []
     while (document.getElementsByClassName("table").length>0) {
         let node = document.getElementsByClassName("table")[0]
@@ -364,3 +347,5 @@ async function clear_table(my_hand, other_hand) {
     animation_state.table.cards = []
     animation_state.table.last_attack_slot=-1
 }
+
+

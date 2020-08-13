@@ -1,0 +1,95 @@
+import {glow_hand, sleep, make_verb_card, new_deck, put_trump,
+play_other,play_own, clear_table,refill_my_hand,refill_other_hand} from "./animations.js";
+
+            let state = {
+                game: null
+            }
+
+            let socket = new WebSocket("ws://192.168.1.13:5678")
+            socket.onopen = function(e) {
+                state.my_name = prompt("Player Name"); 
+                socket.send('{"action":"join","name":"'+state.my_name+'"}');
+                //socket.send('{"action":"join","name":"Other"}');
+            }
+
+            var running = false;
+            socket.onmessage = async function(event) {
+
+
+                while (running) {
+                    await sleep(100)
+                }
+                running = true;
+
+                let payload = JSON.parse(event.data)
+
+                glow_hand("clear");
+                make_verb_card(null);
+
+                if ('game' in payload) {
+
+                    let game = payload.game
+                    if(!state.game) {
+                        await new_deck()
+                        await put_trump(game.trump)
+                    }
+
+                    let table_to_add = game.table.filter(x => !state.game.table.includes(x) );
+                    for (let i=0; i<table_to_add.length; i++) {
+                        for (let j=0; j<state.game.players.length; j++) {
+                            if (state.game.players[j].hand.indexOf(table_to_add[i]) != -1) {
+                                if (state.game.players[j].name == state.my_name) {
+                                    await play_own(table_to_add[i], state.mode);
+                                } else {
+                                    await play_other(table_to_add[i], state.mode);
+                                }
+                            }
+                        }
+                    }
+                    
+                    if (game.table.length==0) {
+                        let my_hand = null
+                        let other_hand = null
+                        for (let id in game.players) {
+                            let name = game.players[id].name
+                            let hand = game.players[id].hand
+
+                            if (name == state.my_name) {
+                                my_hand = hand
+                            } else {
+                                other_hand = hand
+                            }
+                        }
+                        await clear_table(my_hand,other_hand) 
+                        await refill_my_hand(my_hand);
+                        await refill_other_hand(other_hand)
+                    }
+                    state.game = game
+                    
+                }
+
+                if ('prompt' in payload) {
+                    state.mode = payload.prompt.prompt;
+		            if ('player' in payload.prompt) {
+                        if (payload.prompt.player == state.my_name) {
+                            glow_hand("me");
+                            if (state.mode == 'Defend') { make_verb_card('take') }
+                            else if (state.mode == 'First attack') { make_verb_card(null) }
+                            else if (state.mode == 'Add Cards') { make_verb_card('pass') }
+                            else {make_verb_card(state.mode)}
+
+                        } else {
+                            glow_hand("other")
+                        }
+                    }
+                }
+                running = false;
+            }
+
+            export function send_card(card) {
+                socket.send('{"action":"", "card":"'+card+'"}')
+            }
+            
+            export function send_verb(verb) {
+                socket.send('{"action":"'+verb+'"}')
+            }
