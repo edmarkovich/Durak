@@ -31,9 +31,8 @@ socket.onmessage = async function(event) {
 
         let game = payload.game
         if(!state.game) {
-            await Deck.new_deck()
+            await Deck.init(game.trump)
             Table.state.theTable = new Table(game.trump[0])
-            await Deck.put_trump(game.trump)
         }
 
         Table.state.theTable.getHand().glow(false)
@@ -65,20 +64,24 @@ socket.onmessage = async function(event) {
         
     }
 
-    if ('prompt' in payload) {
+    if ('prompt' in payload && 'player' in payload.prompt) {
         state.mode = payload.prompt.prompt;
-        if ('player' in payload.prompt) {
-            if (payload.prompt.player == state.my_name) {
-                Table.state.theTable.getHand().glow(true)
+        if (payload.prompt.player == state.my_name) {
+            Table.state.theTable.getHand().glow(true)
 
-                if (state.mode == 'Defend') { Card.make_verb_card('take') }
-                else if (state.mode == 'First attack') { Card.make_verb_card(null) }
-                else if (state.mode == 'Add Cards') { Card.make_verb_card('pass') }
-                else {Card.make_verb_card(state.mode)}
-
-            } else {
-                Table.state.theTable.getOtherHand().glow(true)
+            if (state.mode == 'Defend') { 
+                Card.make_verb_card('take') }
+            else if (state.mode == 'First attack') { 
+                Card.make_verb_card(null) }
+            else if (state.mode == 'Add Cards') { 
+                Card.make_verb_card('pass') }
+            else {
+                console.log("Other mode:", state.mode)
+                Card.make_verb_card(state.mode)
             }
+
+        } else {
+            Table.state.theTable.getOtherHand().glow(true)
         }
     }
     running = false;
