@@ -15,7 +15,7 @@ export class Table {
     async play(card, my_player, mode) {
         let hand = my_player ? this.hand : this.otherHand
         let node = hand.pop_card(card);
-        await Table.card_to_table(node,mode,card)
+        await this.card_to_table(node,mode,card)
         await hand.arrange()
     }
 
@@ -52,12 +52,7 @@ export class Table {
         await this.getOtherHand().refill(other_hand);
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-    static async card_to_table(node, mode, card) {
+    async card_to_table(node, mode, card) {
         node.style.zIndex = Table.state.table.zIndex++;
         Table.state.table.cards.push(card);
         node.classList.add("table");
@@ -71,7 +66,7 @@ export class Table {
         }
     }
 
-
+    ////////////////////////////////////////////////////////////////////////////////////////
 }
 
 
