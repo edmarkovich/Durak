@@ -9,7 +9,7 @@ class GameIOCase(unittest.TestCase):
             return '{"a":"b", "c":"d"}'
 
         IOUtil.defaultSource = json_string
-        out = IOUtil.get_input()
+        out = IOUtil.get_input({"player":"ed"})
         self.assertEqual(out["a"], "b")      
 
     def test_io_get_input_card(self):
@@ -17,5 +17,5 @@ class GameIOCase(unittest.TestCase):
             return '{"card":"♠A"}'
 
         IOUtil.defaultSource = json_string
-        out = IOUtil.get_input()
+        out = IOUtil.get_input("hello")
         self.assertEqual(out["card"], Card("♠","A"))         
