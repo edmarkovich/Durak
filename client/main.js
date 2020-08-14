@@ -24,9 +24,6 @@ socket.onmessage = async function(event) {
 
     let payload = JSON.parse(event.data)
 
-    Table.state.theTable.getHand().glow(false)
-    Table.state.theTable.getOtherHand().glow(false)
-
 
     Card.make_verb_card(null);
 
@@ -35,10 +32,12 @@ socket.onmessage = async function(event) {
         let game = payload.game
         if(!state.game) {
             await Deck.new_deck()
-            Table.state.trump =game.trump[0]
-            Table.state.trump_card = game.trump
+            Table.state.theTable = new Table(game.trump[0])
             await Deck.put_trump(game.trump)
         }
+
+        Table.state.theTable.getHand().glow(false)
+        Table.state.theTable.getOtherHand().glow(false)
 
         let table_to_add = game.table.filter(x => !state.game.table.includes(x) );
         for (let i=0; i<table_to_add.length; i++) {

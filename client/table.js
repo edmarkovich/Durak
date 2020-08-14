@@ -4,12 +4,11 @@ import { animate_transform} from "./utils.js"
 
 export class Table {
 
-    constructor() {
-        this.hand= new Hand()
+    constructor(trump) {
+        this.hand= new Hand(trump)
         this.otherHand = new OtherHand()
         this.last_attack_slot = -1
         this.zIndex = 100
-
     }
 
     getHand() { return this.hand}
@@ -71,7 +70,5 @@ export class Table {
 
 
 Table.state = {
-    trump: null,
 
-    theTable: new Table()
 }
