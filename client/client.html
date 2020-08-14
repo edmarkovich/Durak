@@ -78,6 +78,10 @@
 
                 if ('prompt' in payload) {
                     state.mode = payload.prompt.prompt;
+                    if (state.mode=="over") {
+                        alert ("Game Over")
+                        return
+                    }
 		            if ('player' in payload.prompt) {
                         if (payload.prompt.player == state.my_name) {
                             glow_hand("me");
