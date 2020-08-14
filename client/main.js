@@ -43,7 +43,7 @@ socket.onmessage = async function(event) {
             for (let j=0; j<state.game.players.length; j++) {
                 if (state.game.players[j].hand.indexOf(table_to_add[i]) != -1) {
                     let is_my_move = (state.game.players[j].name == state.my_name)
-                    await Table.state.theTable.play(table_to_add[i], is_my_move, state.mode)
+                    await Table.state.theTable.play(table_to_add[i], is_my_move)
                 }
             }
         }
@@ -65,13 +65,9 @@ socket.onmessage = async function(event) {
     }
 
     if ('prompt' in payload && 'player' in payload.prompt) {
-        state.mode = payload.prompt.prompt;
-        if (payload.prompt.player == state.my_name) {
-            Table.state.theTable.getHand().glow(true)
-            Card.make_verb_card(state.mode)
-        } else {
-            Table.state.theTable.getOtherHand().glow(true)
-        }
+        let mode = payload.prompt.prompt
+        let my_turn = payload.prompt.player == state.my_name
+        Table.state.theTable.prepare_turn(my_turn, mode)
     }
     running = false;
 }

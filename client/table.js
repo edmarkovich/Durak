@@ -14,10 +14,20 @@ export class Table {
     getHand() { return this.hand}
     getOtherHand() {return this.otherHand}
 
-    async play(card, my_player, mode) {
+    prepare_turn(my_turn, mode){
+        this.mode = mode
+        if (my_turn) {
+            this.getHand().glow(true)
+            Card.make_verb_card(this.mode)
+        } else {
+            this.getOtherHand().glow(true)
+        }
+    }
+
+    async play(card, my_player) {
         let hand = my_player ? this.hand : this.otherHand
         let node = hand.pop_card(card);
-        await this.card_to_table(node,mode,card)
+        await this.card_to_table(node, this.mode)
         await hand.arrange()
     }
 
@@ -53,7 +63,7 @@ export class Table {
         await this.getOtherHand().refill(other_hand);
     }
 
-    async card_to_table(node, mode, card) {
+    async card_to_table(node, mode) {
         node.style.zIndex = this.zIndex++
         node.classList.add("table")
 
