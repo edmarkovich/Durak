@@ -93,7 +93,7 @@ class Game:
             self.players.refill_all(self.attacker, self.defender)
 
             if self.players.is_game_over():
-                IOUtil.get_input("Game Over", None, final_message=True)
+                IOUtil.get_input({'prompt':'over'}, None, final_message=True)
                 break
 
             self.set_next_attacker_defender(outcome)
