@@ -34,6 +34,17 @@ export class OtherHand {
         }
         await Promise.all(waits)
     }
+
+    glow(on) {
+        let nodes = document.getElementsByClassName("his_card")
+        for (let i =0; i<nodes.length; ++i) {
+            if (on) {
+                nodes[i].classList.add("highlight")
+            } else {
+                nodes[i].classList.remove("highlight")
+            }
+        } 
+    }
 }
 
 export class Hand {
@@ -95,6 +106,16 @@ export class Hand {
         await Promise.all(waits)
     }
 
+    glow(on) {
+        if (on) {
+            document.documentElement.style.setProperty('--mine_highlight', "0 0 15px 5px lightblue");
+            document.documentElement.style.setProperty('--mine_click', "all");
+        } else {
+            document.documentElement.style.setProperty('--mine_highlight', "none");
+            document.documentElement.style.setProperty('--mine_click', "none");
+        }
+    }
+
     static hand_sort(a,b) {
         function rank2int(card){
             let a_rank =0;
@@ -117,34 +138,6 @@ export class Hand {
         if (b_suit == Table.state.trump && a_suit != Table.state.trump) { return -1}
         if (a_rank == b_rank) { return (a_suit > b_suit)?1:-1; }
         return (a_rank > b_rank)?1:-1;  
-    }
-
-
-
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
-    static async glow_hand(state) {
-        let nodes =  document.getElementsByClassName("his_card")
-        for (let i =0; i<nodes.length; ++i) {
-            nodes[i].classList.remove("highlight")
-        } 
-
-        if (state=="me") { 
-            document.documentElement.style.setProperty('--mine_highlight', "0 0 15px 5px lightblue");
-            document.documentElement.style.setProperty('--mine_click', "all");
-        } else if (state == "other") {
-            document.documentElement.style.setProperty('--mine_highlight', "none");
-            document.documentElement.style.setProperty('--mine_click', "none");
-
-            let nodes =  document.getElementsByClassName("his_card")
-
-
-            for (let i =0; i<nodes.length; ++i) {
-                nodes[i].classList.add("highlight")
-            }
-        }
     }
 
 }

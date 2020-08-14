@@ -25,7 +25,10 @@ socket.onmessage = async function(event) {
 
     let payload = JSON.parse(event.data)
 
-    Hand.glow_hand("clear");
+    Table.state.hand.glow(false)
+    Table.state.otherHand.glow(false)
+
+
     Card.make_verb_card(null);
 
     if ('game' in payload) {
@@ -76,14 +79,15 @@ socket.onmessage = async function(event) {
         state.mode = payload.prompt.prompt;
         if ('player' in payload.prompt) {
             if (payload.prompt.player == state.my_name) {
-                Hand.glow_hand("me");
+                Table.state.hand.glow(true)
+
                 if (state.mode == 'Defend') { Card.make_verb_card('take') }
                 else if (state.mode == 'First attack') { Card.make_verb_card(null) }
                 else if (state.mode == 'Add Cards') { Card.make_verb_card('pass') }
                 else {Card.make_verb_card(state.mode)}
 
             } else {
-                Hand.glow_hand("other")
+                Table.state.otherHand.glow(true)
             }
         }
     }
