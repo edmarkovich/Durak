@@ -7,6 +7,9 @@ export class Table {
     constructor() {
         this.hand= new Hand()
         this.otherHand = new OtherHand()
+        this.last_attack_slot = -1
+        this.zIndex = 100
+
     }
 
     getHand() { return this.hand}
@@ -42,8 +45,7 @@ export class Table {
             
         }
         await Promise.all(waits)
-        Table.state.table.cards = []
-        Table.state.table.last_attack_slot=-1
+        this.last_attack_slot=-1
     }
 
     async prepare_next_round(my_hand, other_hand) {
@@ -53,29 +55,22 @@ export class Table {
     }
 
     async card_to_table(node, mode, card) {
-        node.style.zIndex = Table.state.table.zIndex++;
-        Table.state.table.cards.push(card);
-        node.classList.add("table");
+        node.style.zIndex = this.zIndex++
+        node.classList.add("table")
 
         if (mode == "Defend") {
-            await animate_transform(node, Card.getTransform(2 + Table.state.table.last_attack_slot, 10, 2, 15) + "rotate3d(0,0,1,400deg)", 500).finished;
+            await animate_transform(node, Card.getTransform(2 + this.last_attack_slot, 10, 2, 15) + "rotate3d(0,0,1,400deg)", 500).finished
         }
         else {
-            Table.state.table.last_attack_slot++;
-            await animate_transform(node, Card.getTransform(2 + Table.state.table.last_attack_slot, 0, 2, 0), 500).finished;
+            this.last_attack_slot++
+            await animate_transform(node, Card.getTransform(2 + this.last_attack_slot, 0, 2, 0), 500).finished
         }
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////
 }
 
 
 Table.state = {
-    table: {
-        last_attack_slot: -1,
-        zIndex: 100,
-        cards: []
-    },
     trump: null,
 
     theTable: new Table()
