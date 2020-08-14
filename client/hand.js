@@ -104,7 +104,7 @@ export class Hand {
             let node = await Deck.take_card_from_deck(cards_to_add[i])
             Card.make_it_a_card(node, cards_to_add[i]);
             this.add_card(cards_to_add[i],node)
-            waits.push(Table.state.hand.arrange())
+            waits.push(this.arrange())
             await Card.flip_card(node); 
         }
         await Promise.all(waits)

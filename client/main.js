@@ -25,8 +25,8 @@ socket.onmessage = async function(event) {
 
     let payload = JSON.parse(event.data)
 
-    Table.state.hand.glow(false)
-    Table.state.otherHand.glow(false)
+    Table.state.theTable.getHand().glow(false)
+    Table.state.theTable.getOtherHand().glow(false)
 
 
     Card.make_verb_card(null);
@@ -46,9 +46,9 @@ socket.onmessage = async function(event) {
             for (let j=0; j<state.game.players.length; j++) {
                 if (state.game.players[j].hand.indexOf(table_to_add[i]) != -1) {
                     if (state.game.players[j].name == state.my_name) {
-                        await Table.play(table_to_add[i], Table.state.hand, state.mode);
+                        await Table.play(table_to_add[i], Table.state.theTable.getHand(), state.mode);
                     } else {
-                        await Table.play(table_to_add[i], Table.state.otherHand,state.mode);
+                        await Table.play(table_to_add[i], Table.state.theTable.getOtherHand(),state.mode);
                     }
                 }
             }
@@ -68,8 +68,8 @@ socket.onmessage = async function(event) {
                 }
             }
             await Table.clear(my_hand,other_hand) 
-            await Table.state.hand.refill(my_hand);
-            await Table.state.otherHand.refill(other_hand);
+            await Table.state.theTable.getHand().refill(my_hand);
+            await Table.state.theTable.getOtherHand().refill(other_hand);
         }
         state.game = game
         
@@ -79,7 +79,7 @@ socket.onmessage = async function(event) {
         state.mode = payload.prompt.prompt;
         if ('player' in payload.prompt) {
             if (payload.prompt.player == state.my_name) {
-                Table.state.hand.glow(true)
+                Table.state.theTable.getHand().glow(true)
 
                 if (state.mode == 'Defend') { Card.make_verb_card('take') }
                 else if (state.mode == 'First attack') { Card.make_verb_card(null) }
@@ -87,7 +87,7 @@ socket.onmessage = async function(event) {
                 else {Card.make_verb_card(state.mode)}
 
             } else {
-                Table.state.otherHand.glow(true)
+                Table.state.theTable.getOtherHand().glow(true)
             }
         }
     }

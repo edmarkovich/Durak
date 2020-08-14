@@ -4,6 +4,17 @@ import { animate_transform} from "./utils.js"
 
 export class Table {
 
+    constructor() {
+        this.hand= new Hand()
+        this.otherHand = new OtherHand()
+    }
+
+    getHand() { return this.hand}
+    getOtherHand() {return this.otherHand}
+
+    ////////////////////////////////////////////////////////////////////////////////////////
+
+
     static async clear(my_hand, other_hand) {
         let waits = []
         while (document.getElementsByClassName("table").length>0) {
@@ -12,13 +23,13 @@ export class Table {
             node.classList.remove("table")
     
             if (my_hand.indexOf(card) != -1) {
-                Table.state.hand.add_card(card,node)
+                Table.state.theTable.getHand().add_card(card,node)
     
-                waits.push(Table.state.hand.arrange());
+                waits.push(Table.state.theTable.getHand().arrange());
     
             } else if (other_hand.indexOf(card) != -1) {
                 await Card.make_deck_card(node)
-                waits.push(Table.state.otherHand.add_card(node))
+                waits.push(Table.state.theTable.getOtherHand().add_card(node))
             } else {
                 // Put in the done pile
                 Card.flip_card(node, true)
@@ -61,7 +72,5 @@ Table.state = {
     },
     trump: null,
 
-    hand: new Hand(),
-    otherHand: new OtherHand(),
-
+    theTable: new Table()
 }
