@@ -22,9 +22,16 @@ export class Hand {
         return this.cards.length
     }
 
-    remove_card(card) {
+    pop_card(card) {
+        let node = document.getElementById(card);   
+
+        node.classList.remove("mine");
+        node.classList.remove("highlight"); 
+
         let idx =this.cards.indexOf(card);
         this.cards.splice(idx,1)
+
+        return node
     }
 
     get_cards() {

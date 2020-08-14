@@ -46,10 +46,7 @@ export class Table {
     }
 
     static async play_own(card, mode) {
-        let node = document.getElementById(card);
-        node.classList.remove("mine");
-        node.classList.remove("highlight");    
-        Table.state.hand.remove_card(card);
+        let node = Table.state.hand.pop_card(card);
         await Table.card_to_table(node,mode,card)
         await Hand.arrange_my_hand(Table.state.hand.get_cards())
     }
