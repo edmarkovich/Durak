@@ -40,9 +40,7 @@ export class Table {
     
             if (my_hand.indexOf(card) != -1) {
                 this.getHand().add_card(card,node)
-    
                 waits.push(this.getHand().arrange());
-    
             } else if (other_hand.indexOf(card) != -1) {
                 await Card.make_deck_card(node)
                 waits.push(this.getOtherHand().add_card(node))
@@ -51,7 +49,6 @@ export class Table {
                 Card.flip_card(node, true)
                 waits.push(animate_transform(node, Card.getTransform(9,0,2,0), 300))
             }
-            
         }
         await Promise.all(waits)
         this.last_attack_slot=-1
