@@ -38,6 +38,17 @@ export class Hand {
         return this.cards
     }
 
+    async arrange() {
+        this.cards.sort(Hand.hand_sort)
+        let waits = []
+        for (let i=0; i<this.cards.length;++i) {
+            let node = document.getElementById(this.cards[i]);
+            if (!node) continue;
+            waits.push(animate_transform(node, Card.getTransform(i+2, 0, 4, 0), 300))
+        }
+        for (let i=0; i<waits.length; ++i) { await waits[i].finished  }
+    }
+
 
 
 
@@ -78,16 +89,7 @@ export class Hand {
     }
 
 
-    static async arrange_my_hand(new_hand) {
-        new_hand.sort(Hand.hand_sort)
-        let waits = []
-        for (let i=0; i<new_hand.length;++i) {
-            let node = document.getElementById(new_hand[i]);
-            if (!node) continue;
-            waits.push(animate_transform(node, Card.getTransform(i+2, 0, 4, 0), 300))
-        }
-        for (let i=0; i<waits.length; ++i) { await waits[i].finished  }
-    }
+
 
     static async refill_my_hand(new_hand) {
         let cards_to_add = new_hand.filter(x => !Table.state.hand.has_card(x) );
@@ -96,7 +98,7 @@ export class Hand {
             let node = await Deck.take_card_from_deck(cards_to_add[i])
             Card.make_it_a_card(node, cards_to_add[i]);
             Table.state.hand.add_card(cards_to_add[i],node)
-            waits.push(Hand.arrange_my_hand(new_hand))
+            waits.push(Table.state.hand.arrange())
             await Card.flip_card(node); 
         }
         await Promise.all(waits)

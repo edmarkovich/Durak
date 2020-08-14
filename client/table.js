@@ -28,7 +28,7 @@ export class Table {
             if (my_hand.indexOf(card) != -1) {
                 Table.state.hand.add_card(card,node)
     
-                waits.push(Hand.arrange_my_hand(my_hand));
+                waits.push(Table.state.hand.arrange());
     
             } else if (other_hand.indexOf(card) != -1) {
                 await Card.make_deck_card(node)
@@ -48,7 +48,7 @@ export class Table {
     static async play_own(card, mode) {
         let node = Table.state.hand.pop_card(card);
         await Table.card_to_table(node,mode,card)
-        await Hand.arrange_my_hand(Table.state.hand.get_cards())
+        await Table.state.hand.arrange()
     }
     
     static play_other(card, mode) {
