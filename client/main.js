@@ -65,7 +65,7 @@ socket.onmessage = async function(event) {
                 }
             }
             await Table.clear(my_hand,other_hand) 
-            await Hand.refill_my_hand(my_hand);
+            await Table.state.hand.refill(my_hand);
             await Hand.refill_other_hand(other_hand)
         }
         state.game = game

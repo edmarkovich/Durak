@@ -49,21 +49,20 @@ export class Hand {
         for (let i=0; i<waits.length; ++i) { await waits[i].finished  }
     }
 
-
-
-
-
-
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------
-
-    static async put_in_other_hand(node) {
-        node.classList.add("his_card")
-        node.id = Table.state.legacy_other_hand
-        return animate_transform(node, Card.getTransform(1+ ++Table.state.legacy_other_hand, 0, 0, 0), 500).finished
+    async refill(new_hand) {
+        let cards_to_add = new_hand.filter(x => !this.has_card(x) );
+        let waits = []
+        for (let i = 0; i< cards_to_add.length; i++) {
+            let node = await Deck.take_card_from_deck(cards_to_add[i])
+            Card.make_it_a_card(node, cards_to_add[i]);
+            this.add_card(cards_to_add[i],node)
+            waits.push(Table.state.hand.arrange())
+            await Card.flip_card(node); 
+        }
+        await Promise.all(waits)
     }
 
     static hand_sort(a,b) {
-
         function rank2int(card){
             let a_rank =0;
             switch (card.substring(1)) {
@@ -84,25 +83,26 @@ export class Hand {
         if (a_suit == Table.state.trump && b_suit != Table.state.trump) { return 1}
         if (b_suit == Table.state.trump && a_suit != Table.state.trump) { return -1}
         if (a_rank == b_rank) { return (a_suit > b_suit)?1:-1; }
-        return (a_rank > b_rank)?1:-1;
-        
+        return (a_rank > b_rank)?1:-1;  
     }
 
 
 
 
-    static async refill_my_hand(new_hand) {
-        let cards_to_add = new_hand.filter(x => !Table.state.hand.has_card(x) );
-        let waits = []
-        for (let i = 0; i< cards_to_add.length; i++) {
-            let node = await Deck.take_card_from_deck(cards_to_add[i])
-            Card.make_it_a_card(node, cards_to_add[i]);
-            Table.state.hand.add_card(cards_to_add[i],node)
-            waits.push(Table.state.hand.arrange())
-            await Card.flip_card(node); 
-        }
-        await Promise.all(waits)
+    // -------------------------------------------------------------------------------------------------------------------------------------------------------
+
+    static async put_in_other_hand(node) {
+        node.classList.add("his_card")
+        node.id = Table.state.legacy_other_hand
+        return animate_transform(node, Card.getTransform(1+ ++Table.state.legacy_other_hand, 0, 0, 0), 500).finished
     }
+
+
+
+
+
+
+
 
     static async refill_other_hand(new_hand) {
         let waits =[]
