@@ -6,8 +6,6 @@ import random
 def print_state_and_input():
     print_state_and_input.next = print_state_and_input.next + 1
     next = print_state_and_input.inputs[print_state_and_input.next]
-    print(next)
-    print("")
     return next
 
 print_state_and_input.next = -1
@@ -159,7 +157,12 @@ class ScenarioHappyPath(unittest.TestCase):
         game = Game(4)
         IOUtil.defaultSource = print_state_and_input
         IOUtil.game = game
-        game.main_loop()
+        
+
+        with self.assertRaises(Exception) as context:
+            game.main_loop()
+        self.assertTrue((str(context.exception)).startswith("Time to Die"))
+
         self.assertEqual(game.players.players["Ed"].hand, [])
         self.assertEqual(game.players.players["Jon"].hand, [])
         self.assertEqual(game.players.players["Mike"].hand, [])

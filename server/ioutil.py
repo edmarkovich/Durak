@@ -7,7 +7,7 @@ class RestartException(Exception):
 class IOUtil:
 
     defaultSource      = lambda: '{}'
-    defaultDestination = lambda x: print("defaultDestination", x)
+    defaultDestination = lambda x: {}
     game = None
 
     @staticmethod
@@ -20,15 +20,18 @@ class IOUtil:
 
 
     @staticmethod
-    def get_input(prompt, player = None):
+    def get_input(prompt, player = None, final_message = False):
 
         message = IOUtil.get_game_data()
         message['prompt'] = prompt
 
         IOUtil.defaultDestination(json.dumps(message))
 
-        source = IOUtil.defaultSource
-        inputA = source()
+        if final_message:
+            inputA = "Die"
+        else:
+            source = IOUtil.defaultSource
+            inputA = source()
 
         if inputA == "Die":
             raise RestartException("Time to Die")

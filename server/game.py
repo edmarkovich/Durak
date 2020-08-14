@@ -90,11 +90,10 @@ class Game:
             self.table = game_round.table
             outcome = game_round.play()
 
-            print("Round is finished. Refilling")
             self.players.refill_all(self.attacker, self.defender)
 
             if self.players.is_game_over():
-                print("Game Over")
+                IOUtil.get_input("Game Over", None, final_message=True)
                 break
 
             self.set_next_attacker_defender(outcome)
