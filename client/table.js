@@ -49,19 +49,18 @@ export class Table {
         let node = document.getElementById(card);
         node.classList.remove("mine");
         node.classList.remove("highlight");    
-        Table.state.hand.splice(Table.state.hand.indexOf(card),1)
-        
+        Table.state.hand.remove_card(card);
         await Table.card_to_table(node,mode,card)
-        await Hand.arrange_my_hand(Table.state.hand)
+        await Hand.arrange_my_hand(Table.state.hand.get_cards())
     }
     
     static play_other(card, mode) {
-        let node = document.getElementById(""+(Table.state.other_hand-1))
+        let node = document.getElementById(""+(Table.state.legacy_other_hand-1))
         node.classList.remove("his_card")
         node.classList.remove("highlight"); 
         Card.make_it_a_card(node, card)
         Card.flip_card(node)
-        Table.state.other_hand --;
+        Table.state.legacy_other_hand --;
         Table.card_to_table(node,mode,card);
     }
 }
@@ -73,7 +72,9 @@ Table.state = {
         zIndex: 100,
         cards: []
     },
-    hand: [],
-    other_hand: 0,
+    legacy_other_hand: 0,
     trump: null,
+
+    hand: new Hand(),
+
 }

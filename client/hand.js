@@ -5,15 +5,47 @@ import { Table } from "./table.js"
 
 export class Hand {
 
+    constructor () {
+        this.cards = []
+    }
+
+    add_card(card) {
+        this.cards.push(card)
+    }
+
+    has_card(card) {
+        return this.cards.indexOf(card) != -1;
+    }
+
+    count() {
+        return this.cards.length
+    }
+
+    remove_card(card) {
+        let idx =this.cards.indexOf(card);
+        this.cards.splice(idx,1)
+    }
+
+    get_cards() {
+        return this.cards
+    }
+
+
+
+
+
+
+    // -------------------------------------------------------------------------------------------------------------------------------------------------------
+
     static put_in_my_hand(node, card) {
         node.classList.add("mine");
-        Table.state.hand.push(card);
+        Table.state.hand.add_card(card);
     }
 
     static async put_in_other_hand(node) {
         node.classList.add("his_card")
-        node.id = Table.state.other_hand
-        return animate_transform(node, Card.getTransform(1+ ++Table.state.other_hand, 0, 0, 0), 500).finished
+        node.id = Table.state.legacy_other_hand
+        return animate_transform(node, Card.getTransform(1+ ++Table.state.legacy_other_hand, 0, 0, 0), 500).finished
     }
 
     static hand_sort(a,b) {
@@ -55,7 +87,7 @@ export class Hand {
     }
 
     static async refill_my_hand(new_hand) {
-        let cards_to_add = new_hand.filter(x => !Table.state.hand.includes(x) );
+        let cards_to_add = new_hand.filter(x => !Table.state.hand.has_card(x) );
         let waits = []
         for (let i = 0; i< cards_to_add.length; i++) {
             let node = await Deck.take_card_from_deck(cards_to_add[i])
@@ -69,7 +101,7 @@ export class Hand {
 
     static async refill_other_hand(new_hand) {
         let waits =[]
-        while (new_hand.length != Table.state.other_hand) {
+        while (new_hand.length != Table.state.legacy_other_hand) {
             let node = await Deck.take_card_from_deck(null)
 
             await Card.make_deck_card(node);
