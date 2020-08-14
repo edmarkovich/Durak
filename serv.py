@@ -73,7 +73,7 @@ class WSThread(threading.Thread):
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
 
-        start_server = websockets.serve(inbound_messaging, "192.168.1.13", 5678)
+        start_server = websockets.serve(inbound_messaging, port=5678)
 
         asyncio.ensure_future(start_server)
         asyncio.ensure_future(outbound_messaging())
