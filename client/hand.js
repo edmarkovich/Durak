@@ -23,6 +23,17 @@ export class OtherHand {
         node.classList.remove("highlight");
         return node;        
     }
+
+     async refill(new_hand) {
+        let waits =[]
+        while (new_hand.length != this.cards_count) {
+            let node = await Deck.take_card_from_deck(null)
+            await Card.make_deck_card(node);
+            waits.push( this.add_card(node))
+            await sleep(150)
+        }
+        await Promise.all(waits)
+    }
 }
 
 export class Hand {
@@ -112,18 +123,7 @@ export class Hand {
 
     // -------------------------------------------------------------------------------------------------------------------------------------------------------
 
-    static async refill_other_hand(new_hand) {
-        let waits =[]
-        while (new_hand.length != Table.state.otherHand.count()) {
-            let node = await Deck.take_card_from_deck(null)
 
-            await Card.make_deck_card(node);
-
-            waits.push( Table.state.otherHand.add_card(node))
-            await sleep(150)
-        }
-        await Promise.all(waits)
-    }
 
     static async glow_hand(state) {
         let nodes =  document.getElementsByClassName("his_card")
