@@ -46,6 +46,12 @@ export class Table {
         Table.state.table.last_attack_slot=-1
     }
 
+    async prepare_next_round(my_hand, other_hand) {
+        await this.clear(my_hand,other_hand) 
+        await this.getHand().refill(my_hand);
+        await this.getOtherHand().refill(other_hand);
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////
 
 

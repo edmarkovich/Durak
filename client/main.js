@@ -54,18 +54,13 @@ socket.onmessage = async function(event) {
             let my_hand = null
             let other_hand = null
             for (let id in game.players) {
-                let name = game.players[id].name
-                let hand = game.players[id].hand
-
-                if (name == state.my_name) {
-                    my_hand = hand
+                if (game.players[id].name == state.my_name) {
+                    my_hand = game.players[id].hand
                 } else {
-                    other_hand = hand
+                    other_hand = game.players[id].hand
                 }
             }
-            await Table.state.theTable.clear(my_hand,other_hand) 
-            await Table.state.theTable.getHand().refill(my_hand);
-            await Table.state.theTable.getOtherHand().refill(other_hand);
+            await Table.state.theTable.prepare_next_round(my_hand,other_hand)
         }
         state.game = game
         
