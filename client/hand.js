@@ -68,7 +68,7 @@ export class Hand {
         return this.cards.length
     }
 
-    async pop_card(card) {
+    pop_card(card) {
         let node = document.getElementById(card);   
 
         node.classList.remove("mine");
@@ -90,7 +90,7 @@ export class Hand {
         for (let i=0; i<this.cards.length;++i) {
             let node = document.getElementById(this.cards[i]);
             if (!node) continue;
-            waits.push(animate_transform(node, Card.getTransform(i+2, 0, 4, 0), 300))
+            waits.push(animate_transform(node, Card.getTransform(i+2, 0, 4, 0), 500))
         }
         for (let i=0; i<waits.length; ++i) { await waits[i].finished  }
     }

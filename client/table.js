@@ -46,7 +46,7 @@ export class Table {
     }
 
     static async play_own(card, mode) {
-        let node = await Table.state.hand.pop_card(card);
+        let node = Table.state.hand.pop_card(card);
         await Table.card_to_table(node,mode,card)
         await Table.state.hand.arrange()
     }
