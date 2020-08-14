@@ -25,7 +25,10 @@ socket.onmessage = async function(event) {
 
     let payload = JSON.parse(event.data)
 
-    Hand.glow_hand("clear");
+    Table.state.theTable.getHand().glow(false)
+    Table.state.theTable.getOtherHand().glow(false)
+
+
     Card.make_verb_card(null);
 
     if ('game' in payload) {
@@ -42,11 +45,8 @@ socket.onmessage = async function(event) {
         for (let i=0; i<table_to_add.length; i++) {
             for (let j=0; j<state.game.players.length; j++) {
                 if (state.game.players[j].hand.indexOf(table_to_add[i]) != -1) {
-                    if (state.game.players[j].name == state.my_name) {
-                        await Table.play_own(table_to_add[i], state.mode);
-                    } else {
-                        await Table.play_other(table_to_add[i], state.mode);
-                    }
+                    let is_my_move = (state.game.players[j].name == state.my_name)
+                    await Table.state.theTable.play(table_to_add[i], is_my_move, state.mode)
                 }
             }
         }
@@ -65,8 +65,8 @@ socket.onmessage = async function(event) {
                 }
             }
             await Table.clear(my_hand,other_hand) 
-            await Table.state.hand.refill(my_hand);
-            await Table.state.otherHand.refill(other_hand);
+            await Table.state.theTable.getHand().refill(my_hand);
+            await Table.state.theTable.getOtherHand().refill(other_hand);
         }
         state.game = game
         
@@ -76,14 +76,15 @@ socket.onmessage = async function(event) {
         state.mode = payload.prompt.prompt;
         if ('player' in payload.prompt) {
             if (payload.prompt.player == state.my_name) {
-                Hand.glow_hand("me");
+                Table.state.theTable.getHand().glow(true)
+
                 if (state.mode == 'Defend') { Card.make_verb_card('take') }
                 else if (state.mode == 'First attack') { Card.make_verb_card(null) }
                 else if (state.mode == 'Add Cards') { Card.make_verb_card('pass') }
                 else {Card.make_verb_card(state.mode)}
 
             } else {
-                Hand.glow_hand("other")
+                Table.state.theTable.getOtherHand().glow(true)
             }
         }
     }

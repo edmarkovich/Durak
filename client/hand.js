@@ -16,11 +16,13 @@ export class OtherHand {
 
     count() {return this.cards_count}
 
-    pop_card() {
+    pop_card(card) {
         this.cards_count--
         let node =document.getElementById(""+(this.cards_count))
         node.classList.remove("his_card")
         node.classList.remove("highlight");
+        Card.make_it_a_card(node, card)
+        Card.flip_card(node)
         return node;        
     }
 
@@ -34,6 +36,19 @@ export class OtherHand {
         }
         await Promise.all(waits)
     }
+
+    glow(on) {
+        let nodes = document.getElementsByClassName("his_card")
+        for (let i =0; i<nodes.length; ++i) {
+            if (on) {
+                nodes[i].classList.add("highlight")
+            } else {
+                nodes[i].classList.remove("highlight")
+            }
+        } 
+    }
+
+    async arrange() {}
 }
 
 export class Hand {
@@ -77,7 +92,7 @@ export class Hand {
         for (let i=0; i<this.cards.length;++i) {
             let node = document.getElementById(this.cards[i]);
             if (!node) continue;
-            waits.push(animate_transform(node, Card.getTransform(i+2, 0, 4, 0), 300))
+            waits.push(animate_transform(node, Card.getTransform(i+2, 0, 4, 0), 500))
         }
         for (let i=0; i<waits.length; ++i) { await waits[i].finished  }
     }
@@ -89,62 +104,36 @@ export class Hand {
             let node = await Deck.take_card_from_deck(cards_to_add[i])
             Card.make_it_a_card(node, cards_to_add[i]);
             this.add_card(cards_to_add[i],node)
-            waits.push(Table.state.hand.arrange())
+            waits.push(this.arrange())
             await Card.flip_card(node); 
         }
         await Promise.all(waits)
     }
 
-    static hand_sort(a,b) {
-        function rank2int(card){
-            let a_rank =0;
-            switch (card.substring(1)) {
-                case 'J': a_rank = 11; break;
-                case 'Q': a_rank = 12; break;
-                case 'K': a_rank = 13; break;
-                case 'A': a_rank = 14; break;
-                default: a_rank = parseInt(card.substring(1));
-            }
-            return a_rank
-        }
-
-        let a_suit = a[0];
-        let a_rank = rank2int(a)
-        let b_suit = b[0];
-        let b_rank = rank2int(b)
-
-        if (a_suit == Table.state.trump && b_suit != Table.state.trump) { return 1}
-        if (b_suit == Table.state.trump && a_suit != Table.state.trump) { return -1}
-        if (a_rank == b_rank) { return (a_suit > b_suit)?1:-1; }
-        return (a_rank > b_rank)?1:-1;  
-    }
-
-
-
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
-    static async glow_hand(state) {
-        let nodes =  document.getElementsByClassName("his_card")
-        for (let i =0; i<nodes.length; ++i) {
-            nodes[i].classList.remove("highlight")
-        } 
-
-        if (state=="me") { 
+    glow(on) {
+        if (on) {
             document.documentElement.style.setProperty('--mine_highlight', "0 0 15px 5px lightblue");
             document.documentElement.style.setProperty('--mine_click', "all");
-        } else if (state == "other") {
+        } else {
             document.documentElement.style.setProperty('--mine_highlight', "none");
             document.documentElement.style.setProperty('--mine_click', "none");
-
-            let nodes =  document.getElementsByClassName("his_card")
-
-
-            for (let i =0; i<nodes.length; ++i) {
-                nodes[i].classList.add("highlight")
-            }
         }
+    }
+
+    static hand_sort(a,b) {
+        function rank2int(card){ switch (card.substring(1)) {
+                case 'J': return 11; 
+                case 'Q': return 12; 
+                case 'K': return 13; 
+                case 'A': return 14; 
+                default:  return parseInt(card.substring(1));
+            }}
+        
+        let a_suit = a[0], b_suit = b[0]
+        if (a_suit == Table.state.trump && b_suit != Table.state.trump) { return  1 }
+        if (b_suit == Table.state.trump && a_suit != Table.state.trump) { return -1 }
+        if (rank2int(a) == rank2int(b))                                 { return (a_suit > b_suit) ? 1:-1 }
+                                                                          return (rank2int(a) > rank2int(b)) ? 1:-1
     }
 
 }
