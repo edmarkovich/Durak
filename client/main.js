@@ -68,18 +68,7 @@ socket.onmessage = async function(event) {
         state.mode = payload.prompt.prompt;
         if (payload.prompt.player == state.my_name) {
             Table.state.theTable.getHand().glow(true)
-
-            if (state.mode == 'Defend') { 
-                Card.make_verb_card('take') }
-            else if (state.mode == 'First attack') { 
-                Card.make_verb_card(null) }
-            else if (state.mode == 'Add Cards') { 
-                Card.make_verb_card('pass') }
-            else {
-                console.log("Other mode:", state.mode)
-                Card.make_verb_card(state.mode)
-            }
-
+            Card.make_verb_card(state.mode)
         } else {
             Table.state.theTable.getOtherHand().glow(true)
         }
