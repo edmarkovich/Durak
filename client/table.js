@@ -26,7 +26,7 @@ export class Table {
             node.classList.remove("table")
     
             if (my_hand.indexOf(card) != -1) {
-                Hand.put_in_my_hand(node,card)
+                Table.state.hand.add_card(card,node)
     
                 waits.push(Hand.arrange_my_hand(my_hand));
     

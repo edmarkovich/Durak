@@ -9,7 +9,8 @@ export class Hand {
         this.cards = []
     }
 
-    add_card(card) {
+    add_card(card, node) {
+        node.classList.add("mine");
         this.cards.push(card)
     }
 
@@ -36,11 +37,6 @@ export class Hand {
 
 
     // -------------------------------------------------------------------------------------------------------------------------------------------------------
-
-    static put_in_my_hand(node, card) {
-        node.classList.add("mine");
-        Table.state.hand.add_card(card);
-    }
 
     static async put_in_other_hand(node) {
         node.classList.add("his_card")
@@ -92,7 +88,7 @@ export class Hand {
         for (let i = 0; i< cards_to_add.length; i++) {
             let node = await Deck.take_card_from_deck(cards_to_add[i])
             Card.make_it_a_card(node, cards_to_add[i]);
-            Hand.put_in_my_hand(node, cards_to_add[i]);
+            Table.state.hand.add_card(cards_to_add[i],node)
             waits.push(Hand.arrange_my_hand(new_hand))
             await Card.flip_card(node); 
         }
