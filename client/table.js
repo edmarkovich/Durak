@@ -1,5 +1,5 @@
 import { Card } from './card.js';
-import { Hand } from "./hand.js";
+import { Hand, OtherHand } from "./hand.js";
 import { animate_transform} from "./utils.js"
 
 export class Table {
@@ -32,7 +32,7 @@ export class Table {
     
             } else if (other_hand.indexOf(card) != -1) {
                 await Card.make_deck_card(node)
-                waits.push(Hand.put_in_other_hand(node))
+                waits.push(Table.state.otherHand.add_card(node))
             } else {
                 // Put in the done pile
                 Card.flip_card(node, true)
@@ -52,12 +52,9 @@ export class Table {
     }
     
     static play_other(card, mode) {
-        let node = document.getElementById(""+(Table.state.legacy_other_hand-1))
-        node.classList.remove("his_card")
-        node.classList.remove("highlight"); 
+        let node = Table.state.otherHand.pop_card() 
         Card.make_it_a_card(node, card)
         Card.flip_card(node)
-        Table.state.legacy_other_hand --;
         Table.card_to_table(node,mode,card);
     }
 }
@@ -69,9 +66,9 @@ Table.state = {
         zIndex: 100,
         cards: []
     },
-    legacy_other_hand: 0,
     trump: null,
 
     hand: new Hand(),
+    otherHand: new OtherHand(),
 
 }

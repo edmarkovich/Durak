@@ -3,6 +3,28 @@ import { Card } from "./card.js";
 import { Deck } from "./deck.js";
 import { Table } from "./table.js"
 
+export class OtherHand {
+    constructor () {
+        this.cards_count = 0
+    }
+
+    async add_card(node) {
+        node.classList.add("his_card")
+        node.id = this.cards_count
+        await animate_transform(node, Card.getTransform(1+ ++this.cards_count, 0, 0, 0), 500).finished
+    }
+
+    count() {return this.cards_count}
+
+    pop_card() {
+        this.cards_count--
+        let node =document.getElementById(""+(this.cards_count))
+        node.classList.remove("his_card")
+        node.classList.remove("highlight");
+        return node;        
+    }
+}
+
 export class Hand {
 
     constructor () {
@@ -88,30 +110,16 @@ export class Hand {
 
 
 
-
     // -------------------------------------------------------------------------------------------------------------------------------------------------------
-
-    static async put_in_other_hand(node) {
-        node.classList.add("his_card")
-        node.id = Table.state.legacy_other_hand
-        return animate_transform(node, Card.getTransform(1+ ++Table.state.legacy_other_hand, 0, 0, 0), 500).finished
-    }
-
-
-
-
-
-
-
 
     static async refill_other_hand(new_hand) {
         let waits =[]
-        while (new_hand.length != Table.state.legacy_other_hand) {
+        while (new_hand.length != Table.state.otherHand.count()) {
             let node = await Deck.take_card_from_deck(null)
 
             await Card.make_deck_card(node);
 
-            waits.push( Hand.put_in_other_hand(node))
+            waits.push( Table.state.otherHand.add_card(node))
             await sleep(150)
         }
         await Promise.all(waits)
