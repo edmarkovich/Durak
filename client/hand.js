@@ -47,6 +47,8 @@ export class OtherHand {
             }
         } 
     }
+
+    async arrange() {}
 }
 
 export class Hand {

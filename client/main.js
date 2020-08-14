@@ -46,9 +46,9 @@ socket.onmessage = async function(event) {
             for (let j=0; j<state.game.players.length; j++) {
                 if (state.game.players[j].hand.indexOf(table_to_add[i]) != -1) {
                     if (state.game.players[j].name == state.my_name) {
-                        await Table.play_own(table_to_add[i], state.mode);
+                        await Table.play(table_to_add[i], Table.state.hand, state.mode);
                     } else {
-                        await Table.play_other(table_to_add[i], state.mode);
+                        await Table.play(table_to_add[i], Table.state.otherHand,state.mode);
                     }
                 }
             }
