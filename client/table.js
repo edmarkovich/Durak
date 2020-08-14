@@ -19,10 +19,7 @@ export class Table {
         await hand.arrange()
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////
-
-
-    static async clear(my_hand, other_hand) {
+    async clear(my_hand, other_hand) {
         let waits = []
         while (document.getElementsByClassName("table").length>0) {
             let node = document.getElementsByClassName("table")[0]
@@ -30,13 +27,13 @@ export class Table {
             node.classList.remove("table")
     
             if (my_hand.indexOf(card) != -1) {
-                Table.state.theTable.getHand().add_card(card,node)
+                this.getHand().add_card(card,node)
     
-                waits.push(Table.state.theTable.getHand().arrange());
+                waits.push(this.getHand().arrange());
     
             } else if (other_hand.indexOf(card) != -1) {
                 await Card.make_deck_card(node)
-                waits.push(Table.state.theTable.getOtherHand().add_card(node))
+                waits.push(this.getOtherHand().add_card(node))
             } else {
                 // Put in the done pile
                 Card.flip_card(node, true)
@@ -48,6 +45,11 @@ export class Table {
         Table.state.table.cards = []
         Table.state.table.last_attack_slot=-1
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////
+
+
+
 
     static async card_to_table(node, mode, card) {
         node.style.zIndex = Table.state.table.zIndex++;

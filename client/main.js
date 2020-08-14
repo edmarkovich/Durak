@@ -1,6 +1,5 @@
 import {sleep} from "./utils.js";
 import {Deck} from "./deck.js"
-import {Hand} from "./hand.js"
 import {Table} from "./table.js"
 import {Card} from  "./card.js"
 
@@ -64,7 +63,7 @@ socket.onmessage = async function(event) {
                     other_hand = hand
                 }
             }
-            await Table.clear(my_hand,other_hand) 
+            await Table.state.theTable.clear(my_hand,other_hand) 
             await Table.state.theTable.getHand().refill(my_hand);
             await Table.state.theTable.getOtherHand().refill(other_hand);
         }
