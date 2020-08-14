@@ -12,6 +12,13 @@ export class Table {
     getHand() { return this.hand}
     getOtherHand() {return this.otherHand}
 
+    async play(card, my_player, mode) {
+        let hand = my_player ? this.hand : this.otherHand
+        let node = hand.pop_card(card);
+        await Table.card_to_table(node,mode,card)
+        await hand.arrange()
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -56,11 +63,7 @@ export class Table {
         }
     }
 
-    static async play(card, hand, mode) {
-        let node = hand.pop_card(card);
-        await Table.card_to_table(node,mode,card)
-        await hand.arrange()
-    }
+
 }
 
 
