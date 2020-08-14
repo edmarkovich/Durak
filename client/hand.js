@@ -16,11 +16,13 @@ export class OtherHand {
 
     count() {return this.cards_count}
 
-    pop_card() {
+    pop_card(card) {
         this.cards_count--
         let node =document.getElementById(""+(this.cards_count))
         node.classList.remove("his_card")
         node.classList.remove("highlight");
+        Card.make_it_a_card(node, card)
+        Card.flip_card(node)
         return node;        
     }
 
@@ -66,7 +68,7 @@ export class Hand {
         return this.cards.length
     }
 
-    pop_card(card) {
+    async pop_card(card) {
         let node = document.getElementById(card);   
 
         node.classList.remove("mine");
