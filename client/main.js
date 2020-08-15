@@ -4,7 +4,8 @@ import {Table} from "./table.js"
 import {Card} from  "./card.js"
 
 let state = {
-    game: null
+    game: null,
+    running: false
 }
 
 let socket = new WebSocket("ws://192.168.1.13:5678")
@@ -13,10 +14,10 @@ socket.onopen = function() {
     socket.send('{"action":"join","name":"'+state.my_name+'"}');
 }
 
-var running = false;
 socket.onmessage = async function(event) {
-    while (running) { await sleep(100) }
-    running = true;
+
+    while (state.running) { await sleep(100) }
+    state.running = true;
 
     let payload = JSON.parse(event.data)
 
@@ -37,19 +38,28 @@ socket.onmessage = async function(event) {
         Table.state.theTable.getHand().glow(false)
         Table.state.theTable.getOtherHand().glow(false)
 
+        // eslint-disable-next-line no-inner-declarations
+        function get_hand_array(mine) {
+            for (let i=0; i< state.game.players.length; i++) {
+                if (mine && state.game.players[i].name == state.my_name) { return state.game.players[i].hand }
+                if (!mine && state.game.players[i].name != state.my_name) { return state.game.players[i].hand }
+                console.log(mine, state.game.players[i], state.my_name)
+             }    
+        }
+
+
         // These are cards that are on the table this update that were not
         // there during the last one (ie update was triggered by a move)
         let table_to_add = game.table.filter(x => !state.game.table.includes(x) );
         for (let i=0; i<table_to_add.length; i++) {
-            // Figure out whose hand these cards were in during last update
-            for (let j=0; j<state.game.players.length; j++) {
-                if (state.game.players[j].hand.indexOf(table_to_add[i]) != -1) {
-                    // Were they in my hand or "other's" hand. Take them and put
-                    // them on the table
-                    let is_my_move = (state.game.players[j].name == state.my_name)
-                    await Table.state.theTable.play(table_to_add[i], is_my_move)
-                }
+
+            if( get_hand_array(true).indexOf(table_to_add[i]) != -1) {
+                await Table.state.theTable.play(table_to_add[i], true)
+            } else if( get_hand_array(false).indexOf(table_to_add[i]) != -1) {
+                await Table.state.theTable.play(table_to_add[i], false)
             }
+
+
         }
         
         // Server has cleared the table, meaning we're about to start a new 'bout'
@@ -78,7 +88,7 @@ socket.onmessage = async function(event) {
         let my_turn = payload.prompt.player == state.my_name
         Table.state.theTable.prepare_turn(my_turn, mode)
     }
-    running = false;
+    state.running = false;
 }
 
 export function send_card(card) { socket.send('{"action":"", "card":"'+card+'"}') }
