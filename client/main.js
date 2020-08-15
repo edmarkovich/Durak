@@ -21,7 +21,6 @@ function get_hand_array(mine, game) {
 }
 
 socket.onmessage = async function(event) {
-
     while (state.running) { await sleep(100) }
     state.running = true;
 
@@ -52,11 +51,16 @@ socket.onmessage = async function(event) {
         state.game = game
     }
 
-    if ('prompt' in payload && 'player' in payload.prompt) {
-        // Glow hand and make the verb card
-        let mode = payload.prompt.prompt
-        let my_turn = payload.prompt.player == state.my_name
-        Table.state.theTable.prompt_for_action(my_turn, mode)
+    if ('prompt' in payload) {
+        if ('player' in payload.prompt) {
+            // Glow hand and make the verb card
+            let my_turn = payload.prompt.player == state.my_name
+            Table.state.theTable.prompt_for_action(my_turn, payload.prompt.prompt)
+        } 
+        
+        if (payload.prompt.prompt == "over") {
+            alert("Gave Over!")
+        }
     }
 
     state.running = false;
