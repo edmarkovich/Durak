@@ -37,6 +37,23 @@ export class Table {
         await hand.arrange()
     }
 
+    async render_turn(old_table_cards, new_table_cards, old_hand, old_other_hand) {
+
+        Card.make_verb_card(null)
+        Table.state.theTable.getHand().glow(false)
+        Table.state.theTable.getOtherHand().glow(false)
+
+        let table_to_add = new_table_cards.filter(x => !old_table_cards.includes(x) );
+        for (let i=0; i<table_to_add.length; i++) {
+            
+            if( old_hand.indexOf(table_to_add[i]) != -1) {
+                await this.play(table_to_add[i], true)
+            } else if( old_other_hand.indexOf(table_to_add[i]) != -1) {
+                await this.play(table_to_add[i], false)
+            }
+        }
+    }
+
     async clear(my_hand, other_hand) {
         let waits = []
         while (document.getElementsByClassName("table").length>0) {
