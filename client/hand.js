@@ -1,7 +1,6 @@
 import { sleep, animate_transform } from './utils.js';
 import { Card } from "./card.js";
 import { Deck } from "./deck.js";
-import { Table } from "./table.js"
 
 export class OtherHand {
     constructor () {
@@ -53,7 +52,8 @@ export class OtherHand {
 
 export class Hand {
 
-    constructor () {
+    constructor (trump) {
+        this.trump = trump
         this.cards = []
     }
 
@@ -84,10 +84,27 @@ export class Hand {
 
     get_cards() {
         return this.cards
-    }
+    }   
 
-    async arrange() {
-        this.cards.sort(Hand.hand_sort)
+    async arrange() {   
+        
+        function hand_sort(a,b) {
+            function rank2int(card){ switch (card.substring(1)) {
+                    case 'J': return 11; 
+                    case 'Q': return 12; 
+                    case 'K': return 13; 
+                    case 'A': return 14; 
+                    default:  return parseInt(card.substring(1));
+                }}
+            
+            let a_suit = a[0], b_suit = b[0]
+            if (a_suit == this.trump && b_suit != this.trump) { return  1 }
+            if (b_suit == this.trump && a_suit != this.trump) { return -1 }
+            if (rank2int(a) == rank2int(b))                                 { return (a_suit > b_suit) ? 1:-1 }
+                                                                              return (rank2int(a) > rank2int(b)) ? 1:-1
+        } 
+
+        this.cards.sort(hand_sort.bind(this))
         let waits = []
         for (let i=0; i<this.cards.length;++i) {
             let node = document.getElementById(this.cards[i]);
@@ -119,21 +136,4 @@ export class Hand {
             document.documentElement.style.setProperty('--mine_click', "none");
         }
     }
-
-    static hand_sort(a,b) {
-        function rank2int(card){ switch (card.substring(1)) {
-                case 'J': return 11; 
-                case 'Q': return 12; 
-                case 'K': return 13; 
-                case 'A': return 14; 
-                default:  return parseInt(card.substring(1));
-            }}
-        
-        let a_suit = a[0], b_suit = b[0]
-        if (a_suit == Table.state.trump && b_suit != Table.state.trump) { return  1 }
-        if (b_suit == Table.state.trump && a_suit != Table.state.trump) { return -1 }
-        if (rank2int(a) == rank2int(b))                                 { return (a_suit > b_suit) ? 1:-1 }
-                                                                          return (rank2int(a) > rank2int(b)) ? 1:-1
-    }
-
 }

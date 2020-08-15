@@ -4,25 +4,57 @@ import { animate_transform} from "./utils.js"
 
 export class Table {
 
-    constructor() {
-        this.hand= new Hand()
+    constructor(trump) {
+        this.hand= new Hand(trump)
         this.otherHand = new OtherHand()
+        this.last_attack_slot = -1
+        this.zIndex = 100
     }
 
     getHand() { return this.hand}
     getOtherHand() {return this.otherHand}
 
-    async play(card, my_player, mode) {
+    prompt_for_action(my_turn, mode){
+        this.mode = mode
+        if (my_turn) {
+            this.getHand().glow(true)
+            Card.make_verb_card(this.mode)
+        } else {
+            this.getOtherHand().glow(true)
+        }
+    }
+
+    async prepare_next_round(my_hand, other_hand) {
+        await this.clear(my_hand,other_hand) 
+        await this.getHand().refill(my_hand);
+        await this.getOtherHand().refill(other_hand);
+    }
+
+    async play(card, my_player) {
         let hand = my_player ? this.hand : this.otherHand
         let node = hand.pop_card(card);
-        await Table.card_to_table(node,mode,card)
+        await this.card_to_table(node, this.mode)
         await hand.arrange()
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////
+    async render_turn(old_table_cards, new_table_cards, old_hand, old_other_hand) {
 
+        Card.make_verb_card(null)
+        Table.state.theTable.getHand().glow(false)
+        Table.state.theTable.getOtherHand().glow(false)
 
-    static async clear(my_hand, other_hand) {
+        let table_to_add = new_table_cards.filter(x => !old_table_cards.includes(x) );
+        for (let i=0; i<table_to_add.length; i++) {
+            
+            if( old_hand.indexOf(table_to_add[i]) != -1) {
+                await this.play(table_to_add[i], true)
+            } else if( old_other_hand.indexOf(table_to_add[i]) != -1) {
+                await this.play(table_to_add[i], false)
+            }
+        }
+    }
+
+    async clear(my_hand, other_hand) {
         let waits = []
         while (document.getElementsByClassName("table").length>0) {
             let node = document.getElementsByClassName("table")[0]
@@ -30,50 +62,39 @@ export class Table {
             node.classList.remove("table")
     
             if (my_hand.indexOf(card) != -1) {
-                Table.state.theTable.getHand().add_card(card,node)
-    
-                waits.push(Table.state.theTable.getHand().arrange());
-    
+                this.getHand().add_card(card,node)
+                waits.push(this.getHand().arrange());
             } else if (other_hand.indexOf(card) != -1) {
                 await Card.make_deck_card(node)
-                waits.push(Table.state.theTable.getOtherHand().add_card(node))
+                waits.push(this.getOtherHand().add_card(node))
             } else {
                 // Put in the done pile
                 Card.flip_card(node, true)
                 waits.push(animate_transform(node, Card.getTransform(9,0,2,0), 300))
             }
-            
         }
         await Promise.all(waits)
-        Table.state.table.cards = []
-        Table.state.table.last_attack_slot=-1
+        this.last_attack_slot=-1
     }
 
-    static async card_to_table(node, mode, card) {
-        node.style.zIndex = Table.state.table.zIndex++;
-        Table.state.table.cards.push(card);
-        node.classList.add("table");
+
+
+    async card_to_table(node, mode) {
+        node.style.zIndex = this.zIndex++
+        node.classList.add("table")
 
         if (mode == "Defend") {
-            await animate_transform(node, Card.getTransform(2 + Table.state.table.last_attack_slot, 10, 2, 15) + "rotate3d(0,0,1,400deg)", 500).finished;
+            await animate_transform(node, Card.getTransform(2 + this.last_attack_slot, 10, 2, 15) + "rotate3d(0,0,1,400deg)", 500).finished
         }
         else {
-            Table.state.table.last_attack_slot++;
-            await animate_transform(node, Card.getTransform(2 + Table.state.table.last_attack_slot, 0, 2, 0), 500).finished;
+            this.last_attack_slot++
+            await animate_transform(node, Card.getTransform(2 + this.last_attack_slot, 0, 2, 0), 500).finished
         }
     }
-
 
 }
 
 
 Table.state = {
-    table: {
-        last_attack_slot: -1,
-        zIndex: 100,
-        cards: []
-    },
-    trump: null,
 
-    theTable: new Table()
 }

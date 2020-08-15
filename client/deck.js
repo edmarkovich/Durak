@@ -2,6 +2,12 @@ import {Card} from "./card.js"
 import {sleep, animate_transform} from "./utils.js"
 
 export class Deck {
+
+    static async init(trump) {
+        await Deck.new_deck()
+        await Deck.put_trump(trump)
+    }
+
     static async new_deck() {
         let waits = []
         for (let i=0; i<36; i++) {

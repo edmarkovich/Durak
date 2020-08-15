@@ -67,10 +67,17 @@ export class Card {
         Card.flip_card(node,true)
     }
 
-    static make_verb_card(verb) {
+    static make_verb_card(mode) {
+        let verb=null
+        if (mode == 'Defend') { 
+            verb = 'take' 
+        } else if (mode == 'Add Cards') { 
+            verb = 'pass' 
+        }
+
         let node = null
         let nodes = document.getElementsByClassName("verb")
-        if (nodes.length==0) {
+        if (nodes.length==0) { // Create this element for the first time
             node = document.createElement("div")
             node.setAttribute("class", "card-container verb hidden")
     
@@ -94,12 +101,15 @@ export class Card {
     
         if (verb==null){
             node.classList.add("hidden")
-        } else {
-            node.setAttribute("onclick", "send_verb('"+verb+"')")
-            node.getElementsByClassName("front")[0].getElementsByClassName("card-inner")[0].innerHTML =(verb == "pass")?"done":verb
-            node.classList.remove("hidden")
-            animate_transform(node, 
-                Card.getTransform(Table.state.theTable.getHand().count()+2, 0, 4, 0), 0)
-        }    
+            return
+        } 
+
+        node.classList.remove("hidden")
+        node.setAttribute("onclick", "send_verb('"+verb+"')")
+        node.getElementsByClassName("front")[0].getElementsByClassName("card-inner")[0].innerHTML 
+            =(verb == "pass")?"done":verb
+        animate_transform(node, 
+            Card.getTransform(Table.state.theTable.getHand().count()+2, 0, 4, 0), 0)
+          
     }
 }

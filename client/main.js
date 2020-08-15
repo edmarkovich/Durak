@@ -1,11 +1,10 @@
 import {sleep} from "./utils.js";
 import {Deck} from "./deck.js"
-import {Hand} from "./hand.js"
 import {Table} from "./table.js"
-import {Card} from  "./card.js"
 
 let state = {
-    game: null
+    game: null,
+    running: false
 }
 
 let socket = new WebSocket("ws://192.168.1.13:5678")
@@ -14,87 +13,54 @@ socket.onopen = function() {
     socket.send('{"action":"join","name":"'+state.my_name+'"}');
 }
 
-var running = false;
+function get_hand_array(mine, game) {
+    for (let i=0; i< game.players.length; i++) {
+        if (mine && game.players[i].name == state.my_name) { return game.players[i].hand }
+        if (!mine && game.players[i].name != state.my_name) { return game.players[i].hand }
+     }    
+}
+
 socket.onmessage = async function(event) {
 
-
-    while (running) {
-        await sleep(100)
-    }
-    running = true;
+    while (state.running) { await sleep(100) }
+    state.running = true;
 
     let payload = JSON.parse(event.data)
-
-    Table.state.theTable.getHand().glow(false)
-    Table.state.theTable.getOtherHand().glow(false)
-
-
-    Card.make_verb_card(null);
 
     if ('game' in payload) {
 
         let game = payload.game
+
         if(!state.game) {
-            await Deck.new_deck()
-            Table.state.trump =game.trump[0]
-            Table.state.trump_card = game.trump
-            await Deck.put_trump(game.trump)
-        }
+            // Nothing was yet rendered, build up the UI stuff
+            await Deck.init(game.trump)
+            Table.state.theTable = new Table(game.trump[0])
+        } else {
+            // These are cards that are on the table this update that were not
+            // there during the last one (ie update was triggered by a move)
+            await Table.state.theTable.render_turn(state.game.table, game.table, 
+                get_hand_array(true,state.game), get_hand_array(false,state.game))
+        } 
 
-        let table_to_add = game.table.filter(x => !state.game.table.includes(x) );
-        for (let i=0; i<table_to_add.length; i++) {
-            for (let j=0; j<state.game.players.length; j++) {
-                if (state.game.players[j].hand.indexOf(table_to_add[i]) != -1) {
-                    let is_my_move = (state.game.players[j].name == state.my_name)
-                    await Table.state.theTable.play(table_to_add[i], is_my_move, state.mode)
-                }
-            }
-        }
-        
         if (game.table.length==0) {
-            let my_hand = null
-            let other_hand = null
-            for (let id in game.players) {
-                let name = game.players[id].name
-                let hand = game.players[id].hand
-
-                if (name == state.my_name) {
-                    my_hand = hand
-                } else {
-                    other_hand = hand
-                }
-            }
-            await Table.clear(my_hand,other_hand) 
-            await Table.state.theTable.getHand().refill(my_hand);
-            await Table.state.theTable.getOtherHand().refill(other_hand);
+            // Server has cleared the table, meaning we're about to start a new 'bout'
+            // Clear the table and refill the hands from either table or deck
+            await Table.state.theTable.prepare_next_round(  get_hand_array(true, game),
+                                                            get_hand_array(false, game))
         }
-        state.game = game
         
+        state.game = game
     }
 
-    if ('prompt' in payload) {
-        state.mode = payload.prompt.prompt;
-        if ('player' in payload.prompt) {
-            if (payload.prompt.player == state.my_name) {
-                Table.state.theTable.getHand().glow(true)
-
-                if (state.mode == 'Defend') { Card.make_verb_card('take') }
-                else if (state.mode == 'First attack') { Card.make_verb_card(null) }
-                else if (state.mode == 'Add Cards') { Card.make_verb_card('pass') }
-                else {Card.make_verb_card(state.mode)}
-
-            } else {
-                Table.state.theTable.getOtherHand().glow(true)
-            }
-        }
+    if ('prompt' in payload && 'player' in payload.prompt) {
+        // Glow hand and make the verb card
+        let mode = payload.prompt.prompt
+        let my_turn = payload.prompt.player == state.my_name
+        Table.state.theTable.prompt_for_action(my_turn, mode)
     }
-    running = false;
+
+    state.running = false;
 }
 
-export function send_card(card) {
-    socket.send('{"action":"", "card":"'+card+'"}')
-}
-
-export function send_verb(verb) {
-    socket.send('{"action":"'+verb+'"}')
-}
+export function send_card(card) { socket.send('{"action":"", "card":"'+card+'"}') }
+export function send_verb(verb) { socket.send('{"action":"'+verb+'"}') }
