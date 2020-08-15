@@ -14,7 +14,7 @@ export class Table {
     getHand() { return this.hand}
     getOtherHand() {return this.otherHand}
 
-    prepare_turn(my_turn, mode){
+    prompt_for_action(my_turn, mode){
         this.mode = mode
         if (my_turn) {
             this.getHand().glow(true)
@@ -22,6 +22,12 @@ export class Table {
         } else {
             this.getOtherHand().glow(true)
         }
+    }
+
+    async prepare_next_round(my_hand, other_hand) {
+        await this.clear(my_hand,other_hand) 
+        await this.getHand().refill(my_hand);
+        await this.getOtherHand().refill(other_hand);
     }
 
     async play(card, my_player) {
@@ -54,11 +60,7 @@ export class Table {
         this.last_attack_slot=-1
     }
 
-    async prepare_next_round(my_hand, other_hand) {
-        await this.clear(my_hand,other_hand) 
-        await this.getHand().refill(my_hand);
-        await this.getOtherHand().refill(other_hand);
-    }
+
 
     async card_to_table(node, mode) {
         node.style.zIndex = this.zIndex++
