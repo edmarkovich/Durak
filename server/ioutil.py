@@ -1,5 +1,6 @@
 import json
 from .card import Card
+import time
 
 class RestartException(Exception):
     pass
@@ -34,6 +35,8 @@ class IOUtil:
             inputA = source()
 
         if inputA == "Die":
+            print("Restarting in 1 second")
+            time.sleep(1)
             raise RestartException("Time to Die")
 
         input = json.loads(inputA)
