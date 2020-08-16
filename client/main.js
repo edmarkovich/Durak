@@ -25,6 +25,7 @@ socket.onmessage = async function(event) {
     state.running = true;
 
     let payload = JSON.parse(event.data)
+    console.log(payload)
 
     if ('game' in payload) {
 
