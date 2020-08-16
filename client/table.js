@@ -4,13 +4,13 @@ import { animate_transform} from "./utils.js"
 
 export class Table {
 
-    constructor(trump, my_name, players) {
+    constructor(trump_suit, my_name, players) {
         this.my_name = my_name
         this.hands = {}
 
         for (let i=0; i<players.length; ++i) {
             if (players[i] == my_name) {
-                this.hands[players[i]] = new Hand()
+                this.hands[players[i]] = new Hand(trump_suit)
             } else {
                 this.hands[players[i]] = new OtherHand()
             }

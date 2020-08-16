@@ -52,8 +52,8 @@ export class OtherHand {
 
 export class Hand {
 
-    constructor (trump) {
-        this.trump = trump
+    constructor (trump_suit) {
+        this.trump = trump_suit
         this.cards = []
     }
 
@@ -89,6 +89,7 @@ export class Hand {
     async arrange() {   
         
         function hand_sort(a,b) {
+            console.log("sort", this.trump)
             function rank2int(card){ switch (card.substring(1)) {
                     case 'J': return 11; 
                     case 'Q': return 12; 
