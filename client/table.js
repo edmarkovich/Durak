@@ -13,7 +13,6 @@ export class Table {
                 this.hands[players[i]] = new Hand()
             } else {
                 this.hands[players[i]] = new OtherHand()
-
             }
         }
 
@@ -24,6 +23,7 @@ export class Table {
     getHand() { 
         return this.hands[this.my_name]
     }
+    
     getOtherHand() {
         for (let name in this.hands) {
             if (name != this.my_name) {
