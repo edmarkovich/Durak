@@ -4,9 +4,6 @@ import json
 import os
 import sys
 
-import http.server
-import socketserver
-
 import threading
 import queue
 
@@ -19,24 +16,7 @@ import time
 inqueue = queue.Queue()
 outqueue = queue.Queue()
 
-class HTTPThread(threading.Thread):
-    def __init__(self):
-        threading.Thread.__init__(self)
 
-    def run(self):
-        class S(http.server.SimpleHTTPRequestHandler):
-            def do_GET(self):
-                if self.path == "/":
-                    self.send_response(301)
-                    self.send_header('Location','/client/client.html')
-                    self.end_headers()
-                return http.server.SimpleHTTPRequestHandler.do_GET(self)
-
-        S.allow_reuse_address = True
-
-        with socketserver.TCPServer(("", 8000), S) as httpd:
-            print ("Serving HTTP")
-            httpd.serve_forever()
 
 
 class WSThread(threading.Thread):
@@ -47,19 +27,22 @@ class WSThread(threading.Thread):
     def run(self):
         async def inbound_messaging(websocket, path):
             if len(self.websockets) == 0:
-                print("First client, restarting the game")
+                print(websocket.remote_address, "WS: First client, restarting the game")
                 inqueue.put("Die")
                 self.end_mode=False
             if self.end_mode:
-                print("End mode in progress")
+                print(websocket.remote_address, "WS: End mode in progress")
                 return
-
+            
             self.websockets.append(websocket)
+            print (websocket.remote_address, "WS: Subscribing #", len(self.websockets))
+
             async for message in websocket:
-                data = message
-                inqueue.put(data)
+                #print(websocket.remote_address, "WS: message: ", message)
+                inqueue.put(message)
+
             self.websockets.remove(websocket)
-            print("Disconect", len(self.websockets), "remain", websocket)
+            print(websocket.remote_address, "WS: Disconect. Now: ", len(self.websockets))
             self.end_mode=True
 
         async def outbound_messaging():
@@ -78,7 +61,7 @@ class WSThread(threading.Thread):
         asyncio.ensure_future(start_server)
         asyncio.ensure_future(outbound_messaging())
         asyncio.get_event_loop().run_forever()
-        print("WSThread Done")
+        print("WS: End Run Thread")
 
 class GameThread(threading.Thread):
     def __init__(self):
@@ -88,20 +71,17 @@ class GameThread(threading.Thread):
         while True:
             try:
                 game = Game(2)
+                print ("Game Thread: New Game Started")
                 IOUtil.game = game
                 IOUtil.defaultSource = inqueue.get
                 IOUtil.defaultDestination = outqueue.put
                 game.main_loop()
             except RestartException as e:
-                print ("Restarting")
+                print ("Game Thread: Restarting")
 
 
-if len(sys.argv)>1 and sys.argv[1]=="http":
-    httpthread = HTTPThread()
-    httpthread.start()
-else:
-    wsthread = WSThread()
-    wsthread.start()
+wsthread = WSThread()
+wsthread.start()
 
-    gamethread = GameThread()
-    gamethread.start()
+gamethread = GameThread()
+gamethread.start()
