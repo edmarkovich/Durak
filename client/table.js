@@ -4,15 +4,33 @@ import { animate_transform} from "./utils.js"
 
 export class Table {
 
-    constructor(trump) {
-        this.hand= new Hand(trump)
-        this.otherHand = new OtherHand()
+    constructor(trump, my_name, players) {
+        this.my_name = my_name
+        this.hands = {}
+
+        for (let i=0; i<players.length; ++i) {
+            if (players[i] == my_name) {
+                this.hands[players[i]] = new Hand()
+            } else {
+                this.hands[players[i]] = new OtherHand()
+            }
+        }
+
         this.last_attack_slot = -1
         this.zIndex = 100
     }
 
-    getHand() { return this.hand}
-    getOtherHand() {return this.otherHand}
+    getHand() { 
+        return this.hands[this.my_name]
+    }
+    
+    getOtherHand() {
+        for (let name in this.hands) {
+            if (name != this.my_name) {
+                return this.hands[name]
+            }
+        }
+    }
 
     prompt_for_action(my_turn, mode){
         this.mode = mode
@@ -31,7 +49,7 @@ export class Table {
     }
 
     async play(card, my_player) {
-        let hand = my_player ? this.hand : this.otherHand
+        let hand = my_player ? this.getHand() : this.getOtherHand()
         let node = hand.pop_card(card);
         await this.card_to_table(node, this.mode)
         await hand.arrange()

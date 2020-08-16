@@ -29,11 +29,10 @@ socket.onmessage = async function(event) {
     if ('game' in payload) {
 
         let game = payload.game
-
         if(!state.game) {
             // Nothing was yet rendered, build up the UI stuff
             await Deck.init(game.trump)
-            Table.state.theTable = new Table(game.trump[0])
+            Table.state.theTable = new Table(game.trump[0], state.my_name, game.players.map(x => x.name))
         } else {
             // These are cards that are on the table this update that were not
             // there during the last one (ie update was triggered by a move)
