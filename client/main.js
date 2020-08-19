@@ -8,7 +8,9 @@ let state = {
 }
 
 let host = "ws://"+location.host+":5678"
-alert(host)
+if (location.host == "localhost:8000") { host = "ws://thepi:5678" }
+
+
 let socket = new WebSocket(host)
 socket.onopen = function() {
     state.my_name = prompt("Player Name"); 
