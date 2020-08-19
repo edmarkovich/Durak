@@ -28,7 +28,7 @@ export class OtherHand {
      async refill(new_hand) {
         let waits =[]
         while (new_hand.length != this.cards_count) {
-            let node = await Deck.take_card_from_deck(null)
+            let node = Deck.take_card_from_deck(false)
             await Card.make_deck_card(node);
             waits.push( this.add_card(node))
             await sleep(150)
@@ -52,8 +52,9 @@ export class OtherHand {
 
 export class Hand {
 
-    constructor (trump_suit) {
-        this.trump = trump_suit
+    constructor (trump_card) {
+        this.trump_suit = trump_card[0]
+        this.trump_card = trump_card
         this.cards = []
     }
 
@@ -76,7 +77,7 @@ export class Hand {
         node.classList.remove("mine");
         node.classList.remove("highlight"); 
 
-        let idx =this.cards.indexOf(card);
+        let idx = this.cards.indexOf(card);
         this.cards.splice(idx,1)
 
         return node
@@ -89,7 +90,6 @@ export class Hand {
     async arrange() {   
         
         function hand_sort(a,b) {
-            console.log("sort", this.trump)
             function rank2int(card){ switch (card.substring(1)) {
                     case 'J': return 11; 
                     case 'Q': return 12; 
@@ -99,8 +99,8 @@ export class Hand {
                 }}
             
             let a_suit = a[0], b_suit = b[0]
-            if (a_suit == this.trump && b_suit != this.trump) { return  1 }
-            if (b_suit == this.trump && a_suit != this.trump) { return -1 }
+            if (a_suit == this.trump_suit && b_suit != this.trump_suit) { return  1 }
+            if (b_suit == this.trump_suit && a_suit != this.trump_suit) { return -1 }
             if (rank2int(a) == rank2int(b))                                 { return (a_suit > b_suit) ? 1:-1 }
                                                                               return (rank2int(a) > rank2int(b)) ? 1:-1
         } 
@@ -119,8 +119,15 @@ export class Hand {
         let cards_to_add = new_hand.filter(x => !this.has_card(x) );
         let waits = []
         for (let i = 0; i< cards_to_add.length; i++) {
-            let node = await Deck.take_card_from_deck(cards_to_add[i])
-            Card.make_it_a_card(node, cards_to_add[i]);
+
+            let node = null
+            if (cards_to_add[i] == this.trump_card) {
+                node = Deck.take_card_from_deck(true)
+            } else {
+                node = Deck.take_card_from_deck(false)
+                Card.make_it_a_card(node, cards_to_add[i]);
+            }
+
             this.add_card(cards_to_add[i],node)
             waits.push(this.arrange())
             await Card.flip_card(node); 

@@ -4,13 +4,13 @@ import { animate_transform} from "./utils.js"
 
 export class Table {
 
-    constructor(trump_suit, my_name, players) {
+    constructor(trump_card, my_name, players) {
         this.my_name = my_name
         this.hands = {}
 
         for (let i=0; i<players.length; ++i) {
             if (players[i] == my_name) {
-                this.hands[players[i]] = new Hand(trump_suit)
+                this.hands[players[i]] = new Hand(trump_card)
             } else {
                 this.hands[players[i]] = new OtherHand()
             }
@@ -44,6 +44,7 @@ export class Table {
 
     async prepare_next_round(my_hand, other_hand) {
         await this.clear(my_hand,other_hand) 
+
         await this.getHand().refill(my_hand);
         await this.getOtherHand().refill(other_hand);
     }

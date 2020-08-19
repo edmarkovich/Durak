@@ -24,7 +24,7 @@ export class Card {
 
     static make_it_a_card(node, card) {
         node.id = card;
-        let front = node.getElementsByClassName("front")[0]
+        let front = node.getElementsByClassName("front")[0]        
         let inner = document.createElement("div")
         inner.classList.add("card-inner")
         inner.innerHTML = Card.card_to_unicode(card)

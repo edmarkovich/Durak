@@ -29,7 +29,6 @@ socket.onmessage = async function(event) {
     state.running = true;
 
     let payload = JSON.parse(event.data)
-    console.log(payload)
 
     if ('game' in payload) {
 
@@ -37,7 +36,7 @@ socket.onmessage = async function(event) {
         if(!state.game) {
             // Nothing was yet rendered, build up the UI stuff
             await Deck.init(game.trump)
-            Table.state.theTable = new Table(game.trump[0], state.my_name, game.players.map(x => x.name))
+            Table.state.theTable = new Table(game.trump, state.my_name, game.players.map(x => x.name))
         } else {
             // These are cards that are on the table this update that were not
             // there during the last one (ie update was triggered by a move)
@@ -53,6 +52,7 @@ socket.onmessage = async function(event) {
         }
         
         state.game = game
+        checker(game)
     }
 
     if ('prompt' in payload) {
@@ -72,3 +72,29 @@ socket.onmessage = async function(event) {
 
 export function send_card(card) { socket.send('{"action":"", "card":"'+card+'"}') }
 export function send_verb(verb) { socket.send('{"action":"'+verb+'"}') }
+
+function checker(game) {
+    // Does deck contain what it should?
+    let a = document.getElementsByClassName("deck").length
+
+    // Does my hand contain what it should?
+    let b = document.getElementsByClassName("mine").length
+
+    // Does other hand contain what it should?
+    let c = document.getElementsByClassName("his_card").length
+
+    if (a != parseInt(game.deck)) {
+        console.log("Deck Problem:", a, game.deck)
+        alert("Deck Problem")
+    }
+
+    if (b != get_hand_array(true, game).length) {
+        console.log("Mine Problem:", b, get_hand_array(true, game).length)
+        alert("Mine Problem")
+    }
+    
+    if (c != get_hand_array(false, game).length) {
+        console.log("His Problem:", c, get_hand_array(false, game).length)
+        alert("His Problem")
+    }
+}

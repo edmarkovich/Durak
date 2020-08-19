@@ -37,7 +37,7 @@ export class Deck {
         Card.make_it_a_card(node, trump_card);
     
         //Flip, turn and move turmp
-        Card.flip_card(node)
+        Card.flip_card(node, false)
         await animate_transform(node, Card.getTransform(0, 0, 2, 10), 500).finished
     
         //Put the deck over trump
@@ -49,12 +49,18 @@ export class Deck {
         await sleep(100)
     }
     
-    static async take_card_from_deck() {
+    static take_card_from_deck(trump) {
     
         let nodes = document.getElementsByClassName("deck")
-        let node = nodes[nodes.length-1]
-    
+        let node = null;
+        
+        if (trump) {
+            node = nodes[0]
+        } else {
+            node = nodes[nodes.length-1]
+        }
+
         node.classList.remove("deck")
-        return node;
+        return node
     }
 }
