@@ -78,6 +78,9 @@ class GameThread(threading.Thread):
                 game.main_loop()
             except RestartException as e:
                 print ("Game Thread: Restarting")
+            except Exception as e:
+                print ("Other Issue", e)
+                print ("Restarting.....")
 
 
 wsthread = WSThread()
