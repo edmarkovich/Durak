@@ -24,6 +24,10 @@ function get_hand_array(mine, game) {
      }    
 }
 
+socket.onclose = async function(event) {
+    alert("Server Closed Connection")
+}
+
 socket.onmessage = async function(event) {
     while (state.running) { await sleep(100) }
     state.running = true;
