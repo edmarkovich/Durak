@@ -33,7 +33,7 @@ body {
 
     backface-visibility: hidden;
 
-    font-size: calc(2700% / var(--card_scale));
+    font-size: calc(432px / var(--card_scale));
     text-align: center;
 
     overflow: hidden;
