@@ -64,14 +64,15 @@ class WSThread(threading.Thread):
         print("WS: End Run Thread")
 
 class GameThread(threading.Thread):
-    def __init__(self):
+    def __init__(self, player_count):
         threading.Thread.__init__(self)
+        self.player_count = player_count
 
     def run(self):
         while True:
             try:
-                game = Game(2)
-                print ("Game Thread: New Game Started")
+                game = Game(self.player_count)
+                print ("Game Thread: New Game Started:", self.player_count)
                 IOUtil.game = game
                 IOUtil.defaultSource = inqueue.get
                 IOUtil.defaultDestination = outqueue.put
@@ -83,8 +84,12 @@ class GameThread(threading.Thread):
                 print ("Restarting.....")
 
 
+player_count = 2
+if len(sys.argv) > 1:
+    player_count = int(sys.argv[1])
+
 wsthread = WSThread()
 wsthread.start()
 
-gamethread = GameThread()
+gamethread = GameThread(player_count)
 gamethread.start()
