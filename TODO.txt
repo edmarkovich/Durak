@@ -1,6 +1,3 @@
-- test on mobile
 - space out cards
-- verb slide with hand
 - crash reasons: duplicate player name
-- don't prompt name until login
 - show error messages
