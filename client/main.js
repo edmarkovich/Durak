@@ -7,7 +7,9 @@ let state = {
     running: false
 }
 
-let socket = new WebSocket("ws://192.168.1.13:5678")
+let host = "ws://"+location.host+":5678"
+alert(host)
+let socket = new WebSocket(host)
 socket.onopen = function() {
     state.my_name = prompt("Player Name"); 
     socket.send('{"action":"join","name":"'+state.my_name+'"}');
