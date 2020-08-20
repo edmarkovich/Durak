@@ -62,7 +62,6 @@ socket.onmessage = async function(event) {
             // Clear the table and refill the hands from either table or deck
             await Table.state.theTable.prepare_next_round(  get_my_hand_array(game),
                                                             get_other_hand_arrays(game))
-            await sleep(2000)
 
         }
         
