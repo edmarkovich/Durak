@@ -3,22 +3,23 @@ import { Card } from "./card.js";
 import { Deck } from "./deck.js";
 
 export class OtherHand {
-    constructor () {
+    constructor (hand_index) {
         this.cards_count = 0
+        this.hand_index = hand_index
     }
 
     async add_card(node) {
-        node.classList.add("his_card")
-        node.id = this.cards_count
-        await animate_transform(node, Card.getTransform(1+ ++this.cards_count, 0, 0, 0), 500).finished
+        node.classList.add("his_card"+this.hand_index)
+        node.id = ""+this.hand_index+":"+this.cards_count
+        await animate_transform(node, Card.getTransform(1+ ++this.cards_count, 0, 0+this.hand_index, 0), 500).finished
     }
 
     count() {return this.cards_count}
 
     pop_card(card) {
         this.cards_count--
-        let node =document.getElementById(""+(this.cards_count))
-        node.classList.remove("his_card")
+        let node =document.getElementById(""+this.hand_index+":"+this.cards_count)
+        node.classList.remove("his_card"+this.hand_index)
         node.classList.remove("highlight");
         Card.make_it_a_card(node, card)
         Card.flip_card(node)
@@ -26,8 +27,10 @@ export class OtherHand {
     }
 
      async refill(new_hand) {
+        console.log(this.hand_index, new_hand)
         let waits =[]
-        while (new_hand.length != this.cards_count) {
+        while (new_hand.length > this.cards_count) {
+            //console.log("Refill", this.hand_index, new_hand.length - this.cards_count)
             let node = Deck.take_card_from_deck(false)
             await Card.make_deck_card(node);
             waits.push( this.add_card(node))
@@ -37,7 +40,7 @@ export class OtherHand {
     }
 
     glow(on) {
-        let nodes = document.getElementsByClassName("his_card")
+        let nodes = document.getElementsByClassName("his_card"+this.hand_index)
         for (let i =0; i<nodes.length; ++i) {
             if (on) {
                 nodes[i].classList.add("highlight")
