@@ -54,6 +54,16 @@ body {
     border-radius: 10px;
 }
 
+.player-name {
+    width: calc(0px + var(--card_width)); /* was 10px */
+    height: calc(0px + var(--card_height));
+    position: absolute;
+    background-color: brown;
+    color: white;
+    text-align: center;
+    vertical-align: middle;  
+}
+
 .front {
     transform: rotateY(-180deg);
 }
