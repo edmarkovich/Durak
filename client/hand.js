@@ -8,14 +8,14 @@ class Hand {
         this.player_name = player_name
         this.row = row
         this.col = col
-        this.name_shown = false
     }
 
     show_name() {   
-        if (this,this.name_shown) return
-        this.name_shown = true     
+        let divname = "name_display_"+this.player_name
+        if (document.getElementById(divname)) { return }
 
         let name_div = document.createElement("div")
+        name_div.id = divname
         name_div.innerHTML = ""+this.player_name
         name_div.classList.add("player-name")
         name_div.style.zIndex=-1000
