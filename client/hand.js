@@ -110,7 +110,7 @@ export class Hand {
         for (let i=0; i<this.cards.length;++i) {
             let node = document.getElementById(this.cards[i]);
             if (!node) continue;
-            waits.push(animate_transform(node, Card.getTransform(i+2, 0, 4, 0), 500))
+            waits.push(animate_transform(node, Card.getTransform(i+2, 0, 4, 0), 500).finished)
         }
         for (let i=0; i<waits.length; ++i) { await waits[i].finished  }
     }
