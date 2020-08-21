@@ -11,9 +11,9 @@ export class Table {
 
         for (let i=0; i<players.length; ++i) {
             if (players[i] == my_name) {
-                this.hands[players[i]] = new Hand(trump_card)
+                this.hands[players[i]] = new Hand(trump_card, players[i])
             } else {
-                this.hands[players[i]] = new OtherHand(hands_index)
+                this.hands[players[i]] = new OtherHand(hands_index, players[i])
                 hands_index++
             }
         }

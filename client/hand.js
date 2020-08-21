@@ -2,10 +2,23 @@ import { sleep, animate_transform } from './utils.js';
 import { Card } from "./card.js";
 import { Deck } from "./deck.js";
 
+function placePlayerName(player_name, row) {
+    let name_div = document.createElement("div")
+    name_div.innerHTML = "<BR><BR>"+player_name
+    name_div.classList.add("player-name")
+    name_div.style.backgroundColor = '#' + md5(player_name).slice(0, 6);
+    animate_transform(name_div, Card.getTransform(1, 0, row, 0), 0)
+    document.body.appendChild(name_div)
+}
+
 export class OtherHand {
-    constructor (hand_index) {
+    constructor (hand_index, player_name) {
         this.cards_count = 0
         this.hand_index = hand_index
+        this.player_name = player_name
+
+        placePlayerName(this.player_name, this.hand_index)
+
     }
 
     async add_card(node) {
@@ -55,10 +68,14 @@ export class OtherHand {
 
 export class Hand {
 
-    constructor (trump_card) {
+    constructor (trump_card, player_name) {
         this.trump_suit = trump_card[0]
         this.trump_card = trump_card
         this.cards = []
+        this.player_name = player_name
+
+        placePlayerName(this.player_name, 4)
+
     }
 
     add_card(card, node) {
@@ -122,6 +139,7 @@ export class Hand {
         let cards_to_add = new_hand.filter(x => !this.has_card(x) );
         let waits = []
         for (let i = 0; i< cards_to_add.length; i++) {
+            console.log(this.player_name, "SELF, adding via refill", cards_to_add[i])
 
             let node = null
             if (cards_to_add[i] == this.trump_card) {
