@@ -3,6 +3,7 @@ import { Card } from "./card.js";
 import { Deck } from "./deck.js";
 
 function placePlayerName(player_name, row) {
+    return
     let name_div = document.createElement("div")
     name_div.innerHTML = "<BR><BR>"+player_name
     name_div.classList.add("player-name")
@@ -24,7 +25,10 @@ export class OtherHand {
     async add_card(node) {
         node.classList.add("his_card"+this.hand_index)
         node.id = ""+this.hand_index+":"+this.cards_count
-        await animate_transform(node, Card.getTransform(1+ ++this.cards_count, 0, 0+this.hand_index, 0), 500).finished
+        node.style.zIndex = this.cards_count
+        await animate_transform(node, Card.getTransform(this.hand_index*3, 15*(this.cards_count), 0, +0*(this.cards_count)) 
+            + "rotate3d(0,0,1,"+(0*this.cards_count)+"deg)", 200).finished
+        this.cards_count++
     }
 
     count() {return this.cards_count}
@@ -44,7 +48,8 @@ export class OtherHand {
         while (new_hand.length > this.cards_count) {
             let node = Deck.take_card_from_deck(false)
             await Card.make_deck_card(node);
-            waits.push( this.add_card(node))
+            //waits.push( this.add_card(node))
+            await this.add_card(node)
             await sleep(150)
         }
         await Promise.all(waits)
@@ -128,9 +133,9 @@ export class Hand {
         for (let i=0; i<this.cards.length;++i) {
             let node = document.getElementById(this.cards[i]);
             if (!node) continue;
-            waits.push(animate_transform(node, Card.getTransform(i+2, 0, 4, 0), 500).finished)
+            waits.push(animate_transform(node, Card.getTransform(i+0, 0, 4, 0), 500).finished)
         }
-        for (let i=0; i<waits.length; ++i) { await waits[i].finished  }
+        for (let i=0; i<waits.length; ++i) { await waits[i]  }
     }
 
     async refill(new_hand) {
@@ -146,9 +151,10 @@ export class Hand {
                 Card.make_it_a_card(node, cards_to_add[i]);
             }
 
+            Card.flip_card(node)
             this.add_card(cards_to_add[i],node)
-            waits.push(this.arrange())
-            await Card.flip_card(node); 
+            //waits.push(this.arrange())
+             await this.arrange()
         }
         await Promise.all(waits)
     }

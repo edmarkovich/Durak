@@ -63,7 +63,8 @@ export class Table {
             let node = to_hand[i]
             node.classList.remove("table")
             await Card.make_deck_card(node)
-            waits.push(this.getOtherHand(player_name).add_card(node))
+            //waits.push(this.getOtherHand(player_name).add_card(node))
+            await this.getOtherHand(player_name).add_card(node)
         }
 
         await Promise.all(waits)
