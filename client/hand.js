@@ -14,11 +14,17 @@ function placePlayerName(player_name, hand_index, me=false) {
     animate_transform(name_div, Card.getTransform(hand_index*3, 0, row, 20), 200)
 }
 
-export class OtherHand {
+class Hand {
+    constructor(player_name) {
+        this.player_name = player_name
+    }
+}
+
+export class OtherHand extends Hand {
     constructor (hand_index, player_name) {
+        super(player_name)
         this.cards_count = 0
         this.hand_index = hand_index
-        this.player_name = player_name
         this.name_shown = false
     }
     
@@ -76,13 +82,13 @@ export class OtherHand {
     async arrange() {}
 }
 
-export class Hand {
+export class MyHand extends Hand{
 
     constructor (trump_card, player_name) {
+        super(player_name)
         this.trump_suit = trump_card[0]
         this.trump_card = trump_card
         this.cards = []
-        this.player_name = player_name
         this.name_shown = false
     }
 

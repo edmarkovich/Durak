@@ -1,5 +1,5 @@
 import { Card } from './card.js';
-import { Hand, OtherHand } from "./hand.js";
+import { MyHand, OtherHand } from "./hand.js";
 import { animate_transform} from "./utils.js"
 
 export class Table {
@@ -11,7 +11,7 @@ export class Table {
 
         for (let i=0; i<players.length; ++i) {
             if (players[i] == my_name) {
-                this.hands[players[i]] = new Hand(trump_card, players[i])
+                this.hands[players[i]] = new MyHand(trump_card, players[i])
             } else {
                 this.hands[players[i]] = new OtherHand(hands_index, players[i])
                 hands_index++
