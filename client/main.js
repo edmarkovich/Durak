@@ -46,8 +46,6 @@ socket.onmessage = async function(event) {
     if ('game' in payload) {
         let game = payload.game
 
-        console.log("Game", game)
-
         if(!state.game) {
             // Nothing was yet rendered, build up the UI stuff
             await Deck.init(game.trump)
@@ -71,8 +69,6 @@ socket.onmessage = async function(event) {
     }
 
     if ('prompt' in payload) {
-
-        console.log("Prompt", payload.prompt)
 
         if ('player' in payload.prompt) {
             // Glow hand and make the verb card

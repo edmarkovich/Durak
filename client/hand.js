@@ -40,10 +40,8 @@ export class OtherHand {
     }
 
      async refill(new_hand) {
-        console.log(this.hand_index, new_hand)
         let waits =[]
         while (new_hand.length > this.cards_count) {
-            //console.log("Refill", this.hand_index, new_hand.length - this.cards_count)
             let node = Deck.take_card_from_deck(false)
             await Card.make_deck_card(node);
             waits.push( this.add_card(node))
@@ -139,7 +137,6 @@ export class Hand {
         let cards_to_add = new_hand.filter(x => !this.has_card(x) );
         let waits = []
         for (let i = 0; i< cards_to_add.length; i++) {
-            console.log(this.player_name, "SELF, adding via refill", cards_to_add[i])
 
             let node = null
             if (cards_to_add[i] == this.trump_card) {
