@@ -53,9 +53,7 @@ class GameRound:
                 old_attacker = attacker
                 attacker = self.players.next_attacker(attacker, self.defender)
                 if old_attacker==attacker:
-                    return "took" if took else "beat_all"
-
-
+                    attacker = None
                 continue
             if out == "added" and not took:
                 passer = None

@@ -21,12 +21,16 @@ class IOUtil:
 
 
     @staticmethod
+    def send_updated_game_state(prompt = None):
+        message = IOUtil.get_game_data()
+        if prompt:
+            message['prompt'] = prompt
+        IOUtil.defaultDestination(json.dumps(message))
+
+    @staticmethod
     def get_input(prompt, player = None, final_message = False):
 
-        message = IOUtil.get_game_data()
-        message['prompt'] = prompt
-
-        IOUtil.defaultDestination(json.dumps(message))
+        IOUtil.send_updated_game_state(prompt)
 
         if final_message:
             inputA = "Die"

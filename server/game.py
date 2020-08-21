@@ -90,6 +90,8 @@ class Game:
             self.table = game_round.table
             outcome = game_round.play()
 
+            IOUtil.send_updated_game_state()
+
             self.players.refill_all(self.attacker, self.defender)
 
             if self.players.is_game_over():
