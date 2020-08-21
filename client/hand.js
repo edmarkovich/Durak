@@ -2,37 +2,36 @@ import { sleep, animate_transform } from './utils.js';
 import { Card } from "./card.js";
 import { Deck } from "./deck.js";
 
-function placePlayerName(player_name, hand_index, me=false) {
-    let name_div = document.createElement("div")
-    name_div.innerHTML = ""+player_name
-    name_div.classList.add("player-name")
-    name_div.style.zIndex=-1000
-    
-    document.body.appendChild(name_div)
-    
-    let row = me?5:1;
-    animate_transform(name_div, Card.getTransform(hand_index*3, 0, row, 20), 200)
-}
 
 class Hand {
-    constructor(player_name) {
+    constructor(player_name, row, col) {
         this.player_name = player_name
+        this.row = row
+        this.col = col
+        this.name_shown = false
+    }
+
+    show_name() {   
+        if (this,this.name_shown) return
+        this.name_shown = true     
+
+        let name_div = document.createElement("div")
+        name_div.innerHTML = ""+this.player_name
+        name_div.classList.add("player-name")
+        name_div.style.zIndex=-1000
+        
+        document.body.appendChild(name_div)
+        animate_transform(name_div, Card.getTransform(this.col*3, 0, this.row+1, 20), 200)        
     }
 }
 
 export class OtherHand extends Hand {
     constructor (hand_index, player_name) {
-        super(player_name)
+        super(player_name,0,hand_index)
         this.cards_count = 0
         this.hand_index = hand_index
-        this.name_shown = false
     }
-    
-    show_name() {   
-        if (this,this.name_shown) return
-        this.name_shown = true     
-        placePlayerName(this.player_name, this.hand_index, false) 
-    }
+
 
     async add_card(node) {
         node.classList.add("his_card"+this.hand_index)
@@ -85,17 +84,10 @@ export class OtherHand extends Hand {
 export class MyHand extends Hand{
 
     constructor (trump_card, player_name) {
-        super(player_name)
+        super(player_name,4,0)
         this.trump_suit = trump_card[0]
         this.trump_card = trump_card
         this.cards = []
-        this.name_shown = false
-    }
-
-    show_name() {      
-        if (this,this.name_shown) return
-        this.name_shown = true  
-        placePlayerName(this.player_name, 0, true) 
     }
 
     add_card(card, node) {

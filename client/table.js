@@ -98,11 +98,11 @@ export class Table {
     async prepare_next_round(my_hand, other_hands) {
         await this.clear(my_hand,other_hands) 
 
-        await this.getHand().refill(my_hand)
-
         for (let player in other_hands) {
             await this.getOtherHand(player).refill(other_hands[player])
-        }
+        }         
+        await this.getHand().refill(my_hand)
+
     }
 
     async play(card, player_name) {
