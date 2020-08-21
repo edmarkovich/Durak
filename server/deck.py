@@ -11,10 +11,11 @@ class Deck:
         for x in Card.suits:
             for y in Card.ranks:                
                 cards.append(Card(x,y))
+                #if len(cards) > 20: return cards
+
         return cards
 
     def shuffle(self, cards):
-        #TODO - random seeds
         return random.sample(cards, len(cards))
 
     def peek_last(self):

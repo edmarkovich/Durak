@@ -36,6 +36,7 @@ class GameRound:
             return "added"
 
     def add_in_loop(self, took):
+
         #TODO: Test
         attacker = self.attacker
         passer = None
@@ -47,14 +48,23 @@ class GameRound:
 
             out = self.add_in_one(attacker)
             if out == "pass":
-                if not passer: passer = attacker
+                if not passer: 
+                    passer = attacker
+                old_attacker = attacker
                 attacker = self.players.next_attacker(attacker, self.defender)
+                if old_attacker==attacker:
+                    return "took" if took else "beat_all"
+
+
                 continue
             if out == "added" and not took:
                 passer = None
+
                 d_out = self.defend()
-                if d_out == "beat_one": continue
-                if d_out == "beat_all": return "beat_all"
+                if d_out == "beat_one": 
+                    continue
+                if d_out == "beat_all": 
+                    return "beat_all"
                 if d_out == "took":
                     took = True
                     continue
