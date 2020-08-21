@@ -45,7 +45,7 @@ body {
 }
 
 .card-container {
-    width: calc(0px + var(--card_width)); /* was 10px */
+    width: calc(0px + var(--card_width));
     height: calc(0px + var(--card_height));
     position: absolute;
     transform: translateX(-150%);
@@ -55,13 +55,15 @@ body {
 }
 
 .player-name {
-    width: calc(0px + var(--card_width)); /* was 10px */
-    height: calc(0px + var(--card_height));
+    font-family: "Comic Sans MS", cursive, sans-serif;
+    font-style: italic;
+    font-weight: lighter;
+    font-variant-caps: small-caps;
     position: absolute;
-    background-color: brown;
-    color: white;
-    text-align: center;
-    vertical-align: middle;  
+    font-size: 25px;
+    color: white; 
+    filter: blur(0.8px);
+    opacity: .7;
 }
 
 .front {

@@ -13,8 +13,12 @@ if (location.host == "localhost:8000") { host = "ws://thepi:5678" }
 
 let socket = new WebSocket(host)
 socket.onopen = function() {
-    state.my_name = prompt("Player Name"); 
-    socket.send('{"action":"join","name":"'+state.my_name+'"}');
+    state.my_name = new URLSearchParams(window.location.search).get("name")
+
+    if (!state.my_name) {
+        state.my_name = prompt("Player Name")
+    } 
+    socket.send('{"action":"join","name":"'+state.my_name+'"}')
 }
 
 function get_my_hand_array(game) {
@@ -76,7 +80,7 @@ socket.onmessage = async function(event) {
         } 
         
         if (payload.prompt.prompt == "over") {
-            alert("Gave Over!")
+            alert("Game Over!")
         }
     }
 

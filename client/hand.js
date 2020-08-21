@@ -2,14 +2,16 @@ import { sleep, animate_transform } from './utils.js';
 import { Card } from "./card.js";
 import { Deck } from "./deck.js";
 
-function placePlayerName(player_name, row) {
-    return
+function placePlayerName(player_name, hand_index, me=false) {
     let name_div = document.createElement("div")
-    name_div.innerHTML = "<BR><BR>"+player_name
+    name_div.innerHTML = ""+player_name
     name_div.classList.add("player-name")
-    name_div.style.backgroundColor = '#' + md5(player_name).slice(0, 6);
-    animate_transform(name_div, Card.getTransform(1, 0, row, 0), 0)
+    name_div.style.zIndex=-1000
+    
     document.body.appendChild(name_div)
+    
+    let row = me?5:1;
+    animate_transform(name_div, Card.getTransform(hand_index*3, 0, row, 20), 200)
 }
 
 export class OtherHand {
@@ -17,9 +19,13 @@ export class OtherHand {
         this.cards_count = 0
         this.hand_index = hand_index
         this.player_name = player_name
-
-        placePlayerName(this.player_name, this.hand_index)
-
+        this.name_shown = false
+    }
+    
+    show_name() {   
+        if (this,this.name_shown) return
+        this.name_shown = true     
+        placePlayerName(this.player_name, this.hand_index, false) 
     }
 
     async add_card(node) {
@@ -44,6 +50,7 @@ export class OtherHand {
     }
 
      async refill(new_hand) {
+        this.show_name()
         let waits =[]
         while (new_hand.length > this.cards_count) {
             let node = Deck.take_card_from_deck(false)
@@ -76,9 +83,13 @@ export class Hand {
         this.trump_card = trump_card
         this.cards = []
         this.player_name = player_name
+        this.name_shown = false
+    }
 
-        placePlayerName(this.player_name, 4)
-
+    show_name() {      
+        if (this,this.name_shown) return
+        this.name_shown = true  
+        placePlayerName(this.player_name, 0, true) 
     }
 
     add_card(card, node) {
@@ -139,6 +150,8 @@ export class Hand {
     }
 
     async refill(new_hand) {
+        this.show_name()
+
         let cards_to_add = new_hand.filter(x => !this.has_card(x) );
         let waits = []
         for (let i = 0; i< cards_to_add.length; i++) {
@@ -157,6 +170,7 @@ export class Hand {
              await this.arrange()
         }
         await Promise.all(waits)
+
     }
 
     glow(on) {
