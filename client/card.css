@@ -2,8 +2,6 @@
     --card_scale: 2.5;
     --card_height: calc(378px / var(--card_scale));
     --card_width: calc(244px / var(--card_scale));
-    --mine_highlight: none;
-    --mine_click: none;
 }
 
 body {
@@ -81,18 +79,18 @@ body {
     color: red;;
 }
 
-.mine {
-    box-shadow: var(--mine_highlight);
-    pointer-events: var(--mine_click); ;
+
+.mine .highlight {
+    pointer-events: all;
 }
 
 .highlight {
-    box-shadow: 0 0 15px 5px lightblue;
+    box-shadow: inset 0 0 15px 5px lightgreen,
+    0 0 15px 5px lightgreen;
 }
 
 .verb {
-    box-shadow: var(--mine_highlight);
-    pointer-events: var(--mine_click); ;
+
 }
 
 .verb .front .card-inner {

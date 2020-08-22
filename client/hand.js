@@ -10,18 +10,27 @@ class Hand {
         this.col = col
     }
 
-    show_name() {   
+    show_name(highlight) {   
         let divname = "name_display_"+this.player_name
-        if (document.getElementById(divname)) { return }
+        let name_div = document.getElementById(divname)
 
-        let name_div = document.createElement("div")
-        name_div.id = divname
-        name_div.innerHTML = ""+this.player_name
-        name_div.classList.add("player-name")
-        name_div.style.zIndex=-1000
-        
-        document.body.appendChild(name_div)
-        animate_transform(name_div, Card.getTransform(this.col*3, 0, this.row+1, 20), 200)        
+        if (!name_div) {
+            name_div = document.createElement("div")
+            name_div.id = divname
+            name_div.innerHTML = ""+this.player_name
+            name_div.classList.add("player-name")
+            name_div.style.zIndex=-1000
+            document.body.appendChild(name_div)
+            animate_transform(name_div, Card.getTransform(this.col*3, 0, this.row+1, 20), 200)        
+        }
+
+        //name_div.style.color = highlight? "lightgreen":"white"
+        if (highlight)
+            name_div.classList.add("highlight")
+        else
+            name_div.classList.remove("highlight")
+ 
+        name_div.style.fontSize = highlight? "250%":"150%"
     }
 }
 
@@ -31,7 +40,6 @@ export class OtherHand extends Hand {
         this.cards_count = 0
         this.hand_index = hand_index
     }
-
 
     async add_card(node) {
         node.classList.add("his_card"+this.hand_index)
@@ -55,7 +63,7 @@ export class OtherHand extends Hand {
     }
 
      async refill(new_hand) {
-        this.show_name()
+        this.show_name(false)
         let waits =[]
         while (new_hand.length > this.cards_count) {
             let node = Deck.take_card_from_deck(false)
@@ -68,6 +76,8 @@ export class OtherHand extends Hand {
     }
 
     glow(on) {
+        this.show_name(on)
+
         let nodes = document.getElementsByClassName("his_card"+this.hand_index)
         for (let i =0; i<nodes.length; ++i) {
             if (on) {
@@ -148,7 +158,7 @@ export class MyHand extends Hand{
     }
 
     async refill(new_hand) {
-        this.show_name()
+        this.show_name(false)
 
         let cards_to_add = new_hand.filter(x => !this.has_card(x) );
         let waits = []
@@ -172,12 +182,17 @@ export class MyHand extends Hand{
     }
 
     glow(on) {
-        if (on) {
-            document.documentElement.style.setProperty('--mine_highlight', "0 0 15px 5px lightblue");
-            document.documentElement.style.setProperty('--mine_click', "all");
-        } else {
-            document.documentElement.style.setProperty('--mine_highlight', "none");
-            document.documentElement.style.setProperty('--mine_click', "none");
+        this.show_name(on)
+
+        let cards = document.getElementsByClassName("mine")
+        for (let i=0;i<cards.length; ++i) {
+
+            if (on) {
+                cards[i].classList.add("highlight")
+
+            } else {
+                cards[i].classList.remove("highlight")
+            }
         }
     }
 }
