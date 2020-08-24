@@ -7,8 +7,7 @@ let state = {
     running: false
 }
 
-let host = "ws://"+location.host+":5678"
-if (location.host == "localhost:8000") { host = "ws://thepi:5678" }
+let host = "ws://"+location.hostname+":5678"
 
 
 let socket = new WebSocket(host)
