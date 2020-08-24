@@ -89,8 +89,8 @@ async function process_inbound(event) {
         if ('player' in payload.prompt) {
             // Glow hand and make the verb card
             Table.state.theTable.prompt_for_action(payload.prompt.player, payload.prompt.prompt)
-            if (payload.prompt.player.indexOf("Computer") != -1) {
-                await sleep(500)
+            if (payload.prompt.player.indexOf("🤖") != -1) {
+                await sleep(1000 + (Math.random() * 500))
             }
         } 
         

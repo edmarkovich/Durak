@@ -71,7 +71,7 @@ export class Card {
         let verb=null
         if (mode == 'Defend') { 
             verb = 'take' 
-        } else if (mode == 'Add Cards') { 
+        } else if (mode == 'Add') { 
             verb = 'pass' 
         }
 

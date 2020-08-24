@@ -12,7 +12,7 @@ class GameRound:
 
     def first_attack(self):
 
-        prompt = {'prompt':"First attack", "player": self.attacker}
+        prompt = {'prompt':"Attack", "player": self.attacker}
         if self.players.players[self.attacker].is_computer:
             IOUtil.send_updated_game_state(prompt)
             move = AutoPlayer(self.table, self.players.players[self.attacker]).attack()
@@ -29,7 +29,7 @@ class GameRound:
             return "pass"
 
         while True:
-            prompt = {"prompt":"Add Cards", "player":attacker}
+            prompt = {"prompt":"Add", "player":attacker}
             if self.players.players[attacker].is_computer:
                 IOUtil.send_updated_game_state(prompt)
                 move = AutoPlayer(self.table, self.players.players[attacker]).add()

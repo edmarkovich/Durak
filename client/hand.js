@@ -19,14 +19,18 @@ class Hand {
         if (!name_div) {
             name_div = document.createElement("div")
             name_div.id = divname
-            name_div.innerHTML = ""+this.player_name
             name_div.classList.add("player-name")
             name_div.style.zIndex=-1000
             document.body.appendChild(name_div)
+            name_div.innerHTML = ""+this.player_name
             animate_transform(name_div, Card.getTransform(this.col*3, 0, this.row+1, 20), 200)        
         }
 
-        name_div.style.fontSize = highlight? "250%":"150%"
+        if (highlight) {
+            name_div.classList.add("highlight")
+        } else {
+            name_div.classList.remove("highlight")
+        }
     }
 }
 
@@ -57,7 +61,7 @@ export class OtherHand extends Hand {
         Card.flip_card(node)
         return node;        
     }
-
+ 
      async refill(new_hand) {
         this.show_name(false)
         let waits =[]

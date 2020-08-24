@@ -57,14 +57,18 @@ body {
 
 .player-name {
     font-family: "Comic Sans MS", cursive, sans-serif;
-    font-style: italic;
     font-weight: lighter;
     font-variant-caps: small-caps;
     position: absolute;
-    font-size: 25px;
+    font-size: 20px;
     color: white; 
     filter: blur(0.8px);
     opacity: .7;
+}
+
+.player-name.highlight {
+    color: pink;
+    box-shadow: none;
 }
 
 .front {
