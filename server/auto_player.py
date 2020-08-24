@@ -4,7 +4,7 @@ class AutoPlayer:
     def __init__(self, table, player):
         self.table   = table
         self.player  = player
-        time.sleep(2)
+        #time.sleep(2)
 
     def attack(self):
         return {"card":self.player.hand[0]}
