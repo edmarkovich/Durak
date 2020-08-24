@@ -3,6 +3,7 @@ import websockets
 import json
 import os
 import sys
+import traceback
 
 import threading
 import queue
@@ -38,7 +39,6 @@ class WSThread(threading.Thread):
             print (websocket.remote_address, "WS: Subscribing #", len(self.websockets))
 
             async for message in websocket:
-                #print(websocket.remote_address, "WS: message: ", message)
                 inqueue.put(message)
 
             self.websockets.remove(websocket)
@@ -64,14 +64,15 @@ class WSThread(threading.Thread):
         print("WS: End Run Thread")
 
 class GameThread(threading.Thread):
-    def __init__(self, player_count):
+    def __init__(self, player_count, computer_count):
         threading.Thread.__init__(self)
         self.player_count = player_count
+        self.computer_count = computer_count
 
     def run(self):
         while True:
             try:
-                game = Game(self.player_count)
+                game = Game(self.player_count, self.computer_count)
                 print ("Game Thread: New Game Started:", self.player_count)
                 IOUtil.game = game
                 IOUtil.defaultSource = inqueue.get
@@ -81,15 +82,20 @@ class GameThread(threading.Thread):
                 print ("Game Thread: Restarting")
             except Exception as e:
                 print ("Other Issue", e)
+                traceback.print_exc()
                 print ("Restarting.....")
 
 
 player_count = 2
+computer_count = 0
+
 if len(sys.argv) > 1:
     player_count = int(sys.argv[1])
 
+if len(sys.argv) > 2:
+    computer_count = int(sys.argv[2])
 wsthread = WSThread()
 wsthread.start()
 
-gamethread = GameThread(player_count)
+gamethread = GameThread(player_count, computer_count)
 gamethread.start()

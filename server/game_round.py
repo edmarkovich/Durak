@@ -1,5 +1,6 @@
 from .table import Table
 from .ioutil import IOUtil
+from .auto_player import AutoPlayer
 
 class GameRound:
 
@@ -9,10 +10,15 @@ class GameRound:
         self.defender = defender
         self.table = Table(trump)
 
-
     def first_attack(self):
-        move = IOUtil.get_input({'prompt':"First attack",
-            "player": self.attacker})
+
+        prompt = {'prompt':"First attack", "player": self.attacker}
+        if self.players.players[self.attacker].is_computer:
+            IOUtil.send_updated_game_state(prompt)
+            move = AutoPlayer(self.table, self.players.players[self.attacker]).attack()
+        else:
+            move = IOUtil.get_input(prompt)
+
         #TODO: validate message
         card = move["card"]
 
@@ -23,7 +29,12 @@ class GameRound:
             return "pass"
 
         while True:
-            move = IOUtil.get_input({"prompt":"Add Cards", "player":attacker})
+            prompt = {"prompt":"Add Cards", "player":attacker}
+            if self.players.players[attacker].is_computer:
+                IOUtil.send_updated_game_state(prompt)
+                move = AutoPlayer(self.table, self.players.players[attacker]).add()
+            else:
+                move = IOUtil.get_input(prompt)
             #TODO: validate message
 
             if move["action"] == "pass":
@@ -70,7 +81,12 @@ class GameRound:
 
     def defend(self):
         while True:
-            move = IOUtil.get_input({'prompt':"Defend", 'player':self.defender})
+            prompt = {'prompt':"Defend", 'player':self.defender}
+            if self.players.players[self.defender].is_computer:
+                IOUtil.send_updated_game_state(prompt)
+                move = AutoPlayer(self.table, self.players.players[self.defender]).defend()
+            else:
+                move = IOUtil.get_input(prompt)
             #TODO: validate message
 
             if move["action"] == "take":

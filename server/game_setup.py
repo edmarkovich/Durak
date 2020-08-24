@@ -4,10 +4,11 @@ from .ioutil import IOUtil
 
 class GameSetup:
 
-    def __init__(self, expect_players):
+    def __init__(self, expect_players, computer_players):
         self.expect_players = expect_players
+        self.computer_players = computer_players
         self.deck = Deck()
-        self.players = Players(self.deck, self.expect_players)
+        self.players = Players(self.deck, self.expect_players+self.computer_players)
 
     def await_single_join(self):
         out = IOUtil.get_input({"prompt":"User Join"})
@@ -20,4 +21,7 @@ class GameSetup:
     def await_all_join(self):
         while len(self.players.players) < self.expect_players:
             self.await_single_join()
-            #print(self.players)
+
+        for i in range(self.computer_players):
+            self.players.add_player("PC"+str(i), True)
+

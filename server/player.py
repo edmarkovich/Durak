@@ -2,9 +2,9 @@ from .card import Card
 import functools
 class Player:
 
-    def __init__(self, cards=[]):
+    def __init__(self, cards=[], is_computer=False):
         self.hand=cards
-
+        self.is_computer = is_computer
 
     def needs_cards(self):
         return max(0, 6-len(self.hand))

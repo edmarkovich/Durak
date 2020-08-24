@@ -6,3 +6,4 @@
 .vscode/settings.json
 client/.eslintrc.js
 Durak.code-workspace
+.vscode/launch.json

@@ -40,6 +40,8 @@ socket.onmessage = async function(event) {
     let payload = JSON.parse(event.data)
 
     if ('game' in payload) {
+        console.log("Game", payload.game)
+
         let game = payload.game
 
         if(!state.game) {
@@ -64,6 +66,8 @@ socket.onmessage = async function(event) {
     }
 
     if ('prompt' in payload) {
+
+        console.log("Prompt", payload.prompt.player, payload.prompt.prompt)
 
         if ('player' in payload.prompt) {
             // Glow hand and make the verb card

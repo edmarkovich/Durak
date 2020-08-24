@@ -8,18 +8,20 @@ from .game_round import GameRound
 
 class Game:
 
-    def __init__(self, expect_players):
+    def __init__(self, expect_players, computer_players):
 
-        if expect_players < 2 or expect_players > 6:
-            raise Exception("Invalid expected players" + str(expect_players))
+        #TODO - include computer, test
+        if expect_players+computer_players < 2 or expect_players+computer_players > 6:
+            raise Exception("Invalid expected players" + str(expect_players+computer_players))
 
         self.console = Console.getInstance()
         self.expect_players = expect_players
+        self.computer_players = computer_players
 
     def start(self, game_setup):
         self.players = game_setup.players #TEST
 
-        if self.expect_players > len(self.players.players):
+        if self.expect_players + self.computer_players> len(self.players.players):
             raise Exception("Not enough players")
 
 
@@ -81,16 +83,18 @@ class Game:
 
     def main_loop(self):
         #TODO test
-        game_setup = GameSetup(self.expect_players)
+        game_setup = GameSetup(self.expect_players, self.computer_players)
         game_setup.await_all_join()
         self.start(game_setup)
 
         while True:
+            #TODO: this shouldn't be necessary - should just be 1 or 2 states in the round
+            IOUtil.send_updated_game_state()
+
             game_round = GameRound(self.players, self.attacker, self.defender, self.trump_card.suit)
             self.table = game_round.table
             outcome = game_round.play()
 
-            IOUtil.send_updated_game_state()
 
             self.players.refill_all(self.attacker, self.defender)
 

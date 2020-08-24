@@ -24,14 +24,14 @@ class Players:
         return out + '}'
 
 
-    def add_player(self, name):
+    def add_player(self, name, is_computer=False):
         if name in self.players:
             raise Exception ("Duplicate player "+ name)
 
         if len(self.players) == self.expect_players:
             raise Exception ("Players full")
 
-        self.players[name] = Player()
+        self.players[name] = Player(is_computer = is_computer)
         self.players[name].add_cards(self.deck.draw(6))
 
         self.console.add("Joined: "+name)
