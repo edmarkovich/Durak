@@ -11,7 +11,12 @@ let host = "ws://"+location.hostname+":5678"
 
 
 let socket = new WebSocket(host)
+
+
 socket.onopen = function() {
+
+    event_loop()
+
     state.my_name = new URLSearchParams(window.location.search).get("name")
 
     if (!state.my_name) {
@@ -33,15 +38,29 @@ socket.onclose = async function() {
     alert("Server Closed Connection")
 }
 
+let action_list = []
+
+async function event_loop() {
+    while (true) {
+        await sleep(10)
+        if (action_list.length == 0) { continue }
+            let event = action_list.shift()
+            await process_inbound(event)
+    }
+}
+
 socket.onmessage = async function(event) {
-    while (state.running) { await sleep(100) }
-    state.running = true;
+    action_list.push(event)
+}
+
+
+
+async function process_inbound(event) {
+
 
     let payload = JSON.parse(event.data)
 
     if ('game' in payload) {
-        console.log("Game", payload.game)
-
         let game = payload.game
 
         if(!state.game) {
@@ -67,11 +86,12 @@ socket.onmessage = async function(event) {
 
     if ('prompt' in payload) {
 
-        console.log("Prompt", payload.prompt.player, payload.prompt.prompt)
-
         if ('player' in payload.prompt) {
             // Glow hand and make the verb card
             Table.state.theTable.prompt_for_action(payload.prompt.player, payload.prompt.prompt)
+            if (payload.prompt.player.indexOf("Computer") != -1) {
+                await sleep(500)
+            }
         } 
         
         if (payload.prompt.prompt == "over") {
@@ -79,7 +99,6 @@ socket.onmessage = async function(event) {
         }
     }
 
-    state.running = false;
 }
 
 export function send_card(card) { socket.send('{"action":"", "card":"'+card+'"}') }

@@ -23,5 +23,5 @@ class GameSetup:
             self.await_single_join()
 
         for i in range(self.computer_players):
-            self.players.add_player("PC"+str(i), True)
+            self.players.add_player("🤖 Computer " +str(i+1), True)
 

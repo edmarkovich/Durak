@@ -50,24 +50,22 @@ class GameRound:
 
         #TODO: Test
         attacker = self.attacker
-        passer = None
+        passer = []
 
         while True:
             #Attcker = None = Game over? Test it
-            if passer == attacker or self.table.attack_cards==6 or attacker == None:
+            if attacker in passer or self.table.attack_cards==6 or attacker == None:
                 return "took" if took else "beat_all"
 
             out = self.add_in_one(attacker)
             if out == "pass":
-                if not passer: 
-                    passer = attacker
-                old_attacker = attacker
+                passer.append(attacker) 
                 attacker = self.players.next_attacker(attacker, self.defender)
-                if old_attacker==attacker:
+                if attacker in passer:
                     attacker = None
                 continue
             if out == "added" and not took:
-                passer = None
+                passer = []
 
                 d_out = self.defend()
                 if d_out == "beat_one": 
