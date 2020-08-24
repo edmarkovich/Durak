@@ -8,16 +8,13 @@ export class Table {
         this.my_name = my_name
         this.hands = {}
         let hands_index = 0
+        let idx = players.indexOf(my_name)
 
-        for (let i=0; i<players.length; ++i) {
-            if (players[i] == my_name) {
-                this.hands[players[i]] = new MyHand(trump_card, players[i])
-            } else {
-                this.hands[players[i]] = new OtherHand(hands_index, players[i])
-                hands_index++
-            }
-        }
+        this.player_sequence=players.slice(idx+1,).concat(players.slice(0, idx)).concat([my_name])
 
+        this.hands = this.player_sequence.reduce( function (acc, item) {acc[item]=new OtherHand(trump_card, hands_index++, item); return acc}, {} )
+        this.hands[my_name] = new MyHand(trump_card, my_name)
+        
         this.last_attack_slot = -1
         this.zIndex = 100
     }
@@ -62,46 +59,43 @@ export class Table {
         for (let i=0; i<to_hand.length; ++i) {
             let node = to_hand[i]
             node.classList.remove("table")
-            await Card.make_deck_card(node)
+            if (player_name != this.my_name) {
+                await Card.make_deck_card(node)
+            }
             //waits.push(this.getOtherHand(player_name).add_card(node))
-            await this.getOtherHand(player_name).add_card(node)
+            await this.hands[player_name].add_card(node,node.id)
         }
 
         await Promise.all(waits)
     }
 
-    async clear(my_hand, other_hands) {
+    async clear(all_hands) {
         let waits = []
 
-        for (let player in other_hands) {
-            await this.table_to_hand(player, other_hands[player])
+        for (let player in all_hands) {
+            await this.table_to_hand(player, all_hands[player])
         }
 
         while (document.getElementsByClassName("table").length>0) {
             let node = document.getElementsByClassName("table")[0]
-            let card = node.id;
             node.classList.remove("table")
 
-            if (my_hand.indexOf(card) != -1) {
-                await this.getHand().add_card(card,node)
-                waits.push(this.getHand().arrange());
-            } else {
-                // Put in the done pile
-                await Card.flip_card(node, true)
-                waits.push(animate_transform(node, Card.getTransform(9,0,2,0), 300).finished)
-            }
+            // Put in the done pile
+            await Card.flip_card(node, true)
+            waits.push(animate_transform(node, Card.getTransform(9,0,2,0), 300).finished)
         }
+
+        waits.push(this.getHand().arrange());
         await Promise.all(waits)
         this.last_attack_slot=-1
     }
 
-    async prepare_next_round(my_hand, other_hands) {
-        await this.clear(my_hand,other_hands) 
-
-        for (let player in other_hands) {
-            await this.getOtherHand(player).refill(other_hands[player])
-        }         
-        await this.getHand().refill(my_hand)
+    async prepare_next_round(all_hands) {
+        await this.clear(all_hands) 
+        
+        for (let i=0; i<this.player_sequence.length; ++i) {
+            await this.hands[this.player_sequence[i]].refill(all_hands[this.player_sequence[i]])
+        }
 
     }
 
@@ -112,27 +106,24 @@ export class Table {
         await hand.arrange()
     }
 
-    async render_turn(old_table_cards, new_table_cards, old_hand, old_other_hands) {
+    async render_turn(old_table_cards, new_table_cards, all_hands) {
         Card.make_verb_card(null)
         Table.state.theTable.getHand().glow(false)
 
-        for (let name in old_other_hands) {
-            Table.state.theTable.getOtherHand(name).glow(false)
+        for (let name in all_hands) {
+            this.hands[name].glow(false)
         }
 
         let table_to_add = new_table_cards.filter(x => !old_table_cards.includes(x) );
         for (let i=0; i<table_to_add.length; i++) {
             
-            if( old_hand.indexOf(table_to_add[i]) != -1) {
-                await this.play(table_to_add[i], this.my_name)
-            } else { 
-                for (let name in old_other_hands) {
-                    Table.state.theTable.getOtherHand(name).glow(false)
-                    if (old_other_hands[name].indexOf(table_to_add[i]) != -1 ) {
-                        await this.play(table_to_add[i], name)
-                    }
+            for (let name in all_hands) {
+                Table.state.theTable.getOtherHand(name).glow(false)
+                if (all_hands[name].indexOf(table_to_add[i]) != -1 ) {
+                    await this.play(table_to_add[i], name)
                 }
             }
+            
         }
     }
 

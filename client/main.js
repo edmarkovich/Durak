@@ -21,18 +21,11 @@ socket.onopen = function() {
     socket.send('{"action":"join","name":"'+state.my_name+'"}')
 }
 
-function get_my_hand_array(game) {
-    for (let i=0; i< game.players.length; i++) {
-        if (game.players[i].name == state.my_name) { return game.players[i].hand }
-     }    
-}
 
-function get_other_hand_arrays(game) {
+function get_hands_array(game) {
     let out = {}
     for (let i=0; i< game.players.length; i++) {
-        if (game.players[i].name != state.my_name) { 
             out[game.players[i].name] = game.players[i].hand 
-        }
     }
     return out    
 }
@@ -58,14 +51,13 @@ socket.onmessage = async function(event) {
             // These are cards that are on the table this update that were not
             // there during the last one (ie update was triggered by a move)
             await Table.state.theTable.render_turn(state.game.table, game.table, 
-                get_my_hand_array(state.game), get_other_hand_arrays(state.game))
+                get_hands_array(state.game))
         } 
 
         if (game.table.length==0) {
             // Server has cleared the table, meaning we're about to start a new 'bout'
             // Clear the table and refill the hands from either table or deck
-            await Table.state.theTable.prepare_next_round(  get_my_hand_array(game),
-                                                            get_other_hand_arrays(game))
+            await Table.state.theTable.prepare_next_round(  get_hands_array(game))
 
         }
         

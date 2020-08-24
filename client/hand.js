@@ -4,10 +4,12 @@ import { Deck } from "./deck.js";
 
 
 class Hand {
-    constructor(player_name, row, col) {
+    constructor(trump_card, player_name, row, col) {
         this.player_name = player_name
         this.row = row
         this.col = col
+        this.trump_suit = trump_card[0]
+        this.trump_card = trump_card
     }
 
     show_name(highlight) {   
@@ -24,19 +26,13 @@ class Hand {
             animate_transform(name_div, Card.getTransform(this.col*3, 0, this.row+1, 20), 200)        
         }
 
-        //name_div.style.color = highlight? "lightgreen":"white"
-        if (highlight)
-            name_div.classList.add("highlight")
-        else
-            name_div.classList.remove("highlight")
- 
         name_div.style.fontSize = highlight? "250%":"150%"
     }
 }
 
 export class OtherHand extends Hand {
-    constructor (hand_index, player_name) {
-        super(player_name,0,hand_index)
+    constructor (trump_card, hand_index, player_name) {
+        super(trump_card, player_name,0,hand_index)
         this.cards_count = 0
         this.hand_index = hand_index
     }
@@ -65,8 +61,12 @@ export class OtherHand extends Hand {
      async refill(new_hand) {
         this.show_name(false)
         let waits =[]
+        let take_trump = new_hand.indexOf(this.trump_card) != -1
+
         while (new_hand.length > this.cards_count) {
-            let node = Deck.take_card_from_deck(false)
+            //TODO: this should really be the LAST card taken, not first
+            let node = Deck.take_card_from_deck(take_trump)
+            take_trump=false
             await Card.make_deck_card(node);
             //waits.push( this.add_card(node))
             await this.add_card(node)
@@ -94,13 +94,11 @@ export class OtherHand extends Hand {
 export class MyHand extends Hand{
 
     constructor (trump_card, player_name) {
-        super(player_name,4,0)
-        this.trump_suit = trump_card[0]
-        this.trump_card = trump_card
+        super(trump_card,player_name,4,0)
         this.cards = []
     }
 
-    add_card(card, node) {
+    add_card(node, card) {
         node.classList.add("mine");
         this.cards.push(card)
     }
@@ -173,7 +171,7 @@ export class MyHand extends Hand{
             }
 
             Card.flip_card(node)
-            this.add_card(cards_to_add[i],node)
+            this.add_card(node, cards_to_add[i])
             //waits.push(this.arrange())
              await this.arrange()
         }
