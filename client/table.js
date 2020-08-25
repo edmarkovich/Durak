@@ -79,11 +79,11 @@ export class Table {
 
             // Put in the done pile
             await Card.flip_card(node, true)
-            let x = (Math.random()*30)+this.done_pile*5
-            let y = (Math.random()*10)+this.done_pile*5
-            let z = (Math.random()*10)+this.done_pile*5
+            let r = (Math.random()*30)+(this.done_pile%10)*5
+            let x = (Math.random()*10)+this.done_pile*5
+            let y = (Math.random()*10)+(this.done_pile)*5
             node.style.zIndex = this.done_pile
-            waits.push(animate_transform(node, Card.getTransform(8,y,2,z) + "rotate3d(0,0,1,"+x+"deg)", 300).finished)
+            waits.push(animate_transform(node, Card.getTransform(8,x,2,y) + "rotate3d(0,0,1,"+r+"deg)", 300).finished)
             await sleep(100)
         }
 
@@ -118,7 +118,7 @@ export class Table {
         for (let i=0; i<table_to_add.length; i++) {
             
             for (let name in all_hands) {
-                Table.state.theTable.getHand(name).glow(false)
+                this.getHand(name).glow(false)
                 if (all_hands[name].indexOf(table_to_add[i]) != -1 ) {
                     await this.play(table_to_add[i], name)
                 }
