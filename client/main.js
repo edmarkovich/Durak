@@ -100,7 +100,7 @@ async function process_inbound(event) {
     }
 
     if ('notify' in payload) {
-        console.log(payload.notify)
+        Table.state.theTable.notice_to_table(payload.notify)
     }
 
 }

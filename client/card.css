@@ -27,8 +27,6 @@ body {
     width: var(--card_width);
     height: var(--card_height);
 
-
-
     backface-visibility: hidden;
 
     font-size: calc(432px / var(--card_scale));
@@ -118,4 +116,32 @@ body {
 
 .hidden {
     visibility: hidden;
+}
+
+.notice {
+    color:white;
+    position: absolute;
+    top: 500px;
+    left:250px;
+    height : 100px;
+    width: 600px;
+
+    font-family: "Comic Sans MS", cursive, sans-serif;
+    font-weight: lighter;
+    font-variant-caps: small-caps;
+    position: absolute;
+    font-size: 20px;
+    color: white; 
+    filter: blur(0.8px);
+    opacity: .7;
+    z-index: -200;
+    list-style: none;
+    padding: 0px;
+    margin: 0px;
+    column-count: 3;
+    column-fill: auto;
+}
+
+.notice li:last-of-type {
+    color: pink;
 }

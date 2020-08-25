@@ -19,6 +19,7 @@ export class Table {
         this.zIndex = 100
 
         this.done_pile =0
+
     }
     
     getHand(player_name) {
@@ -126,6 +127,18 @@ export class Table {
         }
     }
 
+    async notice_to_table(text) {
+
+        let notice_areas = document.getElementsByClassName("notice")
+        if (notice_areas.length==0){ 
+            let notice_area = document.createElement("div")
+            notice_area.classList.add("notice")
+            document.body.appendChild(notice_area)
+        }
+        let notice_area = document.getElementsByClassName("notice")[0]
+        notice_area.innerHTML = notice_area.innerHTML+ "<li>"+ text + "</li>"
+    }
+
     async card_to_table(node, mode) {
         node.style.zIndex = this.zIndex++
         node.classList.add("table")
@@ -141,6 +154,4 @@ export class Table {
 }
 
 
-Table.state = {
-
-}
+Table.state = { }
