@@ -1,6 +1,6 @@
 import { Card } from './card.js';
 import { MyHand, OtherHand } from "./hand.js";
-import { animate_transform} from "./utils.js"
+import { animate_transform, sleep} from "./utils.js"
 
 export class Table {
 
@@ -17,6 +17,8 @@ export class Table {
         
         this.last_attack_slot = -1
         this.zIndex = 100
+
+        this.done_pile =0
     }
 
     getHand() { 
@@ -80,9 +82,16 @@ export class Table {
             let node = document.getElementsByClassName("table")[0]
             node.classList.remove("table")
 
+            this.done_pile++
+
             // Put in the done pile
             await Card.flip_card(node, true)
-            waits.push(animate_transform(node, Card.getTransform(9,0,2,0), 300).finished)
+            let x = (Math.random()*30)+this.done_pile*5
+            let y = (Math.random()*10)+this.done_pile*5
+            let z = (Math.random()*10)+this.done_pile*5
+            node.style.zIndex = this.done_pile
+            waits.push(animate_transform(node, Card.getTransform(9,y,2,z) + "rotate3d(0,0,1,"+x+"deg)", 300).finished)
+            await sleep(100)
         }
 
         waits.push(this.getHand().arrange());
