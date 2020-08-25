@@ -1,4 +1,4 @@
-
+from .ioutil import IOUtil
 
 class Table:
 
@@ -25,6 +25,7 @@ class Table:
         self.pile.append(card)
 
         self.attack_cards += 1
+        IOUtil.notify(""+str(card)+" "+player.name + " attack")
         return True
 
 

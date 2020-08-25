@@ -19,6 +19,9 @@ class IOUtil:
                  return {'game': g}
         return {}
 
+    @staticmethod
+    def notify(text):
+        IOUtil.defaultDestination(json.dumps({"notify":text}))
 
     @staticmethod
     def send_updated_game_state(prompt = None):

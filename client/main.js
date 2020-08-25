@@ -57,7 +57,6 @@ socket.onmessage = async function(event) {
 
 async function process_inbound(event) {
 
-
     let payload = JSON.parse(event.data)
 
     if ('game' in payload) {
@@ -97,6 +96,10 @@ async function process_inbound(event) {
         if (payload.prompt.prompt == "over") {
             alert("Game Over!")
         }
+    }
+
+    if ('notify' in payload) {
+        console.log(payload.notify)
     }
 
 }

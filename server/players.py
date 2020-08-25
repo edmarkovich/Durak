@@ -32,6 +32,7 @@ class Players:
             raise Exception ("Players full")
 
         self.players[name] = Player(is_computer = is_computer)
+        self.players[name].name = name
         self.players[name].add_cards(self.deck.draw(6))
 
         self.console.add("Joined: "+name)

@@ -25,6 +25,7 @@ class GameRound:
         self.table.attack(card, self.players.players[self.attacker])
 
     def add_in_one(self, attacker):
+
         if not self.players.players[attacker].has_cards():
             return "pass"
 
@@ -38,12 +39,12 @@ class GameRound:
             #TODO: validate message
 
             if move["action"] == "pass":
+                IOUtil.notify("" + attacker + " passed")
                 return "pass"
 
             card = move["card"]
             if not self.table.attack(card, self.players.players[attacker]):
                 continue
-
             return "added"
 
     def add_in_loop(self, took):
@@ -88,6 +89,7 @@ class GameRound:
             #TODO: validate message
 
             if move["action"] == "take":
+                IOUtil.notify(""+" " + self.defender + " took")
                 return "took"
 
             card = move["card"]
@@ -96,8 +98,10 @@ class GameRound:
 
             #if defender beats 6 cards, or uses all his cards, he won this round
             if self.table.attack_cards == 6 or not self.players.players[self.defender].has_cards():
+                IOUtil.notify(""+str(card)+" " + self.defender + " beat all")
                 return "beat_all"
 
+            IOUtil.notify(""+str(card)+" " + self.defender + " beat")   
             return "beat_one"
 
     def play(self):
