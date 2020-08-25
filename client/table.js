@@ -20,12 +20,8 @@ export class Table {
 
         this.done_pile =0
     }
-
-    getHand() { 
-        return this.hands[this.my_name]
-    }
     
-    getOtherHand(player_name) {
+    getHand(player_name) {
         for (let name in this.hands) {
             if (name == player_name) {
                 return this.hands[name]
@@ -35,14 +31,11 @@ export class Table {
 
     prompt_for_action(player_name, mode){
         this.mode = mode
+        this.getHand(player_name).glow(true)
         if (player_name == this.my_name) {
-            this.getHand().glow(true)
             Card.make_verb_card(this.mode)
-        } else {
-            this.getOtherHand(player_name).glow(true)
-        }
+        } 
     }
-
 
     async table_to_hand(player_name, player_hand) {
         let waits = []
@@ -90,11 +83,11 @@ export class Table {
             let y = (Math.random()*10)+this.done_pile*5
             let z = (Math.random()*10)+this.done_pile*5
             node.style.zIndex = this.done_pile
-            waits.push(animate_transform(node, Card.getTransform(9,y,2,z) + "rotate3d(0,0,1,"+x+"deg)", 300).finished)
+            waits.push(animate_transform(node, Card.getTransform(8,y,2,z) + "rotate3d(0,0,1,"+x+"deg)", 300).finished)
             await sleep(100)
         }
 
-        waits.push(this.getHand().arrange());
+        waits.push(this.getHand(this.my_name).arrange());
         await Promise.all(waits)
         this.last_attack_slot=-1
     }
@@ -105,11 +98,10 @@ export class Table {
         for (let i=0; i<this.player_sequence.length; ++i) {
             await this.hands[this.player_sequence[i]].refill(all_hands[this.player_sequence[i]])
         }
-
     }
 
     async play(card, player_name) {
-        let hand = player_name == this.my_name ? this.getHand() : this.getOtherHand(player_name)
+        let hand = this.getHand(player_name)
         let node = hand.pop_card(card);
         await this.card_to_table(node, this.mode)
         await hand.arrange()
@@ -117,7 +109,6 @@ export class Table {
 
     async render_turn(old_table_cards, new_table_cards, all_hands) {
         Card.make_verb_card(null)
-        Table.state.theTable.getHand().glow(false)
 
         for (let name in all_hands) {
             this.hands[name].glow(false)
@@ -127,16 +118,13 @@ export class Table {
         for (let i=0; i<table_to_add.length; i++) {
             
             for (let name in all_hands) {
-                Table.state.theTable.getOtherHand(name).glow(false)
+                Table.state.theTable.getHand(name).glow(false)
                 if (all_hands[name].indexOf(table_to_add[i]) != -1 ) {
                     await this.play(table_to_add[i], name)
                 }
             }
-            
         }
     }
-
-
 
     async card_to_table(node, mode) {
         node.style.zIndex = this.zIndex++

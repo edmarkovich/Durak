@@ -1,3 +1,4 @@
+/* eslint-disable no-constant-condition */
 import {sleep} from "./utils.js";
 import {Deck} from "./deck.js"
 import {Table} from "./table.js"

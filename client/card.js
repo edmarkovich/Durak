@@ -109,7 +109,7 @@ export class Card {
         node.getElementsByClassName("front")[0].getElementsByClassName("card-inner")[0].innerHTML 
             =(verb == "pass")?"done":verb
         animate_transform(node, 
-            Card.getTransform(Table.state.theTable.getHand().count()+0, 0, 4, 0), 0)
+            Card.getTransform(Table.state.theTable.getHand(Table.state.theTable.my_name).count()+0, 0, 4, 0), 0)
           
     }
 }
