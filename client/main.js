@@ -88,7 +88,7 @@ async function process_inbound(event) {
 
         if ('player' in payload.prompt) {
             // Glow hand and make the verb card
-            Table.state.theTable.prompt_for_action(payload.prompt.player, payload.prompt.prompt)
+            Table.state.theTable.prompt_for_action(payload.prompt.player, payload.prompt)
             if (payload.prompt.player.indexOf("🤖") != -1) {
                 await sleep(1000 + (Math.random() * 500))
             }
@@ -97,10 +97,6 @@ async function process_inbound(event) {
         if (payload.prompt.prompt == "over") {
             alert("Game Over!")
         }
-    }
-
-    if ('notify' in payload) {
-        Table.state.theTable.notice_to_table(payload.notify)
     }
 
 }

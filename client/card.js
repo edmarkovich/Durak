@@ -69,9 +69,13 @@ export class Card {
 
     static make_verb_card(mode) {
         let verb=null
+        let text=null
+
         if (mode == 'Defend') { 
+            text = "Take"
             verb = 'take' 
         } else if (mode == 'Add') { 
+            text = 'Skip'
             verb = 'pass' 
         }
 
@@ -107,7 +111,7 @@ export class Card {
         node.classList.remove("hidden")
         node.setAttribute("onclick", "send_verb('"+verb+"')")
         node.getElementsByClassName("front")[0].getElementsByClassName("card-inner")[0].innerHTML 
-            =(verb == "pass")?"done":verb
+            =text
         animate_transform(node, 
             Card.getTransform(Table.state.theTable.getHand(Table.state.theTable.my_name).count()+0, 0, 4, 0), 0)
           

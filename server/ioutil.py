@@ -20,10 +20,6 @@ class IOUtil:
         return {}
 
     @staticmethod
-    def notify(text):
-        IOUtil.defaultDestination(json.dumps({"notify":text}))
-
-    @staticmethod
     def send_updated_game_state(prompt = None):
         message = IOUtil.get_game_data()
         if prompt:

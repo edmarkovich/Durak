@@ -12,7 +12,7 @@ class GameRound:
 
     def first_attack(self):
 
-        prompt = {'prompt':"Attack", "player": self.attacker}
+        prompt = {'prompt':"Attack", "player": self.attacker, "defender": self.defender}
         if self.players.players[self.attacker].is_computer:
             IOUtil.send_updated_game_state(prompt)
             move = AutoPlayer(self.table, self.players.players[self.attacker]).attack()
@@ -24,13 +24,13 @@ class GameRound:
 
         self.table.attack(card, self.players.players[self.attacker])
 
-    def add_in_one(self, attacker):
+    def add_in_one(self, attacker, took):
 
         if not self.players.players[attacker].has_cards():
             return "pass"
 
         while True:
-            prompt = {"prompt":"Add", "player":attacker}
+            prompt = {"prompt":"Add", "player":attacker, "defender":self.defender, "took":took}
             if self.players.players[attacker].is_computer:
                 IOUtil.send_updated_game_state(prompt)
                 move = AutoPlayer(self.table, self.players.players[attacker]).add()
@@ -39,7 +39,6 @@ class GameRound:
             #TODO: validate message
 
             if move["action"] == "pass":
-                IOUtil.notify("" + attacker + " passed")
                 return "pass"
 
             card = move["card"]
@@ -58,7 +57,7 @@ class GameRound:
             if attacker in passer or self.table.attack_cards==6 or attacker == None:
                 return "took" if took else "beat_all"
 
-            out = self.add_in_one(attacker)
+            out = self.add_in_one(attacker,took)
             if out == "pass":
                 passer.append(attacker) 
                 attacker = self.players.next_attacker(attacker, self.defender)
@@ -89,7 +88,6 @@ class GameRound:
             #TODO: validate message
 
             if move["action"] == "take":
-                IOUtil.notify(""+" " + self.defender + " took")
                 return "took"
 
             card = move["card"]
@@ -98,10 +96,8 @@ class GameRound:
 
             #if defender beats 6 cards, or uses all his cards, he won this round
             if self.table.attack_cards == 6 or not self.players.players[self.defender].has_cards():
-                IOUtil.notify(""+str(card)+" " + self.defender + " beat all")
                 return "beat_all"
 
-            IOUtil.notify(""+str(card)+" " + self.defender + " beat")   
             return "beat_one"
 
     def play(self):

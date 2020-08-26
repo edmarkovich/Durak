@@ -55,7 +55,6 @@ body {
 
 .player-name {
     font-family: "Comic Sans MS", cursive, sans-serif;
-    font-weight: lighter;
     font-variant-caps: small-caps;
     position: absolute;
     font-size: 20px;
@@ -107,11 +106,10 @@ body {
     font-style: italic;
 
     text-align: center;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: "Comic Sans MS", cursive, sans-serif;
+
     font-size: 20%;
     font-weight: normal;
-
-    text-transform: lowercase;
 }
 
 .hidden {
@@ -121,27 +119,17 @@ body {
 .notice {
     color:white;
     position: absolute;
-    top: 500px;
-    left:250px;
+    top: 550px;
+    left:2px;
     height : 100px;
-    width: 600px;
+    width: 900px;
 
     font-family: "Comic Sans MS", cursive, sans-serif;
-    font-weight: lighter;
-    font-variant-caps: small-caps;
     position: absolute;
-    font-size: 20px;
-    color: white; 
-    filter: blur(0.8px);
-    opacity: .7;
+    font-size: 34.56px;
+    color: yellow; 
+    filter: blur(1.0px);
+    opacity: .55;
     z-index: -200;
-    list-style: none;
-    padding: 0px;
-    margin: 0px;
-    column-count: 3;
-    column-fill: auto;
-}
-
-.notice li:last-of-type {
-    color: pink;
+    font-style: italic;
 }
