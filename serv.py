@@ -14,23 +14,26 @@ from server.ioutil import RestartException
 
 import time
 
-inqueue = queue.Queue()
-outqueue = queue.Queue()
-
-
-
-
 class WSThread(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
         self.websockets=[]
         self.end_mode=False
+        self.gamethread = None
     def run(self):
         async def inbound_messaging(websocket, path):
             if len(self.websockets) == 0:
-                print(websocket.remote_address, "WS: First client, restarting the game")
-                inqueue.put("Die")
+                print(websocket.remote_address, "WS: First client, restarting the game", path)
+                if self.gamethread: 
+                    self.gamethread.inqueue.put("Die")
+                    self.gamethread = None
                 self.end_mode=False
+
+                player_count = 1
+                computer_count = 3
+                time.sleep(1)
+                self.gamethread = GameThread(player_count, computer_count)
+                self.gamethread.start()
             if self.end_mode:
                 print(websocket.remote_address, "WS: End mode in progress")
                 return
@@ -39,7 +42,7 @@ class WSThread(threading.Thread):
             print (websocket.remote_address, "WS: Subscribing #", len(self.websockets))
 
             async for message in websocket:
-                inqueue.put(message)
+                self.gamethread.inqueue.put(message)
 
             self.websockets.remove(websocket)
             print(websocket.remote_address, "WS: Disconect. Now: ", len(self.websockets))
@@ -48,8 +51,8 @@ class WSThread(threading.Thread):
         async def outbound_messaging():
             while True:
                 await asyncio.sleep(0.1)
-                if not outqueue.empty():
-                    m = outqueue.get()
+                if self.gamethread and not self.gamethread.outqueue.empty():
+                    m = self.gamethread.outqueue.get()
                     for ws in self.websockets:
                         await ws.send(m)
 
@@ -68,34 +71,25 @@ class GameThread(threading.Thread):
         threading.Thread.__init__(self)
         self.player_count = player_count
         self.computer_count = computer_count
+        self.inqueue = queue.Queue()
+        self.outqueue = queue.Queue()
 
     def run(self):
-        while True:
-            try:
-                game = Game(self.player_count, self.computer_count)
-                print ("Game Thread: New Game Started:", self.player_count)
-                IOUtil.game = game
-                IOUtil.defaultSource = inqueue.get
-                IOUtil.defaultDestination = outqueue.put
-                game.main_loop()
-            except RestartException as e:
-                print ("Game Thread: Restarting")
-            except Exception as e:
-                print ("Other Issue", e)
-                traceback.print_exc()
-                print ("Restarting.....")
+        try:
+            game = Game(self.player_count, self.computer_count)
+            print ("Game Thread: New Game Started:", self.player_count)
+            IOUtil.game = game
+            IOUtil.defaultSource = self.inqueue.get
+            IOUtil.defaultDestination = self.outqueue.put
+            game.main_loop()
+        except RestartException as e:
+            print ("Game Thread: Exiting")
+        except Exception as e:
+            print ("Other Issue", e)
+            traceback.print_exc()
+            print ("Exiting.....")
 
-
-player_count = 2
-computer_count = 0
-
-if len(sys.argv) > 1:
-    player_count = int(sys.argv[1])
-
-if len(sys.argv) > 2:
-    computer_count = int(sys.argv[2])
 wsthread = WSThread()
 wsthread.start()
 
-gamethread = GameThread(player_count, computer_count)
-gamethread.start()
+
