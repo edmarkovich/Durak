@@ -36,8 +36,6 @@ export class Table {
         if (player_name == this.my_name) {
             Card.make_verb_card(this.mode)
 
-            console.log(prompt)
-
             if (prompt.prompt == "Defend") { this.notice_to_table("Defend or take cards") }
             if (prompt.prompt == "Attack") { this.notice_to_table("Attack " + prompt.defender)}
             if (prompt.prompt == "Add") {

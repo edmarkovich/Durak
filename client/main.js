@@ -8,7 +8,7 @@ let state = {
     running: false
 }
 
-let host = "ws://"+location.hostname+":5678"
+let host = "ws://"+location.hostname+":5678/game"
 
 
 let socket = new WebSocket(host)
