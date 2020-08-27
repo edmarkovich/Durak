@@ -10,7 +10,7 @@ export class Create {
 
     async getName() {
         while (!this.name) {
-            await sleep(10)
+            await sleep(200)
         }
         return this.name
     }

@@ -40,6 +40,8 @@ class WSThread(threading.Thread):
         async def inbound_messaging(websocket, path):
             if len(self.websockets) == 0:
                 print(websocket.remote_address, "WS: First client, restarting the game", path)
+                if self.gamethread:
+                    self.gamethread.inqueue.put("Die")
                 self.end_mode=False
 
             if self.end_mode:
@@ -103,5 +105,3 @@ class GameThread(threading.Thread):
 
 wsthread = WSThread()
 wsthread.start()
-
-
