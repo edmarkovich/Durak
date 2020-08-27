@@ -50,7 +50,7 @@ let action_list = []
 
 async function event_loop() {
     while (true) {
-        await sleep(10)
+        await sleep(100)
         if (action_list.length == 0) { continue }
             let event = action_list.shift()
             await process_inbound(event)
