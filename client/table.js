@@ -85,6 +85,7 @@ export class Table {
         while (document.getElementsByClassName("table").length>0) {
             let node = document.getElementsByClassName("table")[0]
             node.classList.remove("table")
+            node.classList.add("pile")
 
             this.done_pile++
 

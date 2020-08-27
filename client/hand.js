@@ -43,6 +43,7 @@ export class OtherHand extends Hand {
 
     async add_card(node) {
         node.classList.add("his_card"+this.hand_index)
+        node.classList.add("his")
         node.id = ""+this.hand_index+":"+this.cards_count
         node.style.zIndex = this.cards_count
         await animate_transform(node, Card.getTransform(this.hand_index*3, 15*(this.cards_count), 0, +0*(this.cards_count)) 
@@ -56,6 +57,7 @@ export class OtherHand extends Hand {
         this.cards_count--
         let node =document.getElementById(""+this.hand_index+":"+this.cards_count)
         node.classList.remove("his_card"+this.hand_index)
+        node.classList.remove("his");
         node.classList.remove("highlight");
         Card.make_it_a_card(node, card)
         Card.flip_card(node)

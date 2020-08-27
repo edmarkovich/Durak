@@ -64,14 +64,13 @@ body {
 }
 
 .player-name.highlight {
-    color: pink;
+    color: lightblue;
     box-shadow: none;
 }
 
 .front {
     transform: rotateY(-180deg);
 }
-
 
 .back {
     color: blue;
@@ -84,21 +83,26 @@ body {
 }
 
 
-.mine {
-    opacity: 0.5;
+.deck,.his,.mine,.pile {
+    filter: saturate(30%);
 }
+
+.his.highlight {
+    filter: saturate(100%);
+}
+
 
 .mine.highlight, .card-container.verb {
     pointer-events: all;
     cursor: pointer;
     box-shadow: inset 0 0 15px 5px yellow,
     0 0 15px 5px yellow;
-    opacity: 1;
+    filter: saturate(100%);
 }
 
 .highlight {
-    box-shadow: inset 0 0 15px 5px pink,
-    0 0 15px 5px pink;
+    box-shadow: inset 0 0 15px 5px lightblue,
+    0 0 15px 5px lightblue;
 }
 
 
