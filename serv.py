@@ -4,6 +4,7 @@ import json
 import os
 import sys
 import traceback
+import json
 
 import threading
 import queue
@@ -20,28 +21,38 @@ class WSThread(threading.Thread):
         self.websockets=[]
         self.end_mode=False
         self.gamethread = None
+
+    def create_game(self, message):
+        message = json.loads(message)
+
+        if self.gamethread: 
+            self.gamethread.inqueue.put("Die")
+            self.gamethread = None
+        self.end_mode=False
+
+        player_count = int(message['humans'])
+        computer_count = int(message['computers'])
+        time.sleep(1)
+        self.gamethread = GameThread(player_count, computer_count)
+        self.gamethread.start()
+
     def run(self):
         async def inbound_messaging(websocket, path):
             if len(self.websockets) == 0:
                 print(websocket.remote_address, "WS: First client, restarting the game", path)
-                if self.gamethread: 
-                    self.gamethread.inqueue.put("Die")
-                    self.gamethread = None
                 self.end_mode=False
 
-                player_count = 1
-                computer_count = 3
-                time.sleep(1)
-                self.gamethread = GameThread(player_count, computer_count)
-                self.gamethread.start()
             if self.end_mode:
                 print(websocket.remote_address, "WS: End mode in progress")
                 return
             
-            self.websockets.append(websocket)
             print (websocket.remote_address, "WS: Subscribing #", len(self.websockets))
+            self.websockets.append(websocket)
 
             async for message in websocket:
+                if 'create' in message and (not self.gamethread or not self.gamethread.is_alive()):
+                    self.create_game(message)
+
                 self.gamethread.inqueue.put(message)
 
             self.websockets.remove(websocket)
@@ -88,6 +99,7 @@ class GameThread(threading.Thread):
             print ("Other Issue", e)
             traceback.print_exc()
             print ("Exiting.....")
+        print ("Exiting Game Thread Normally")
 
 wsthread = WSThread()
 wsthread.start()

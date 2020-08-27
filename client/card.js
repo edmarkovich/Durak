@@ -75,7 +75,7 @@ export class Card {
             text = "Take"
             verb = 'take' 
         } else if (mode == 'Add') { 
-            text = 'Skip'
+            text = 'Done'
             verb = 'pass' 
         }
 

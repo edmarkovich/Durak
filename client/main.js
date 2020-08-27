@@ -23,7 +23,8 @@ socket.onopen = function() {
     if (!state.my_name) {
         state.my_name = prompt("Player Name")
     } 
-    socket.send('{"action":"join","name":"'+state.my_name+'"}')
+    socket.send(JSON.stringify({"action":"create", "humans":"1", "computers":"2", "name":state.my_name}))
+    //socket.send('{"action":"join","name":"'+state.my_name+'"}')
 }
 
 
