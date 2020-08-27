@@ -2,6 +2,7 @@
 import {sleep} from "./utils.js";
 import {Deck} from "./deck.js"
 import {Table} from "./table.js"
+import {Create} from "./create.js"
 
 let state = {
     game: null,
@@ -14,16 +15,21 @@ let host = "ws://"+location.hostname+":5678/game"
 let socket = new WebSocket(host)
 
 
-socket.onopen = function() {
+socket.onopen = async function() {
 
     event_loop()
 
     state.my_name = new URLSearchParams(window.location.search).get("name")
 
-    if (!state.my_name) {
-        state.my_name = prompt("Player Name")
-    } 
-    socket.send(JSON.stringify({"action":"create", "humans":"1", "computers":"2", "name":state.my_name}))
+    let create = new Create(socket)
+    window.got_click =  create.got_click.bind(create)
+    create.renderCreate()
+    state.my_name = await create.getName()
+
+    //if (!state.my_name) {
+    //    state.my_name = prompt("Player Name")
+    //} 
+    //socket.send(JSON.stringify({"action":"create", "humans":"1", "computers":"2", "name":state.my_name}))
     //socket.send('{"action":"join","name":"'+state.my_name+'"}')
 }
 
@@ -104,4 +110,5 @@ async function process_inbound(event) {
 
 export function send_card(card) { socket.send('{"action":"", "card":"'+card+'"}') }
 export function send_verb(verb) { socket.send('{"action":"'+verb+'"}') }
+
 

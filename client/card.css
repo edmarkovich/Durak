@@ -138,3 +138,25 @@ body {
     z-index: -200;
     font-style: italic;
 }
+
+input {
+    border-radius: 10px;
+    text-align: center;
+    font-family:inherit;
+    font-size: inherit;
+}
+
+.create {
+    border-radius: 10px;
+
+    position: fixed;
+    background-image: url("assets/front.jpg");
+    font-family: "Comic Sans MS", cursive, sans-serif;
+    font-size: 34.56px;
+    width: 400px;
+    height: 500px;
+    top: 50%;
+    left: 50%;
+    margin-top: -200px;
+    margin-left: -200px;
+}
