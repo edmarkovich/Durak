@@ -20,14 +20,10 @@ export class Create {
         let species     = document.querySelector('input[name="species"]:checked').value
         let count       = parseInt(document.querySelector('input[name="count"]:checked').value)
 
-        console.log(species,count)
-
         let humans    =  1 + (species=="human"?count:0)
         let computers =  0 + (species=="computer"?count:0)
 
         let out = JSON.stringify({"action":"create", "humans":humans, "computers":computers, "name": this.name})
-        console.log(out)
-
         this.socket.send(out)
 
         let parent = document.body.getElementsByClassName("create")[0]
