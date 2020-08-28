@@ -7,34 +7,32 @@ class RestartException(Exception):
 
 class IOUtil:
 
-    defaultSource      = lambda: '{}'
-    defaultDestination = lambda x: {}
-    game = None
+    def __init__(self, source, destination, game):
+        self.defaultSource      = source
+        self.defaultDestination = destination
+        self.game = game
 
-    @staticmethod
-    def get_game_data():
-        if IOUtil.game:
-            g = IOUtil.game.json()
+    def get_game_data(self):
+        if self.game:
+            g = self.game.json()
             if g:
                  return {'game': g}
         return {}
 
-    @staticmethod
-    def send_updated_game_state(prompt = None):
-        message = IOUtil.get_game_data()
+    def send_updated_game_state(self, prompt = None):
+        message = self.get_game_data()
         if prompt:
             message['prompt'] = prompt
-        IOUtil.defaultDestination(json.dumps(message))
+        self.defaultDestination(json.dumps(message))
 
-    @staticmethod
-    def get_input(prompt, player = None, final_message = False):
+    def get_input(self, prompt, player = None, final_message = False):
 
-        IOUtil.send_updated_game_state(prompt)
+        self.send_updated_game_state(prompt)
 
         if final_message:
             inputA = "Die"
         else:
-            source = IOUtil.defaultSource
+            source = self.defaultSource
             inputA = source()
 
         if inputA == "Die":

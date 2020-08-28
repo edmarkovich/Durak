@@ -1,5 +1,3 @@
-from .ioutil import IOUtil
-
 class Table:
 
     def __init__(self, trump):

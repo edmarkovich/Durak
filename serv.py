@@ -38,8 +38,6 @@ class WSThread(threading.Thread):
         async def inbound_messaging(websocket, path):
 
             async for message in websocket:
-                print(">>", message)
-
                 message = json.loads(message)
 
                 if 'game_id' in message:
@@ -54,6 +52,7 @@ class WSThread(threading.Thread):
                     if game_id in self.games:
                         #TODO - this can be more efficient
                         if websocket not in self.games[game_id]['sockets']:
+                            print("Subscribe", websocket, "for", game_id)
                             self.games[game_id]['sockets'].append(websocket) 
                         self.games[game_id]['thread'].dispatch(message)
                     else:
@@ -90,11 +89,12 @@ class GameThread(threading.Thread):
 
     def run(self):
         try:
-            game = Game(self.player_count, self.computer_count)
             print ("Game Thread: New Game Started:", self.player_count)
-            IOUtil.game = game
-            IOUtil.defaultSource = self.inqueue.get
-            IOUtil.defaultDestination = lambda x:  self.outqueue.put({"game_id": self.ident, "payload":x})
+            game = Game(self.player_count, self.computer_count)
+            game.ioutil = IOUtil(self.inqueue.get,
+                            lambda x:  self.outqueue.put({"game_id": self.ident, "payload":x}),
+                            game)
+            
             game.main_loop()
         except RestartException as e:
             print ("Game Thread: Exiting")
@@ -105,6 +105,7 @@ class GameThread(threading.Thread):
         print ("Exiting Game Thread Normally")
 
     def dispatch(self, message):
+        print("Dispatching", self.ident)
         self.inqueue.put(message)
 
 wsthread = WSThread()

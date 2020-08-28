@@ -71,8 +71,6 @@ async function event_loop() {
 
 async function process_inbound(event) {
 
-    console.log(event.data)
-
     let payload = JSON.parse(event.data)
 
     if ('created' in payload) {

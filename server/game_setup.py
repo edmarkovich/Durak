@@ -4,14 +4,15 @@ from .ioutil import IOUtil
 
 class GameSetup:
 
-    def __init__(self, expect_players, computer_players):
+    def __init__(self, expect_players, computer_players, ioutil):
         self.expect_players = expect_players
         self.computer_players = computer_players
         self.deck = Deck()
         self.players = Players(self.deck, self.expect_players+self.computer_players)
+        self.ioutil = ioutil
 
     def await_single_join(self):
-        out = IOUtil.get_input({"prompt":"User Join"})
+        out = self.ioutil.get_input({"prompt":"User Join"})
 
         #if "action" not in out or "name" not in out or out["action"] != "join" or len(out["name"])==0:
         #    raise Exception("Invalid join: "+str(out))

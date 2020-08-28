@@ -83,15 +83,15 @@ class Game:
 
     def main_loop(self):
         #TODO test
-        game_setup = GameSetup(self.expect_players, self.computer_players)
+        game_setup = GameSetup(self.expect_players, self.computer_players,self.ioutil)
         game_setup.await_all_join()
         self.start(game_setup)
 
         while True:
             #TODO: this shouldn't be necessary - should just be 1 or 2 states in the round
-            IOUtil.send_updated_game_state()
+            self.ioutil.send_updated_game_state()
 
-            game_round = GameRound(self.players, self.attacker, self.defender, self.trump_card.suit)
+            game_round = GameRound(self.players, self.attacker, self.defender, self.trump_card.suit,self.ioutil)
             self.table = game_round.table
             outcome = game_round.play()
 
@@ -100,7 +100,7 @@ class Game:
 
             if self.players.is_game_over():
                 print("Game is over")
-                IOUtil.get_input({'prompt':'over'}, None, final_message=True)
+                self.ioutil.get_input({'prompt':'over'}, None, final_message=True)
                 break
 
             self.set_next_attacker_defender(outcome)
