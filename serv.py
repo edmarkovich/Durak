@@ -18,56 +18,57 @@ import time
 class WSThread(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
-        self.websockets=[]
         self.end_mode=False
-        self.gamethread = None
+        self.games = {}
+        self.outqueue = queue.Queue()
+
 
     def create_game(self, message):
-        message = json.loads(message)
-
-        if self.gamethread: 
-            self.gamethread.inqueue.put("Die")
-            self.gamethread = None
-        self.end_mode=False
 
         player_count = int(message['humans'])
         computer_count = int(message['computers'])
         time.sleep(1)
-        self.gamethread = GameThread(player_count, computer_count)
-        self.gamethread.start()
+        gamethread = GameThread(player_count, computer_count, self.outqueue)
+        gamethread.start()
+
+        self.games[gamethread.ident] = {"thread": gamethread, "sockets":[]}
+        return gamethread.ident
 
     def run(self):
         async def inbound_messaging(websocket, path):
-            if len(self.websockets) == 0:
-                print(websocket.remote_address, "WS: First client, restarting the game", path)
-                if self.gamethread:
-                    self.gamethread.inqueue.put("Die")
-                self.end_mode=False
-
-            if self.end_mode:
-                print(websocket.remote_address, "WS: End mode in progress")
-                return
-            
-            print (websocket.remote_address, "WS: Subscribing #", len(self.websockets))
-            self.websockets.append(websocket)
 
             async for message in websocket:
-                if 'create' in message and (not self.gamethread or not self.gamethread.is_alive()):
-                    self.create_game(message)
+                print(">>", message)
 
-                self.gamethread.inqueue.put(message)
+                message = json.loads(message)
 
-            self.websockets.remove(websocket)
-            print(websocket.remote_address, "WS: Disconect. Now: ", len(self.websockets))
-            self.end_mode=True
+                if 'game_id' in message:
+                    game_id = message['game_id']
+
+                    if game_id == "create":
+                        id =  self.create_game(message)
+                        await websocket.send(json.dumps({'created':id}))
+                        continue
+
+                    game_id = int(game_id)
+                    if game_id in self.games:
+                        #TODO - this can be more efficient
+                        if websocket not in self.games[game_id]['sockets']:
+                            self.games[game_id]['sockets'].append(websocket) 
+                        self.games[game_id]['thread'].dispatch(message)
+                    else:
+                        print("Unknown Game ID", message)
+                else:
+                    print ("Missing Game ID", message)
+
 
         async def outbound_messaging():
             while True:
                 await asyncio.sleep(0.1)
-                if self.gamethread and not self.gamethread.outqueue.empty():
-                    m = self.gamethread.outqueue.get()
-                    for ws in self.websockets:
-                        await ws.send(m)
+                if not self.outqueue.empty():
+                    m = self.outqueue.get()
+                    for ws in self.games[m['game_id']]['sockets']:
+                        await ws.send(m['payload'])
 
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
@@ -80,12 +81,12 @@ class WSThread(threading.Thread):
         print("WS: End Run Thread")
 
 class GameThread(threading.Thread):
-    def __init__(self, player_count, computer_count):
+    def __init__(self, player_count, computer_count, outqueue):
         threading.Thread.__init__(self)
         self.player_count = player_count
         self.computer_count = computer_count
         self.inqueue = queue.Queue()
-        self.outqueue = queue.Queue()
+        self.outqueue = outqueue
 
     def run(self):
         try:
@@ -93,7 +94,7 @@ class GameThread(threading.Thread):
             print ("Game Thread: New Game Started:", self.player_count)
             IOUtil.game = game
             IOUtil.defaultSource = self.inqueue.get
-            IOUtil.defaultDestination = self.outqueue.put
+            IOUtil.defaultDestination = lambda x:  self.outqueue.put({"game_id": self.ident, "payload":x})
             game.main_loop()
         except RestartException as e:
             print ("Game Thread: Exiting")
@@ -102,6 +103,9 @@ class GameThread(threading.Thread):
             traceback.print_exc()
             print ("Exiting.....")
         print ("Exiting Game Thread Normally")
+
+    def dispatch(self, message):
+        self.inqueue.put(message)
 
 wsthread = WSThread()
 wsthread.start()

@@ -42,7 +42,7 @@ class IOUtil:
             time.sleep(1)
             raise RestartException("Time to Die")
 
-        input = json.loads(inputA)
+        input = inputA # json.loads(inputA)
 
         if "card" in input:
             input["card"] = Card.from_string(input["card"])

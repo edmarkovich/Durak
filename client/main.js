@@ -10,28 +10,38 @@ let state = {
 }
 
 let host = "ws://"+location.hostname+":5678/game"
+let socket = null
 
 
-let socket = new WebSocket(host)
-
-
-socket.onopen = async function() {
-
-    event_loop()
-
+window.onload = async function() {
     state.my_name = new URLSearchParams(window.location.search).get("name")
 
     let create = new Create(socket)
     window.got_click =  create.got_click.bind(create)
     create.renderCreate()
     state.my_name = await create.getName()
+    
+    state.firstRequest = await create.getRequest()
+    state.game_id = create.getGameId()
 
-    //if (!state.my_name) {
-    //    state.my_name = prompt("Player Name")
-    //} 
-    //socket.send(JSON.stringify({"action":"create", "humans":"1", "computers":"2", "name":state.my_name}))
-    //socket.send('{"action":"join","name":"'+state.my_name+'"}')
+    socket = new WebSocket(host)
+
+    socket.onopen = async function() {
+        socket.send(state.firstRequest)
+        event_loop()
+    }
+
+    socket.onclose = async function() {
+        alert("Server Closed Connection")
+    }
+
+    socket.onmessage = async function(event) {
+        action_list.push(event)
+    }
+    
 }
+
+
 
 
 function get_hands_array(game) {
@@ -42,9 +52,7 @@ function get_hands_array(game) {
     return out    
 }
 
-socket.onclose = async function() {
-    alert("Server Closed Connection")
-}
+
 
 let action_list = []
 
@@ -57,15 +65,21 @@ async function event_loop() {
     }
 }
 
-socket.onmessage = async function(event) {
-    action_list.push(event)
-}
+
 
 
 
 async function process_inbound(event) {
 
+    console.log(event.data)
+
     let payload = JSON.parse(event.data)
+
+    if ('created' in payload) {
+        state.game_id = payload['created']
+        alert("Tell your friends to join game #"+ state.game_id)
+        socket.send('{"game_id":'+ state.game_id+', "action":"join","name":"'+state.my_name+'"}')
+    }
 
     if ('game' in payload) {
         let game = payload.game
@@ -108,7 +122,7 @@ async function process_inbound(event) {
 
 }
 
-export function send_card(card) { socket.send('{"action":"", "card":"'+card+'"}') }
-export function send_verb(verb) { socket.send('{"action":"'+verb+'"}') }
+export function send_card(card) { socket.send('{"game_id": "'+state.game_id + '", "action":"", "card":"'+card+'"}') }
+export function send_verb(verb) { socket.send('{"game_id": "'+state.game_id + '", "action":"'+verb+'"}') }
 
 
