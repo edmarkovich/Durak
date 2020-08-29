@@ -1,4 +1,5 @@
 import { sleep } from "./utils.js"
+import { Card } from "./card.js"
 
 
 export class Create {
@@ -51,6 +52,12 @@ export class Create {
 
 
     async renderCreate() {
+
+        Card.make_menu_card("Humans", 0)
+        Card.make_menu_card("Bots", 1)
+        return
+
+
         let parent = document.createElement("div")
         parent.classList.add("create")
 

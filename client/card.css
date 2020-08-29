@@ -121,6 +121,10 @@ body {
     font-weight: normal;
 }
 
+.menu .front .card-inner {
+    font-size: 15%;
+}
+
 .notice {
     color:white;
     position: absolute;
