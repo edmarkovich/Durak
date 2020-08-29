@@ -60,7 +60,6 @@ export class OtherHand extends Hand {
         node.classList.remove("his");
         node.classList.remove("highlight");
         Card.make_it_a_card(node, card)
-        Card.flip_card(node)
         return node;        
     }
  
@@ -176,7 +175,6 @@ export class MyHand extends Hand{
                 Card.make_it_a_card(node, cards_to_add[i]);
             }
 
-            Card.flip_card(node)
             this.add_card(node, cards_to_add[i])
             //waits.push(this.arrange())
              await this.arrange()

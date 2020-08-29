@@ -36,8 +36,6 @@ export class Deck {
         let node = nodes[0]
         Card.make_it_a_card(node, trump_card);
     
-        //Flip, turn and move turmp
-        Card.flip_card(node, false)
         await animate_transform(node, Card.getTransform(0, 0, 2, 10), 500).finished
     
         //Put the deck over trump

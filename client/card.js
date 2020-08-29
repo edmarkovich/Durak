@@ -1,19 +1,25 @@
 import { animate_transform} from "./utils.js"
 import { Table } from './table.js';
 
+function makeDivOfClass(classes, parent) {
+    let div = document.createElement("div")
+    div.setAttribute("class", classes)
+    parent.appendChild(div)
+    return div
+}
+
 export class Card {
 
     static card_to_unicode(card) {
-        var base;
-        var offset;
         switch (card[0]) {
-            case '♠': base = 127137; break;
+            case '♠': var base = 127137; break;
             case '♥': base = 127153; break;
             case '♦': base = 127169; break;
             case '♣': base = 127185; break;
+            default: return card
         }
         switch (card.substring(1)) {
-            case 'A': offset = 0; break;
+            case 'A': var offset = 0; break;
             case 'J': offset = 10; break;
             case 'Q': offset = 12; break;
             case 'K': offset = 13; break;
@@ -22,27 +28,31 @@ export class Card {
         return "&#" + (base + offset) + ";";
     }
 
-    static make_it_a_card(node, card) {
-        node.id = card;
-        let front = node.getElementsByClassName("front")[0]        
-        let inner = document.createElement("div")
-        inner.classList.add("card-inner")
+    static set_card_front(node, card) {
+        let fronts = node.getElementsByClassName("front")
+        if (fronts.length>0) {
+            var front = fronts[0];
+        } else {
+            front = makeDivOfClass("front", node)
+        }
+        
+        if (front.getElementsByClassName("card-inner").length > 0) {
+            var inner = front.getElementsByClassName("card-inner")[0]
+        } else {
+            inner = makeDivOfClass("card-inner", front)
+        }
+
         inner.innerHTML = Card.card_to_unicode(card)
-        front.appendChild(inner)
-        if (card[0] == '♥' || card[0] == '♦') { node.classList.add("red"); } 
-        node.setAttribute('onclick', 'send_card(\''+card+'\')')
+        if (card[0] == '♥' || card[0] == '♦') { inner.classList.add("red"); } 
     }
 
-     static async flip_card(container, reverse) {
+    static async flip_card(container, reverse) {
         let front = container.getElementsByClassName("front")[0];
         let back = container.getElementsByClassName("back")[0];
     
-        let a=null
-        let b=null
-    
         if (reverse) {
-            a=animate_transform(front, "rotate3d(0,1,0,-180deg)", 150);
-            b=animate_transform(back, "rotate3d(0,1,0,0deg)", 150);
+            var a=animate_transform(front, "rotate3d(0,1,0,-180deg)", 150);
+            var b=animate_transform(back, "rotate3d(0,1,0,0deg)", 150);
         } else {
             a=animate_transform(front, "rotate3d(0,1,0,0deg)", 150);
             b=animate_transform(back, "rotate3d(0,1,0,-180deg)", 150);
@@ -57,48 +67,33 @@ export class Card {
     }
 
     static async make_deck_card(node) {
-        let inner = node.getElementsByClassName("front")[0].getElementsByClassName("card-inner")[0];
-        if (inner) {
-            node.getElementsByClassName("front")[0].removeChild(inner)
-        }
+        this.set_card_front(node, "")
         node.removeAttribute("id")
-        node.removeAttribute("onclick")
         node.setAttribute("class", "card-container")
         Card.flip_card(node,true)
     }
 
-    static make_verb_card(mode) {
-        let verb=null
-        let text=null
+    static make_it_a_card(node, card) {
+        node.id = card;
+        this.set_card_front(node, card)
+        Card.flip_card(node, false)
+        node.setAttribute('onclick', 'send_card(\''+card+'\')')
+    }
 
+    static make_verb_card(mode) {
         if (mode == 'Defend') { 
-            text = "Take"
-            verb = 'take' 
+            var text = "Take"
+            var verb = 'take' 
         } else if (mode == 'Add') { 
             text = 'Done'
             verb = 'pass' 
         }
 
-        let node = null
         let nodes = document.getElementsByClassName("verb")
-        if (nodes.length==0) { // Create this element for the first time
-            node = document.createElement("div")
-            node.setAttribute("class", "card-container verb hidden")
-    
-            let inner = document.createElement("div")
-            inner.classList.add("card-inner")
-    
-            let front = document.createElement("div");
-            front.setAttribute("class","front")
-    
-            let back = document.createElement("div");
-            back.setAttribute("class","back")
-            node.appendChild(back);
-            node.appendChild(front);
-    
-            front.appendChild(inner)
-            document.body.appendChild(node)
-            Card.flip_card(node)
+        if (nodes.length==0) { 
+            var node = makeDivOfClass("card-container verb hidden", document.body)
+            makeDivOfClass("back", node)
+            //this.set_card_front(node,"")
         } else {
             node = nodes[0]
         }
@@ -110,8 +105,9 @@ export class Card {
 
         node.classList.remove("hidden")
         node.setAttribute("onclick", "send_verb('"+verb+"')")
-        node.getElementsByClassName("front")[0].getElementsByClassName("card-inner")[0].innerHTML 
-            =text
+        this.set_card_front(node, text)
+        Card.flip_card(node)
+        
         animate_transform(node, 
             Card.getTransform(Table.state.theTable.getHand(Table.state.theTable.my_name).count()+0, 0, 4, 0), 0)
           
