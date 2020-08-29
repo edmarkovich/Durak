@@ -1,5 +1,6 @@
 import { sleep } from "./utils.js"
 import { Card } from "./card.js"
+import { Table } from "./table.js"
 
 
 export class Create {
@@ -51,31 +52,37 @@ export class Create {
     }
 
     async makeBotRequest(self, bots) {
+        Table.notice_to_table("")
         Card.delete_menu_cards()
         self.name = "You"
         self.request = JSON.stringify({"game_id":"create", "humans":1, "computers":bots, "name": self.name})
     }
 
     async makeJoinRequest(self) {
+        Table.notice_to_table("")
         Card.delete_menu_cards()
         self.game_id  = prompt ("Game ID?")
         self.name    = prompt("Your Name")
         self.request = JSON.stringify({"game_id":self.game_id, "action":"join", "name": self.name})
     }
 
-    async makeCreateRequest(self,   players) {
+    async makeCreateRequest(self, players) {
+        Table.notice_to_table("")
         Card.delete_menu_cards()
         self.name    = prompt("Your Name")
         self.request = JSON.stringify({"game_id":"create", "humans": (1+players), "computers":0, "name": self.name})
     }
 
     async renderHumans(self) {
+        Table.notice_to_table("Join a game or start a new one?")
         Card.delete_menu_cards()
         Card.make_menu_card("Join", 0, function()   {self.makeJoinRequest(self)})
         Card.make_menu_card("Create", 1, function() {self.renderPlayerCount(self, self.makeCreateRequest)})       
     }
 
     async renderPlayerCount(self, callback) {
+        Table.notice_to_table("How many opponents?")
+
         Card.delete_menu_cards()
         Card.make_menu_card("1", 0, function() {callback(self,1)})
         Card.make_menu_card("2", 1, function() {callback(self,2)})
@@ -84,8 +91,9 @@ export class Create {
 
     async renderCreate() {
         let self = this
+        Table.notice_to_table("Play agains Humans or Robots?")
         Card.make_menu_card("Humans", 0, function() {self.renderHumans(self)})
-        Card.make_menu_card("Bots",   1, function() {self.renderPlayerCount(self, self.makeBotRequest)})
+        Card.make_menu_card("Robots",   1, function() {self.renderPlayerCount(self, self.makeBotRequest)})
     }
 }
 

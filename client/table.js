@@ -36,13 +36,13 @@ export class Table {
         if (player_name == this.my_name) {
             Card.make_verb_card(this.mode)
 
-            if (prompt.prompt == "Defend") { this.notice_to_table("Defend or take cards") }
-            if (prompt.prompt == "Attack") { this.notice_to_table("Attack " + prompt.defender)}
+            if (prompt.prompt == "Defend") { Table.notice_to_table("Defend or take cards") }
+            if (prompt.prompt == "Attack") { Table.notice_to_table("Attack " + prompt.defender)}
             if (prompt.prompt == "Add") {
                 if (prompt.took) {
-                    this.notice_to_table(prompt.defender + " is taking, add cards")
+                    Table.notice_to_table(prompt.defender + " is taking, add cards")
                 } else {
-                    this.notice_to_table(prompt.defender + " defended, add cards")
+                    Table.notice_to_table(prompt.defender + " defended, add cards")
                 }
             }
         } 
@@ -123,7 +123,7 @@ export class Table {
         Card.make_verb_card(null)
 
         for (let name in all_hands) {
-            this.notice_to_table("")
+            Table.notice_to_table("")
             this.hands[name].glow(false)
         }
 
@@ -139,7 +139,7 @@ export class Table {
         }
     }
 
-    async notice_to_table(text) {
+    static async notice_to_table(text) {
 
         let notice_areas = document.getElementsByClassName("notice")
         if (notice_areas.length==0){ 
