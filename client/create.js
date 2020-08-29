@@ -50,53 +50,42 @@ export class Create {
         this.request=out
     }
 
-    async makeBotRequest(bots) {
+    async makeBotRequest(self, bots) {
         Card.delete_menu_cards()
-        this.name = "You"
-        this.request = JSON.stringify({"game_id":"create", "humans":1, "computers":bots, "name": this.name})
+        self.name = "You"
+        self.request = JSON.stringify({"game_id":"create", "humans":1, "computers":bots, "name": self.name})
     }
 
-    async renderBots(self) {
+    async makeJoinRequest(self) {
         Card.delete_menu_cards()
-        Card.make_menu_card("1", 0, function() {console.log(self);self.makeBotRequest(1)})
-        Card.make_menu_card("2", 1, function() {console.log(self);self.makeBotRequest(2)})
-        Card.make_menu_card("3", 2, function() {console.log(self);self.makeBotRequest(3)})
+        self.game_id  = prompt ("Game ID?")
+        self.name    = prompt("Your Name")
+        self.request = JSON.stringify({"game_id":self.game_id, "action":"join", "name": self.name})
+    }
+
+    async makeCreateRequest(self,   players) {
+        Card.delete_menu_cards()
+        self.name    = prompt("Your Name")
+        self.request = JSON.stringify({"game_id":"create", "humans": (1+players), "computers":0, "name": self.name})
+    }
+
+    async renderHumans(self) {
+        Card.delete_menu_cards()
+        Card.make_menu_card("Join", 0, function()   {self.makeJoinRequest(self)})
+        Card.make_menu_card("Create", 1, function() {self.renderPlayerCount(self, self.makeCreateRequest)})       
+    }
+
+    async renderPlayerCount(self, callback) {
+        Card.delete_menu_cards()
+        Card.make_menu_card("1", 0, function() {callback(self,1)})
+        Card.make_menu_card("2", 1, function() {callback(self,2)})
+        Card.make_menu_card("3", 2, function() {callback(self,3)})
     }
 
     async renderCreate() {
         let self = this
-        Card.make_menu_card("Humans", 0)
-        Card.make_menu_card("Bots", 1, function() {self.renderBots(self)})
-        return
-
-
-        let parent = document.createElement("div")
-        parent.classList.add("create")
-
-        let html = '<center>'
-        html += '<br>'
-        html += '<label for="fname">>> Your Name</label>'
-        html += '<br>'
-        html += '<input type="text" id="player_name" name="player_name" size="10" value="Ed">'
-        html += '<br><br>'
-        html += ">> Opponents<br>"
-        html += '<input type="radio" id="human" name="species" value="human">'
-        html += '<label for="human">Humans</label>&nbsp;&nbsp;'
-        html += '<input type="radio" id="computer" name="species" value="computer" checked>'
-        html += '<label for="computer">Computers</label>'
-        html += '<br>'
-        html += '<input type="radio" id="1" name="count" value="1"><label for="1">1</label>&nbsp;&nbsp;'
-        html += '<input type="radio" id="2" name="count" value="2"><label for="2">2</label>&nbsp;&nbsp;'
-        html += '<input type="radio" id="3" name="count" value="3" checked><label for="3">3</label>&nbsp;&nbsp;'
-        html += '<br><br>'
-        html += '<span onclick="got_click(1)" style="cursor: pointer;">>> Create</span>'
-        html += '<br><br>'
-        html += '<input type="text" id="game_id" name="game_id" size="10"><br>'
-        html += '<span onclick="got_click(2)" style="cursor: pointer;">>> Join</span>'
-        html += '</center>'
-
-        parent.innerHTML = html
-        document.body.appendChild(parent)
+        Card.make_menu_card("Humans", 0, function() {self.renderHumans(self)})
+        Card.make_menu_card("Bots",   1, function() {self.renderPlayerCount(self, self.makeBotRequest)})
     }
 }
 
