@@ -7,6 +7,11 @@ function makeDivOfClass(classes, parent) {
     return parent.appendChild(div)
 }
 
+function getFirstOfClass(className) {
+    let nodes = document.getElementsByClassName(className)
+    return (nodes.length>0)?nodes[0]:null
+}
+
 export class Card {
 
     static card_to_unicode(card) {
@@ -28,33 +33,23 @@ export class Card {
     }
 
     static set_card_front(node, card) {
-        let fronts = node.getElementsByClassName("front")
-        if (fronts.length>0) {
-            var front = fronts[0];
-        } else {
-            front = makeDivOfClass("front", node)
-        }
-        
-        if (front.getElementsByClassName("card-inner").length > 0) {
-            var inner = front.getElementsByClassName("card-inner")[0]
-        } else {
-            inner = makeDivOfClass("card-inner", front)
-        }
+        let front = getFirstOfClass("front")
+        if (!front) front = makeDivOfClass("front", node)
+
+        let inner = getFirstOfClass("card-inner")
+        if (!inner) inner = makeDivOfClass("card-inner", front)
 
         inner.innerHTML = Card.card_to_unicode(card)
         if (card[0] == '♥' || card[0] == '♦') { inner.classList.add("red"); } 
     }
 
     static async flip_card(container, reverse) {
-        let front = container.getElementsByClassName("front")[0];
-        let back = container.getElementsByClassName("back")[0];
-    
         if (reverse) {
-            var a=animate_transform(front, "rotate3d(0,1,0,-180deg)", 150);
-            var b=animate_transform(back, "rotate3d(0,1,0,0deg)", 150);
+            var a=animate_transform(getFirstOfClass("front"), "rotate3d(0,1,0,-180deg)", 150);
+            var b=animate_transform(getFirstOfClass("back"), "rotate3d(0,1,0,0deg)", 150);
         } else {
-            a=animate_transform(front, "rotate3d(0,1,0,0deg)", 150);
-            b=animate_transform(back, "rotate3d(0,1,0,-180deg)", 150);
+            a=animate_transform(getFirstOfClass("front"), "rotate3d(0,1,0,0deg)", 150);
+            b=animate_transform(getFirstOfClass("back"), "rotate3d(0,1,0,-180deg)", 150);
         }
         await Promise.all([ a.finished ,     await b.finished] )
     }
@@ -66,7 +61,6 @@ export class Card {
     }
 
     static async make_deck_card(node) {
-        //this.set_card_front(node, "")
         node.removeAttribute("id")
         node.setAttribute("class", "card-container")
         Card.flip_card(node,true)
@@ -81,9 +75,7 @@ export class Card {
 
     static make_verb_card(mode) {
         if (mode != 'Defend' && mode != 'Add') {
-            let nodes = document.getElementsByClassName("verb")
-            if (nodes.length>0) { document.body.removeChild(nodes[0])}
-            return
+            return document.body.removeChild(getFirstOfClass("verb"))
         }
 
         var node = makeDivOfClass("card-container verb", document.body)
