@@ -7,8 +7,8 @@ function makeDivOfClass(classes, parent) {
     return parent.appendChild(div)
 }
 
-function getFirstOfClass(className) {
-    let nodes = document.getElementsByClassName(className)
+function getFirstOfClass(parent, className) {
+    let nodes = parent.getElementsByClassName(className)
     return (nodes.length>0)?nodes[0]:null
 }
 
@@ -33,10 +33,10 @@ export class Card {
     }
 
     static set_card_front(node, card) {
-        let front = getFirstOfClass("front")
+        let front = getFirstOfClass(node, "front")
         if (!front) front = makeDivOfClass("front", node)
 
-        let inner = getFirstOfClass("card-inner")
+        let inner = getFirstOfClass(front, "card-inner")
         if (!inner) inner = makeDivOfClass("card-inner", front)
 
         inner.innerHTML = Card.card_to_unicode(card)
@@ -45,11 +45,11 @@ export class Card {
 
     static async flip_card(container, reverse) {
         if (reverse) {
-            var a=animate_transform(getFirstOfClass("front"), "rotate3d(0,1,0,-180deg)", 150);
-            var b=animate_transform(getFirstOfClass("back"), "rotate3d(0,1,0,0deg)", 150);
+            var a=animate_transform(getFirstOfClass(container,"front"), "rotate3d(0,1,0,-180deg)", 150);
+            var b=animate_transform(getFirstOfClass(container,"back"), "rotate3d(0,1,0,0deg)", 150);
         } else {
-            a=animate_transform(getFirstOfClass("front"), "rotate3d(0,1,0,0deg)", 150);
-            b=animate_transform(getFirstOfClass("back"), "rotate3d(0,1,0,-180deg)", 150);
+            a=animate_transform(getFirstOfClass(container, "front"), "rotate3d(0,1,0,0deg)", 150);
+            b=animate_transform(getFirstOfClass(container, "back"), "rotate3d(0,1,0,-180deg)", 150);
         }
         await Promise.all([ a.finished ,     await b.finished] )
     }
@@ -75,7 +75,8 @@ export class Card {
 
     static make_verb_card(mode) {
         if (mode != 'Defend' && mode != 'Add') {
-            return document.body.removeChild(getFirstOfClass("verb"))
+            let verb = getFirstOfClass(document,"verb")
+            return verb? document.body.removeChild(verb) : null
         }
 
         var node = makeDivOfClass("card-container verb", document.body)
