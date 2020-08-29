@@ -4,8 +4,7 @@ import { Table } from './table.js';
 function makeDivOfClass(classes, parent) {
     let div = document.createElement("div")
     div.setAttribute("class", classes)
-    parent.appendChild(div)
-    return div
+    return parent.appendChild(div)
 }
 
 export class Card {
@@ -67,7 +66,7 @@ export class Card {
     }
 
     static async make_deck_card(node) {
-        this.set_card_front(node, "")
+        //this.set_card_front(node, "")
         node.removeAttribute("id")
         node.setAttribute("class", "card-container")
         Card.flip_card(node,true)
@@ -81,35 +80,25 @@ export class Card {
     }
 
     static make_verb_card(mode) {
-        if (mode == 'Defend') { 
-            var text = "Take"
-            var verb = 'take' 
-        } else if (mode == 'Add') { 
-            text = 'Done'
-            verb = 'pass' 
-        }
-
-        let nodes = document.getElementsByClassName("verb")
-        if (nodes.length==0) { 
-            var node = makeDivOfClass("card-container verb hidden", document.body)
-            makeDivOfClass("back", node)
-            //this.set_card_front(node,"")
-        } else {
-            node = nodes[0]
-        }
-    
-        if (verb==null){
-            node.classList.add("hidden")
+        if (mode != 'Defend' && mode != 'Add') {
+            let nodes = document.getElementsByClassName("verb")
+            if (nodes.length>0) { document.body.removeChild(nodes[0])}
             return
-        } 
+        }
 
-        node.classList.remove("hidden")
-        node.setAttribute("onclick", "send_verb('"+verb+"')")
-        this.set_card_front(node, text)
-        Card.flip_card(node)
+        var node = makeDivOfClass("card-container verb", document.body)
+        makeDivOfClass("back", node)
+        
+        if (mode == 'Defend') { 
+            this.set_card_front(node, "Take")
+            node.setAttribute("onclick", "send_verb('take')")
+        } else if (mode == 'Add') { 
+            this.set_card_front(node, "Done")
+            node.setAttribute("onclick", "send_verb('pass')")
+        } 
         
         animate_transform(node, 
             Card.getTransform(Table.state.theTable.getHand(Table.state.theTable.my_name).count()+0, 0, 4, 0), 0)
-          
+        Card.flip_card(node)  
     }
 }

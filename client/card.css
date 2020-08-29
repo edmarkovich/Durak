@@ -121,10 +121,6 @@ body {
     font-weight: normal;
 }
 
-.hidden {
-    visibility: hidden;
-}
-
 .notice {
     color:white;
     position: absolute;
