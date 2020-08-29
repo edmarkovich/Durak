@@ -34,10 +34,10 @@ export class Deck {
     
         let nodes = document.getElementsByClassName("deck")
         let node = nodes[0]
+        
         Card.make_it_a_card(node, trump_card);
-    
         await animate_transform(node, Card.getTransform(0, 0, 2, 10), 500).finished
-    
+        
         //Put the deck over trump
         let waits = []
         for (let i=1; i<nodes.length; i++) {

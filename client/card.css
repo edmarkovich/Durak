@@ -100,6 +100,11 @@ body {
     filter: saturate(100%);
 }
 
+.card-container.menu {
+    box-shadow: inset 0 0 15px 5px lightblue,
+    0 0 15px 5px lightblue;
+}
+
 .highlight {
     box-shadow: inset 0 0 15px 5px lightblue,
     0 0 15px 5px lightblue;

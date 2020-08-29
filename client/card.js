@@ -1,4 +1,4 @@
-import { animate_transform} from "./utils.js"
+import { animate_transform, sleep} from "./utils.js"
 import { Table } from './table.js';
 
 function makeDivOfClass(classes, parent) {
@@ -48,8 +48,8 @@ export class Card {
             var a=animate_transform(getFirstOfClass(container,"front"), "rotate3d(0,1,0,-180deg)", 150);
             var b=animate_transform(getFirstOfClass(container,"back"), "rotate3d(0,1,0,0deg)", 150);
         } else {
-            a=animate_transform(getFirstOfClass(container, "front"), "rotate3d(0,1,0,0deg)", 150);
-            b=animate_transform(getFirstOfClass(container, "back"), "rotate3d(0,1,0,-180deg)", 150);
+            a=animate_transform(getFirstOfClass(container, "front"), "rotate3d(0,1,0,0deg)", 650);
+            b=animate_transform(getFirstOfClass(container, "back"), "rotate3d(0,1,0,-180deg)", 650);
         }
         await Promise.all([ a.finished ,     await b.finished] )
     }
@@ -95,18 +95,19 @@ export class Card {
         Card.flip_card(node)  
     }
 
-    static make_menu_card(option, position, onclick) {
+    static async make_menu_card(option, position, onclick) {
         var node = makeDivOfClass("card-container verb menu", document.body)
         makeDivOfClass("back", node)
-        this.set_card_front(node, ""+option)    
-        animate_transform(node, 
-            Card.getTransform(3+position, 0, 2, 0), 0)
-        Card.flip_card(node)
+
+        this.set_card_front(node, ""+option) 
+        await animate_transform(node, 
+            Card.getTransform(1+position, 0, 2, 0), 300).finished
+        await Card.flip_card(node)
         node.onclick=onclick
+        node.classList.add("highlight")
     }
 
     static delete_menu_cards() {
         while (getFirstOfClass(document.body, "menu"))  document.body.removeChild(getFirstOfClass(document.body, "menu"))
-
     }
 }

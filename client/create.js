@@ -92,8 +92,8 @@ export class Create {
     async renderCreate() {
         let self = this
         Table.notice_to_table("Play agains Humans or Robots?")
-        Card.make_menu_card("Humans", 0, function() {self.renderHumans(self)})
-        Card.make_menu_card("Robots",   1, function() {self.renderPlayerCount(self, self.makeBotRequest)})
+        await Card.make_menu_card("Humans",   0, function() {self.renderHumans(self)})
+        await Card.make_menu_card("Robots",   1, function() {self.renderPlayerCount(self, self.makeBotRequest)})
     }
 }
 
