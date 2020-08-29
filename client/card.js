@@ -95,12 +95,18 @@ export class Card {
         Card.flip_card(node)  
     }
 
-    static make_menu_card(option, position) {
+    static make_menu_card(option, position, onclick) {
         var node = makeDivOfClass("card-container verb menu", document.body)
         makeDivOfClass("back", node)
         this.set_card_front(node, ""+option)    
         animate_transform(node, 
             Card.getTransform(3+position, 0, 2, 0), 0)
         Card.flip_card(node)
+        node.onclick=onclick
+    }
+
+    static delete_menu_cards() {
+        while (getFirstOfClass(document.body, "menu"))  document.body.removeChild(getFirstOfClass(document.body, "menu"))
+
     }
 }

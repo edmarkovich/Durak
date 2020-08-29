@@ -75,7 +75,8 @@ async function process_inbound(event) {
 
     if ('created' in payload) {
         state.game_id = payload['created']
-        alert("Tell your friends to join game #"+ state.game_id)
+        if (state.my_name != "You") //TODO - there's a better way to do this
+            alert("Tell your friends to join game #"+ state.game_id)
         socket.send('{"game_id":'+ state.game_id+', "action":"join","name":"'+state.my_name+'"}')
     }
 

@@ -50,11 +50,23 @@ export class Create {
         this.request=out
     }
 
+    async makeBotRequest(bots) {
+        Card.delete_menu_cards()
+        this.name = "You"
+        this.request = JSON.stringify({"game_id":"create", "humans":1, "computers":bots, "name": this.name})
+    }
+
+    async renderBots(self) {
+        Card.delete_menu_cards()
+        Card.make_menu_card("1", 0, function() {console.log(self);self.makeBotRequest(1)})
+        Card.make_menu_card("2", 1, function() {console.log(self);self.makeBotRequest(2)})
+        Card.make_menu_card("3", 2, function() {console.log(self);self.makeBotRequest(3)})
+    }
 
     async renderCreate() {
-
+        let self = this
         Card.make_menu_card("Humans", 0)
-        Card.make_menu_card("Bots", 1)
+        Card.make_menu_card("Bots", 1, function() {self.renderBots(self)})
         return
 
 
