@@ -40,7 +40,11 @@ export class Card {
         if (!inner) inner = makeDivOfClass("card-inner", front)
 
         inner.innerHTML = Card.card_to_unicode(card)
-        if (card[0] == '♥' || card[0] == '♦') { inner.classList.add("red"); } 
+        if (card[0] == '♥' || card[0] == '♦') { 
+            inner.classList.add("red"); 
+        } else {
+            inner.classList.remove("red")
+        } 
     }
 
     static async flip_card(container, reverse) {
