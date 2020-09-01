@@ -108,5 +108,5 @@ class GameThread(threading.Thread):
         print("Dispatching", self.ident)
         self.inqueue.put(message)
 
-wsthread = WSThread()
-wsthread.start()
+#wsthread = WSThread()
+#wsthread.start()
