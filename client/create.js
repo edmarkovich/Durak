@@ -5,8 +5,7 @@ import { Table } from "./table.js"
 
 export class Create {
 
-    constructor(socket) {
-        this.socket=socket
+    constructor() {
         this.name = null
         this.game_id = null
     }
@@ -23,7 +22,8 @@ export class Create {
     }
 
     async getRequest() {
-        return this.request
+        console.log("Get Request", [this.verb, this.request])
+        return [this.verb, this.request]
     }
 
     async got_click(verb) {
@@ -38,9 +38,9 @@ export class Create {
 
         let out = ""
         if (verb==1) {
-            out = JSON.stringify({"game_id":"create", "humans":humans, "computers":computers, "name": this.name})
+            out = {"game_id":"create", "humans":humans, "computers":computers, "name": this.name}
         } else {
-            out = JSON.stringify({"game_id":game_id, "action":"join", "name": this.name})
+            out = {"game_id":game_id, "action":"join", "name": this.name}
             this.game_id = game_id
         }
 
@@ -55,7 +55,8 @@ export class Create {
         Table.notice_to_table("")
         Card.delete_menu_cards()
         self.name = "You"
-        self.request = JSON.stringify({"game_id":"create", "humans":1, "computers":bots, "name": self.name})
+        self.verb ="create_game"
+        self.request = {"game_id":"create", "humans":1, "computers":bots, "name": self.name}
     }
 
     async makeJoinRequest(self) {
@@ -63,14 +64,16 @@ export class Create {
         Card.delete_menu_cards()
         self.game_id  = prompt ("Game ID?")
         self.name    = prompt("Your Name")
-        self.request = JSON.stringify({"game_id":self.game_id, "action":"join", "name": self.name})
+        self.verb = "join"
+        self.request = {"game_id":self.game_id, "action":"join", "name": self.name}
     }
 
     async makeCreateRequest(self, players) {
         Table.notice_to_table("")
         Card.delete_menu_cards()
         self.name    = prompt("Your Name")
-        self.request = JSON.stringify({"game_id":"create", "humans": (1+players), "computers":0, "name": self.name})
+        self.verb = "create_game"
+        self.request = {"humans": (1+players), "computers":0, "name": self.name}
     }
 
     async renderHumans(self) {

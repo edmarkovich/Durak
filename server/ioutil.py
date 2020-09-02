@@ -23,7 +23,7 @@ class IOUtil:
         message = self.get_game_data()
         if prompt:
             message['prompt'] = prompt
-        self.defaultDestination(json.dumps(message))
+        self.defaultDestination(message) #json.dumps(message))
 
     def get_input(self, prompt, player = None, final_message = False):
 

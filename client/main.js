@@ -9,36 +9,70 @@ let state = {
     running: false
 }
 
-let host = "ws://"+location.hostname+":5678/game"
-let socket = null
+var action_list = []
+var IOsocket = io();
 
 
-window.onload = async function() {
-    state.my_name = new URLSearchParams(window.location.search).get("name")
+IOsocket.on('connect', async function() {
 
-    let create = new Create(socket)
+    let create = new Create()
     window.got_click =  create.got_click.bind(create)
     create.renderCreate()
+
+    console.log("ON CONNECT")
+
     state.my_name = await create.getName()
     
     state.firstRequest = await create.getRequest()
     state.game_id = create.getGameId()
 
-    socket = new WebSocket(host)
+    console.log("Before any requests", state.game_id, state.firstRequest)
+    IOsocket.emit(state.firstRequest[0], state.firstRequest[1])
+    event_loop()
+});
 
-    socket.onopen = async function() {
-        socket.send(state.firstRequest)
-        event_loop()
-    }
+IOsocket.on('connect_error', (error) => {
+    console.log(error)
+  });
 
-    socket.onclose = async function() {
-        alert("Server Closed Connection")
-    }
+  IOsocket.on('connect_timeout', (timeout) => {
+    console.log(timeout)
+  });
 
-    socket.onmessage = async function(event) {
-        action_list.push(event)
-    }
-    
+  IOsocket.on('error', (error) => {
+    console.log(error)
+  });
+
+  IOsocket.on('disconnect', (reason) => { 
+    console.log(reason)
+  })
+
+
+// handle the event sent with socket.send()
+IOsocket.on('created', data => {
+    state.game_id = data['created']
+    if (state.my_name != "You") //TODO - there's a better way to do this
+        alert("Tell your friends to join game #"+ state.game_id)
+
+    console.log("Game", state.game_id, "was created. Now we will JOIN it")
+    IOsocket.emit('join', {"game_id": state.game_id , "name": state.my_name, "action":"join"})
+});
+
+IOsocket.on('GAME_UPDATE', data => {
+    console.log("GameUpdate", data)
+    action_list.push(data.payload)
+})
+
+window.onload = async function() {
+    state.my_name = new URLSearchParams(window.location.search).get("name")
+
+
+
+
+
+
+
+ 
 }
 
 
@@ -54,13 +88,14 @@ function get_hands_array(game) {
 
 
 
-let action_list = []
+
 
 async function event_loop() {
     while (true) {
         await sleep(100)
         if (action_list.length == 0) { continue }
             let event = action_list.shift()
+            console.log("Got event for loop:", event)
             await process_inbound(event)
     }
 }
@@ -71,14 +106,10 @@ async function event_loop() {
 
 async function process_inbound(event) {
 
-    let payload = JSON.parse(event.data)
+    let payload = event; //JSON.parse(event.data)
 
-    if ('created' in payload) {
-        state.game_id = payload['created']
-        if (state.my_name != "You") //TODO - there's a better way to do this
-            alert("Tell your friends to join game #"+ state.game_id)
-        socket.send('{"game_id":'+ state.game_id+', "action":"join","name":"'+state.my_name+'"}')
-    }
+    if (payload == {}) return
+
 
     if ('game' in payload) {
         let game = payload.game
@@ -121,7 +152,10 @@ async function process_inbound(event) {
 
 }
 
-export function send_card(card) { socket.send('{"game_id": "'+state.game_id + '", "action":"", "card":"'+card+'"}') }
-export function send_verb(verb) { socket.send('{"game_id": "'+state.game_id + '", "action":"'+verb+'"}') }
+export function send_card(card) { IOsocket.emit('game_action', {"game_id": state.game_id, "action":"", "card":card})}
+export function send_verb(verb) { IOsocket.emit('game_action', {"game_id": state.game_id, "action":verb}) }
+
+
+
 
 
