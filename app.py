@@ -12,7 +12,7 @@ app = Flask(__name__, static_folder='client')
 def client():
     return redirect("/client/index.html")
 
-socketio = SocketIO(app, cors_allowed_origins = "abc")
+socketio = SocketIO(app, cors_allowed_origins = ["http://www.playdurak.gq", "https://www.playdurak.gq"])
 
 games = {}
 outqueue = queue.Queue()
