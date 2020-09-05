@@ -1,4 +1,4 @@
-from flask import Flask, redirect
+from flask import Flask, redirect, request
 from serv import WSThread, GameThread
 from flask_socketio import SocketIO, emit, join_room
 import queue
@@ -10,9 +10,10 @@ app = Flask(__name__, static_folder='client')
 
 @app.route('/')
 def client():
+    print(request.headers)
     return redirect("/client/index.html")
 
-socketio = SocketIO(app, cors_allowed_origins = ["http://www.playdurak.gq", "https://www.playdurak.gq"])
+socketio = SocketIO(app, cors_allowed_origins = "*")
 
 games = {}
 outqueue = queue.Queue()
@@ -33,6 +34,7 @@ rep_thread.start()
 @socketio.on('create_game')
 def on_create(data):
         print("ON CREATE", data)
+        print (request.headers)
         player_count = int(data['humans'])
         computer_count = int(data['computers'])
         gamethread = GameThread(player_count, computer_count, outqueue)
