@@ -10,10 +10,9 @@ app = Flask(__name__, static_folder='client')
 
 @app.route('/')
 def client():
-    print(request.headers)
     return redirect("/client/index.html")
 
-socketio = SocketIO(app, cors_allowed_origins = "*")
+socketio = SocketIO(app, cors_allowed_origins = "*", logger = True)
 
 games = {}
 outqueue = queue.Queue()
@@ -35,7 +34,6 @@ rep_thread.start()
 @socketio.on('create_game')
 def on_create(data):
         print("ON CREATE", data)
-        print (request.headers)
         player_count = int(data['humans'])
         computer_count = int(data['computers'])
         gamethread = GameThread(player_count, computer_count, outqueue)
