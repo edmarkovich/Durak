@@ -1,6 +1,4 @@
-import eventlet
-eventlet.monkey_patch(os = True)
-
+import os
 from flask import Flask, redirect, request
 from serv import WSThread, GameThread
 from flask_socketio import SocketIO, emit, join_room
@@ -63,6 +61,5 @@ def on_game_action(data):
 
 
 if __name__ == '__main__':
-    #socketio.run(app)
-    socketio.run(app, port=int(os.environ.get('PORT', '5000')))
+    socketio.run(app)
 
