@@ -26,8 +26,9 @@ class ReplyThread(threading.Thread):
             socketio.sleep(0.1)
             if not outqueue.empty():
                 out = outqueue.get()
-                print("Sending", out,out['game_id'])
+                print("Start Send")
                 socketio.emit("GAME_UPDATE", out, room=out['game_id'])
+                print("End Send")
 rep_thread = ReplyThread()
 rep_thread.start()
 
@@ -45,16 +46,19 @@ def on_create(data):
 
 @socketio.on('join')
 def on_join(data):
-    print("ON JOIN", data)
+    print("Start Join")
     game = int(data['game_id'])
     join_room(game)
     games[game]['thread'].dispatch(data)
+    print("END Join")
 
 @socketio.on('game_action')
 def on_game_action(data):
+    print("Start Action")
     game = int(data['game_id'])
     print ("ON GAME ACTION", game, data)
     games[game]['thread'].dispatch(data)
+    print("End Join")
 
 
 if __name__ == '__main__':
