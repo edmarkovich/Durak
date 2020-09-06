@@ -39,12 +39,19 @@ export class Card {
         let inner = getFirstOfClass(front, "card-inner")
         if (!inner) inner = makeDivOfClass("card-inner", front)
 
-        inner.innerHTML = Card.card_to_unicode(card)
-        if (card[0] == '♥' || card[0] == '♦') { 
-            inner.classList.add("red"); 
+        if (card[0] == '♥' || card[0] == '♦' || card[0] == '♠' || card[0] == '♣') {
+            inner.innerHTML = "<img src='assets/cards/"+card+".png'>"
         } else {
-            inner.classList.remove("red")
-        } 
+            inner.innerHTML = card
+        }
+        
+
+        //inner.innerHTML = Card.card_to_unicode(card)
+        //if (card[0] == '♥' || card[0] == '♦') { 
+        //    inner.classList.add("red"); 
+        //} else {
+        //    inner.classList.remove("red")
+        //} 
     }
 
     static async flip_card(container, reverse) {
