@@ -44,7 +44,6 @@ export class Card {
 
         let img = getFirstOfClass(parent, "card-face")
         if (!img) {
-            console.log(card, "no img in" , parent)
             img =  document.createElement("img")
             img.classList.add("card-face")
             parent.appendChild(img)
