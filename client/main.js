@@ -19,14 +19,10 @@ IOsocket.on('connect', async function() {
     window.got_click =  create.got_click.bind(create)
     create.renderCreate()
 
-    console.log("ON CONNECT")
-
     state.my_name = await create.getName()
     
     state.firstRequest = await create.getRequest()
     state.game_id = create.getGameId()
-
-    console.log("Before any requests", state.game_id, state.firstRequest)
     IOsocket.emit(state.firstRequest[0], state.firstRequest[1])
     event_loop()
 });
@@ -54,12 +50,10 @@ IOsocket.on('created', data => {
     if (state.my_name != "You") //TODO - there's a better way to do this
         alert("Tell your friends to join game #"+ state.game_id)
 
-    console.log("Game", state.game_id, "was created. Now we will JOIN it")
     IOsocket.emit('join', {"game_id": state.game_id , "name": state.my_name, "action":"join"})
 });
 
 IOsocket.on('GAME_UPDATE', data => {
-    console.log("GameUpdate", data)
     action_list.push(data.payload)
 })
 
@@ -95,7 +89,6 @@ async function event_loop() {
         await sleep(100)
         if (action_list.length == 0) { continue }
             let event = action_list.shift()
-            console.log("Got event for loop:", event)
             await process_inbound(event)
     }
 }

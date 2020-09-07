@@ -14,22 +14,52 @@ function getFirstOfClass(parent, className) {
 
 export class Card {
 
-    static card_to_unicode(card) {
+    static card_to_sprite(card) {
         switch (card[0]) {
-            case '♠': var base = 127137; break;
-            case '♥': base = 127153; break;
-            case '♦': base = 127169; break;
-            case '♣': base = 127185; break;
+            case '♠': var row = 3; break;
+            case '♥': row = 2; break;
+            case '♦': row = 1; break;
+            case '♣': row = 0; break;
             default: return card
         }
         switch (card.substring(1)) {
             case 'A': var offset = 0; break;
             case 'J': offset = 10; break;
-            case 'Q': offset = 12; break;
-            case 'K': offset = 13; break;
+            case 'Q': offset = 11; break;
+            case 'K': offset = 12; break;
             default: offset = parseInt(card.substring(1)) - 1;
         }
-        return "&#" + (base + offset) + ";";
+        return [ offset, row]
+    }
+
+
+    static putCardSprite(card, parent) {
+
+        let pos = Card.card_to_sprite(card)
+
+        let width = 512
+        let Xskip = width * pos[0]
+        let height = 780
+        let Yskip = height * pos[1]
+
+        let img = getFirstOfClass(parent, "card-face")
+        if (!img) {
+            console.log(card, "no img in" , parent)
+            img =  document.createElement("img")
+            img.classList.add("card-face")
+            parent.appendChild(img)
+        }
+        
+        img.src = "assets/card_sprites.png"
+        img.style.width = width
+        img.style.height = height
+        img.style.objectFit = "none"
+        img.style.objectPosition = "-"+Xskip+"px -"+Yskip+"px"
+        img.style.transform = "scale(.193)"
+        
+        img.style.position ="absolute"
+        img.style.left = "-208px"
+        img.style.top = "-315px"
     }
 
     static set_card_front(node, card) {
@@ -40,18 +70,12 @@ export class Card {
         if (!inner) inner = makeDivOfClass("card-inner", front)
 
         if (card[0] == '♥' || card[0] == '♦' || card[0] == '♠' || card[0] == '♣') {
-            inner.innerHTML = "<img src='assets/cards/"+card+".png'>"
+            Card.putCardSprite(card,inner)
         } else {
             inner.innerHTML = card
         }
         
 
-        //inner.innerHTML = Card.card_to_unicode(card)
-        //if (card[0] == '♥' || card[0] == '♦') { 
-        //    inner.classList.add("red"); 
-        //} else {
-        //    inner.classList.remove("red")
-        //} 
     }
 
     static async flip_card(container, reverse) {

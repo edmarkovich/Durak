@@ -22,7 +22,6 @@ export class Create {
     }
 
     async getRequest() {
-        console.log("Get Request", [this.verb, this.request])
         return [this.verb, this.request]
     }
 
