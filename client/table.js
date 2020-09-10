@@ -148,7 +148,7 @@ export class Table {
             document.body.appendChild(notice_area)
         }
         let notice_area = document.getElementsByClassName("notice")[0]
-        notice_area.innerHTML =  text?">> "+ text:""
+        notice_area.innerHTML =  text?""+ text:""
     }
 
     async card_to_table(node, mode) {

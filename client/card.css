@@ -54,12 +54,11 @@ body {
 }
 
 .player-name {
-    font-family: "Comic Sans MS", cursive, sans-serif;
+    font-family: "Great Vibes", cursive, sans-serif;
     font-variant-caps: small-caps;
     position: absolute;
     font-size: 20px;
     color: white; 
-    filter: blur(0.8px);
     opacity: .7;
 }
 
@@ -111,16 +110,20 @@ body {
 }
 
 
+@font-face {
+    font-family:"Great Vibes";
+    src: url("assets/GreatVibes-Regular.ttf") /* TTF file for CSS3 browsers */
+}
 
 .verb .front .card-inner {
     position: relative;
     text-align: center;
-    top: 50px;
+    top: 60px;
     left: 0px;
-    font-style: italic;
+    fon11t-style: italic;
 
     text-align: center;
-    font-family: "Comic Sans MS", cursive, sans-serif;
+    font-family: "Great Vibes", cursive, sans-serif;
 
     font-size: 20%;
     font-weight: normal;
@@ -138,14 +141,13 @@ body {
     height : 100px;
     width: 900px;
 
-    font-family: "Comic Sans MS", cursive, sans-serif;
+    font-family: "Great Vibes", cursive, sans-serif;
     position: absolute;
     font-size: 34.56px;
     color: yellow; 
-    filter: blur(1.0px);
     opacity: .55;
     z-index: -200;
-    font-style: italic;
+    fo1nt-style: italic;
 }
 
 input {
@@ -160,7 +162,7 @@ input {
 
     position: fixed;
     background-image: url("assets/front.jpg");
-    font-family: "Comic Sans MS", cursive, sans-serif;
+    font-family: "Great Vibes", cursive, sans-serif;
     font-size: 34.56px;
     width: 400px;
     height: 600px;
