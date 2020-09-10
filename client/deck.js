@@ -22,6 +22,8 @@ export class Deck {
             
             container.appendChild(back)
             container.appendChild(front)
+            Card.flip_card(container,true)
+
 
             document.body.appendChild(container)
 
