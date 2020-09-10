@@ -43,7 +43,7 @@ export class Card {
         let height = 780/scaleFactor
         let Yskip = height * pos[1]
 
-        parent.style.background = "url('assets/card_sprites.png')"
+        parent.style.background = "url('assets/small_card_sprites.png')"
         parent.style.width = parent.style.height = "100%"
         parent.style.backgroundSize = "calc(6663px/"+scaleFactor+") calc(3906px/"+scaleFactor+")"
         parent.style.backgroundRepeat = "no-repeat"
