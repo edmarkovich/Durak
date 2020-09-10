@@ -36,29 +36,18 @@ export class Card {
     static putCardSprite(card, parent) {
 
         let pos = Card.card_to_sprite(card)
+        let scaleFactor = 5.27
 
-        let width = 512
+        let width = 512/scaleFactor
         let Xskip = width * pos[0]
-        let height = 780
+        let height = 780/scaleFactor
         let Yskip = height * pos[1]
 
-        let img = getFirstOfClass(parent, "card-face")
-        if (!img) {
-            img =  document.createElement("img")
-            img.classList.add("card-face")
-            parent.appendChild(img)
-        }
-        
-        img.src = "assets/card_sprites.png"
-        img.style.width = width
-        img.style.height = height
-        img.style.objectFit = "none"
-        img.style.objectPosition = "-"+Xskip+"px -"+Yskip+"px"
-        img.style.transform = "scale(.193)"
-        
-        img.style.position ="absolute"
-        img.style.left = "-208px"
-        img.style.top = "-315px"
+        parent.style.background = "url('assets/card_sprites.png')"
+        parent.style.width = parent.style.height = "100%"
+        parent.style.backgroundSize = "calc(6663px/"+scaleFactor+") calc(3906px/"+scaleFactor+")"
+        parent.style.backgroundRepeat = "no-repeat"
+        parent.style.backgroundPosition = "-"+Xskip+"px -"+Yskip+"px"
     }
 
     static set_card_front(node, card) {
