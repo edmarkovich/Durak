@@ -16,4 +16,8 @@ export class Deck {
             [this.cards[i], this.cards[j]] = [this.cards[j], this.cards[i]];
         }
     }
+
+    takeCard() {
+        return this.cards.pop()
+    }
 }

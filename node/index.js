@@ -1,4 +1,4 @@
-import {Deck} from "./deck.js"
+import {Game} from "./game.js"
 
-let deck = new Deck()
-console.log(deck)
+let game = new Game(['Ed', 'David', 'Jamie'])
+console.log(JSON.stringify(game, null, 2))
