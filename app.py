@@ -5,9 +5,17 @@ from flask_socketio import SocketIO, emit, join_room
 import queue
 import time
 import threading
+from atatus.contrib.flask import Atatus
 
 
 app = Flask(__name__, static_folder='client')
+
+
+app.config['ATATUS'] = {
+    'APP_NAME': 'Playdurak',
+    'LICENSE_KEY': 'lic_apm_6d3f3310d4394019a16c42dbf1f91844'
+}
+atatus = Atatus(app)
 
 @app.route('/')
 def client():
