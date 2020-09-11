@@ -2,5 +2,4 @@ Flask==1.1.2
 websockets==8.1
 waitress==1.4.4
 flask-socketio==4.3.1
-atatus[flask]
 newrelic
