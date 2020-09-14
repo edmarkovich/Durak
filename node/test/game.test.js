@@ -1,7 +1,7 @@
 import chai from 'chai'
 const {expect} = chai
 
-import {Game} from "../game.js"
+import {Game} from "../game_core/game.js"
 
 describe ('Play Full Game', () => {
     let game = new Game(['Ed', 'David', 'Jamie'])
