@@ -30,13 +30,14 @@ export class Table {
         return this.pairs.length
     }
 
-    gatherAllCards() {
+    gatherAllCards(dont_clear) {
         let out = []
         this.pairs.forEach( function(pair) { 
             out.push(pair[0])
             if (pair[1]) { out.push(pair[1])}
         } )    
-        this.pairs = []
+
+        if (!dont_clear) this.pairs = []
         return out   
     }
 

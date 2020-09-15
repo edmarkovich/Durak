@@ -54,19 +54,13 @@ IOsocket.on('created', data => {
 });
 
 IOsocket.on('GAME_UPDATE', data => {
-    action_list.push(data.payload)
+    console.log("Here", data)
+    action_list.push(data)
 })
 
 window.onload = async function() {
     state.my_name = new URLSearchParams(window.location.search).get("name")
 
-
-
-
-
-
-
- 
 }
 
 
@@ -97,9 +91,8 @@ async function event_loop() {
 
 
 
-async function process_inbound(event) {
+async function process_inbound(payload) {
 
-    let payload = event; //JSON.parse(event.data)
 
     if (payload == {}) return
 
