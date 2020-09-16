@@ -37,7 +37,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('game_action', (msg) => {
-      console.log('message: ' + msg);
+      gameManager.process_move(msg)
     });
   });
 

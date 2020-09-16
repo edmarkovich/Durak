@@ -7,6 +7,7 @@ export class Game {
     constructor(player_names) {
         this.players = {}
         this.deck = new Deck()
+        this.trump_card = this.deck.cards[0].toString()
         let self=this
         player_names.forEach( function (p) { self.players[p] = new Player() ; self.refill_player_cards(p) })
 
@@ -16,7 +17,6 @@ export class Game {
         this.table = new Table()
         this.state = "empty table"
         this.error = null
-
         this.passers = []
     }
 
@@ -167,11 +167,15 @@ export class Game {
 
     process_input(player_name, verb, card) {
         this.error = null;
-        card = new Card(card)
+        
 
         if (!this.check_player(player_name, this.state)) return
         if (!this.check_verb(verb))                      return
-        if (!this.check_card(player_name, verb, card))   return
+
+        if (verb=="play") {
+            card = new Card(card)
+            if (!this.check_card(player_name, verb, card))   return
+        }
 
         switch (this.state) {
             case "empty table":

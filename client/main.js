@@ -138,8 +138,8 @@ async function process_inbound(payload) {
 
 }
 
-export function send_card(card) { IOsocket.emit('game_action', {"game_id": state.game_id, "action":"", "card":card})}
-export function send_verb(verb) { IOsocket.emit('game_action', {"game_id": state.game_id, "action":verb}) }
+export function send_card(card) { IOsocket.emit('game_action', {"game_id": state.game_id, "name":state.my_name, "action":"play", "card":card})}
+export function send_verb(verb) { IOsocket.emit('game_action', {"game_id": state.game_id, "name":state.my_name, "action":verb}) }
 
 
 

@@ -27,9 +27,12 @@ export class GameManager {
         }
     }
 
-    process_move() {
-        //apply move to the right game
-        //send out status update
+    process_move(message) {
+        console.log("process_move", message)
+        let game = this.games[message.game_id].game        
+        game.process_input(message.name, message.action, message.card)
+        this.send_state(message.game_id)
+
         //if game over, remove the game
     }
 
@@ -37,14 +40,35 @@ export class GameManager {
         let game = this.games[game_id].game
         let out = {
             game: {
-                trump: game.deck.cards[0].toString(), //TODO: will break when deck's done
+                trump: game.trump_card,
                 players: Object.keys(game.players).map(x => {return {name: x, hand: game.players[x].cards.map(y=>y.toString())}}),
-                table: game.table.gatherAllCards(true)
+                table: game.table.gatherAllCards(true).map(x => x.toString())
+            },
+            prompt: {
+                player: game.state == "attack in progress"?game.defender:game.attacker,
+                prompt: "",
+                defender: game.defender
             }
-
-
         }
 
+        switch (game.state) {
+            case "empty table":
+                out.prompt.prompt = "Attack"                                
+                break
+            case "attack in progress":
+                out.prompt.prompt = "Defend"            
+                break
+            case "taking":
+            case "passed on add":
+            case "passed on attack":
+            case "beat one":
+        
+                out.prompt.prompt = "Add"            
+                break
+            case "game over":
+                out.prompt.prompt = "over"            
+                break            
+        }
 
         this.io.to(game_id).emit("GAME_UPDATE", out);
     }
