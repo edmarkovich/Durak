@@ -11,9 +11,16 @@ let state = {
 
 var action_list = []
 var IOsocket = io();
-
+var initialized = false
 
 IOsocket.on('connect', async function() {
+
+    if (initialized) {
+        console.log("Already Initialized")
+        return
+    }
+    initialized = true
+
 
     let create = new Create()
     window.got_click =  create.got_click.bind(create)
@@ -29,22 +36,25 @@ IOsocket.on('connect', async function() {
 
 IOsocket.on('connect_error', (error) => {
     console.log(error)
+    //alert("Connection Error")
   });
 
   IOsocket.on('connect_timeout', (timeout) => {
     console.log(timeout)
+    alert("Connection Error")
   });
 
   IOsocket.on('error', (error) => {
     console.log(error)
+    alert("Connection Error")
   });
 
   IOsocket.on('disconnect', (reason) => { 
     console.log(reason)
+    alert("Connection Error")
   })
 
 
-// handle the event sent with socket.send()
 IOsocket.on('created', data => {
     state.game_id = data['created']
     if (state.my_name != "You") //TODO - there's a better way to do this
@@ -60,7 +70,6 @@ IOsocket.on('GAME_UPDATE', data => {
 
 window.onload = async function() {
     state.my_name = new URLSearchParams(window.location.search).get("name")
-
 }
 
 

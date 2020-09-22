@@ -53,6 +53,7 @@ export class GameManager {
 
     process_move(message) {
         console.log("process_move", message)
+        //TODO - check it's an actual game in progress
         let game = this.games[message.game_id].game        
         game.process_input(message.name, message.action, message.card)
         this.send_state(message.game_id)
