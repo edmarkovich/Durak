@@ -10,7 +10,7 @@ let http = htt.createServer(app);
 let io = socketio(http);
 
 
-app.use(express.static('../client'))
+app.use(express.static('client'))
 
 let gameManager = new GameManager(io)
 
