@@ -26,7 +26,7 @@ io.on('connection', (socket) => {
       console.log("Create_game", player_count, computer_count)
 
       let game_id = gameManager.create_game(msg)
-      io.emit("created", {'created':game_id})
+      socket.emit("created", {'created':game_id})
 
     });
 
