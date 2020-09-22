@@ -4,7 +4,7 @@ import { Table } from "./table.js"
 import { Card } from "./card.js"
 
 export class Game {
-    constructor(player_names) {
+    constructor(player_names, game_id) {
         this.players = {}
         this.deck = new Deck()
         this.trump_card = this.deck.cards[0].toString()
@@ -18,6 +18,7 @@ export class Game {
         this.state = "empty table"
         this.error = null
         this.passers = []
+        this.game_id = game_id
     }
 
     check_player(player_name, state) {
@@ -96,6 +97,10 @@ export class Game {
         return (this.players[this.defender].hasCards() && this.table.numPairs()<6)
     }
 
+    attacker_is_out_of_cards() {
+        return !(this.players[this.attacker].hasCards())
+    }
+
     set_next_attacker() {
         let ps = Object.entries(this.players).map(x => x[0])
         let idx = ps.indexOf(this.attacker)
@@ -133,6 +138,7 @@ export class Game {
         } else {
             this.set_players_for_next_round()
             this.state = "empty table"
+            this.passers = []
         }
         return true
     }
@@ -168,9 +174,9 @@ export class Game {
     }
 
     process_input(player_name, verb, card) {
+        console.log(this.game_id, player_name,verb,card)
         this.error = null;
         
-
         if (!this.check_player(player_name, this.state)) return
         if (!this.check_verb(verb))                      return
 
@@ -184,6 +190,7 @@ export class Game {
             case "empty table":
                 this.play_card(player_name, card)
                 this.state = "attack in progress"
+                if (this.attacker_is_out_of_cards()) this.set_next_attacker()
                 break;
             case "attack in progress":
                 if (verb == 'play') {
@@ -198,6 +205,7 @@ export class Game {
                 if (verb == 'play') {
                     this.play_card(player_name, card)
                     this.state = "attack in progress"
+                    if (this.attacker_is_out_of_cards()) this.set_next_attacker()
                 }
                 if (verb == 'pass') {
                     if(this.set_next_attacker()) {
@@ -212,6 +220,7 @@ export class Game {
                 if (verb == 'play') {
                     this.play_card(player_name, card)
                     this.state = this.can_play_more()?"taking":"took done"
+                    if (this.attacker_is_out_of_cards()) this.set_next_attacker()
                 } 
                 if (verb == 'pass') {
                     if(this.set_next_attacker()) {
@@ -227,6 +236,7 @@ export class Game {
                     this.play_card(player_name, card)
                     this.passers = []
                     this.state = "attack in progress"
+                    if (this.attacker_is_out_of_cards()) this.set_next_attacker()
                 } 
                 if (verb =='pass') {
                     if (!this.set_next_attacker()) { this.state = "beat done" }
@@ -242,7 +252,9 @@ export class Game {
             case "passed on add":
                 if (verb=='play') {
                     this.play_card(player_name, card)
+                    this.passers = []
                     this.state = this.can_play_more()?"taking":"took done"
+                    if (this.attacker_is_out_of_cards()) this.set_next_attacker()
                 }
                 if (verb=='pass') {
                     if (!this.set_next_attacker()) { this.state = "took done" }

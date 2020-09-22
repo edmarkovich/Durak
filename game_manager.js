@@ -28,7 +28,7 @@ export class GameManager {
             }
 
             console.log("Starting Game")
-            this.games[game_id].game = new Game(this.games[game_id].players)
+            this.games[game_id].game = new Game(this.games[game_id].players, game_id)
             this.send_state(game_id)
 
             this.autoplay(game_id)
@@ -52,9 +52,8 @@ export class GameManager {
     }
 
     process_move(message) {
-        console.log("process_move", message)
         //TODO - check it's an actual game in progress
-        let game = this.games[message.game_id].game        
+        let game = this.games[message.game_id].game       
         game.process_input(message.name, message.action, message.card)
         this.send_state(message.game_id)
         if (game.prepare_next_round())
@@ -89,11 +88,11 @@ export class GameManager {
                 break
             case "taking":
             case "passed on add":
-            case "passed on attack":
                 out.prompt.took = true
                 out.prompt.prompt = "Add"            
                 break
-            case "beat one":        
+            case "beat one":     
+            case "passed on attack":   
                 out.prompt.prompt = "Add"            
                 break
             case "game over":
