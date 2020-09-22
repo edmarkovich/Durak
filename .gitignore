@@ -7,3 +7,5 @@
 client/.eslintrc.js
 Durak.code-workspace
 .vscode/launch.json
+node_modules
+
