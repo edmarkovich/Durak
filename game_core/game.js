@@ -212,7 +212,7 @@ export class Game {
                 if (verb == 'play') {
                     this.play_card(player_name, card)
                     this.state = this.can_play_more()?"taking":"took done"
-                }
+                } 
                 if (verb == 'pass') {
                     if(this.set_next_attacker()) {
                         this.passers.push(player_name)
@@ -242,7 +242,7 @@ export class Game {
             case "passed on add":
                 if (verb=='play') {
                     this.play_card(player_name, card)
-                    this.state = "taking"
+                    this.state = this.can_play_more()?"taking":"took done"
                 }
                 if (verb=='pass') {
                     if (!this.set_next_attacker()) { this.state = "took done" }

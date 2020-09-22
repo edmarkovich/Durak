@@ -98,7 +98,9 @@ export class GameManager {
                 break
             case "game over":
                 out.prompt.prompt = "over"            
-                break            
+                break  
+            default:
+                delete out.prompt // these aren't actual promptable states        
         }
 
         this.io.to(game_id).emit("GAME_UPDATE", out);
