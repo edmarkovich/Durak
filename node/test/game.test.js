@@ -22,21 +22,25 @@ describe ('Play Full Game', () => {
     describe('empty table', ()=> {
         it('should reject bad player', () => {
             game.process_input("Bad Name", "play", "X")
+            game.prepare_next_round()
             expect(game.error).to.eq("Unexpected player: Bad Name. Expecting: Ed")
             expect(game.state).to.eq("empty table")
         })
         it('should reject bad verb', () => {
             game.process_input("Ed", "pass", "X")
+            game.prepare_next_round()
             expect(game.error).to.eq("Unexpected verb: pass. Expecting: play")
             expect(game.state).to.eq("empty table")
         })
         it('should reject missing card', () => {
             game.process_input("Ed", "play", "♥J")
+            game.prepare_next_round()
             expect(game.error).to.eq("Player Ed does not have card ♥J")
             expect(game.state).to.eq("empty table")
         })
         it('should accept valid move', () => {
             game.process_input("Ed", "play", "♣Q")
+            game.prepare_next_round()
             expect(game.error).is.null
             expect(game.state).to.eq("attack in progress")
         })
@@ -45,26 +49,31 @@ describe ('Play Full Game', () => {
     describe('attack in progress - beat one - not trump', () => {
         it('should reject bad player', ()=> {
             game.process_input("Ed", "play", "X")
+            game.prepare_next_round()
             expect(game.error).to.eq("Unexpected player: Ed. Expecting: David")
             expect(game.state).to.eq("attack in progress")          
         })
         it('should reject bad verb', () => {
             game.process_input("David", "pass", "X")
+            game.prepare_next_round()
             expect(game.error).to.eq("Unexpected verb: pass. Expecting: play,take")
             expect(game.state).to.eq("attack in progress")
         })
         it('should reject missing card', () => {
             game.process_input("David", "play", "♣6")
+            game.prepare_next_round()
             expect(game.error).to.eq("Player David does not have card ♣6")
             expect(game.state).to.eq("attack in progress")
         })
         it('should reject weaker card', () => {
             game.process_input("David", "play", "♣8")
+            game.prepare_next_round()
             expect(game.error).to.eq("Card ♣8 does not beat the table card")
             expect(game.state).to.eq("attack in progress")
         })
         it('should accept stronger card', () => {
             game.process_input("David", "play", "♣A")
+            game.prepare_next_round()
             expect(game.players["Ed"].cards.length).to.eq(5)
             expect(game.players["David"].cards.length).to.eq(5) 
             expect(game.error).is.null
@@ -74,16 +83,19 @@ describe ('Play Full Game', () => {
     describe("beat one - pass", () => {
         it('should reject bad player', ()=> {
             game.process_input("David", "play", "X")
+            game.prepare_next_round()
             expect(game.error).to.eq("Unexpected player: David. Expecting: Ed")
             expect(game.state).to.eq("beat one")          
         })
         it('should reject bad verb', () => {
             game.process_input("Ed", "take", "X")
+            game.prepare_next_round()
             expect(game.error).to.eq("Unexpected verb: take. Expecting: play,pass")
             expect(game.state).to.eq("beat one")       
         })
         it('should accept first pass', () => {
             game.process_input("Ed", "pass", "X")
+            game.prepare_next_round()
             expect(game.error).is.null
             expect(game.state).to.eq("passed on attack")
             expect(game.passers).to.eql(['Ed']) 
@@ -95,6 +107,7 @@ describe ('Play Full Game', () => {
     describe("passed on attack - everyone passes", () => {
         it('should accept subsequent pass', () => {
             game.process_input("Jamie", "pass", "X")
+            game.prepare_next_round()
             expect(game.error).is.null
             expect(game.state).to.eq("empty table")   
             expect(game.players["Ed"].cards.length).to.eq(6)
@@ -110,15 +123,19 @@ describe ('Play Full Game', () => {
     describe("ability to add in cards / take ", () => {
         it('should accept additional cards from another player', () => {
             game.process_input('David', "play", "♦10")
+            game.prepare_next_round()
             expect(game.state).to.eq("attack in progress")
 
             game.process_input('Jamie', "play", "♥7")
+            game.prepare_next_round()
             expect(game.state).to.eq("beat one")
 
             game.process_input('David', "pass", "♥10")
+            game.prepare_next_round()
             expect(game.state).to.eq("passed on attack")
 
             game.process_input('Ed', "play", "♥10")
+            game.prepare_next_round()
             expect(game.state).to.eq("attack in progress")
 
             expect(game.players["Ed"].cards.length).to.eq(5)
@@ -126,12 +143,15 @@ describe ('Play Full Game', () => {
             expect(game.players["David"].cards.length).to.eq(5)
 
             game.process_input('Jamie', "take", "")
+            game.prepare_next_round()
             expect(game.state).to.eq("taking")
 
             game.process_input('Ed', "pass", "")
+            game.prepare_next_round()
             expect(game.state).to.eq("passed on add")
 
             game.process_input('David', "pass", "")
+            game.prepare_next_round()
             expect(game.state).to.eq("empty table")
 
             expect(game.players["Ed"].cards.length).to.eq(6)
@@ -164,6 +184,7 @@ describe ('Play Full Game', () => {
             
 
             game.process_input("Ed", "pass", "")
+            game.prepare_next_round()
             expect(game.state).to.eq("empty table")
 
             expect(game.players["Ed"].cards.length).to.eq(6)
@@ -195,6 +216,7 @@ describe ('Play Full Game', () => {
             expect(game.players["David"].cards.length).to.eq(11)
 
             game.process_input("David", "pass", "")
+            game.prepare_next_round()
             expect(game.players["Ed"].cards.length).to.eq(6)
             expect(game.players["Jamie"].cards.length).to.eq(6)
             expect(game.players["David"].cards.length).to.eq(11)
@@ -228,6 +250,7 @@ describe ('Play Full Game', () => {
             expect(game.players["David"].cards.length).to.eq(7)
 
             game.process_input("Jamie", "play", "♥7")
+            game.prepare_next_round()
             expect(game.state).to.eq("empty table")
 
             expect(game.players["Ed"].cards.length).to.eq(6)
@@ -248,6 +271,7 @@ describe ('Play Full Game', () => {
             game.process_input("David", "pass", "")
 
             game.process_input("Jamie", "pass", "")  
+            game.prepare_next_round()
             expect(game.error).is.null 
             expect(game.state).to.eq("empty table")
             expect(game.players["Ed"].cards.length).to.eq(9)
@@ -261,6 +285,7 @@ describe ('Play Full Game', () => {
         it('round over when player out of cards', () => {
             game.process_input("David", "play", "♣6")   
             game.process_input("Jamie", "play", "♥Q")
+            game.prepare_next_round()
             expect(game.state).to.eq("empty table")
             expect(game.players["Ed"].cards.length).to.eq(9)
             expect(game.players["Jamie"].cards.length).to.eq(0)
@@ -274,6 +299,7 @@ describe ('Play Full Game', () => {
             game.process_input("Ed", "play", "♦8")   
             game.process_input("David", "play", "♦9")   
             game.process_input("Ed", "pass", "")   
+            game.prepare_next_round()
             expect(game.state).to.eq("empty table")
             expect(game.players["Ed"].cards.length).to.eq(8)            
             expect(game.players["David"].cards.length).to.eq(14)
@@ -297,6 +323,7 @@ describe ('Play Full Game', () => {
             game.process_input("Ed", "take", "")   
 
             game.process_input("David", "play", "♥J")             
+            game.prepare_next_round()
             expect(game.state).to.eq("empty table")
 
             expect(game.players["Ed"].cards.length).to.eq(14)            
@@ -313,7 +340,8 @@ describe ('Play Full Game', () => {
             game.process_input("David", "play", "♠8") 
             game.process_input("Ed", "play", "♠J")
 
-            game.process_input("David", "pass", "") 
+            game.process_input("David", "pass", "")
+            game.prepare_next_round() 
             expect(game.state).to.eq("empty table")
 
             expect(game.players["Ed"].cards.length).to.eq(12)
@@ -339,6 +367,7 @@ describe ('Play Full Game', () => {
             game.process_input("David", "play", "♥9") 
 
             game.process_input("Ed", "pass", "")  
+            game.prepare_next_round()
             expect(game.state).to.eq("empty table")
 
             expect(game.players["Ed"].cards.length).to.eq(8)            
@@ -354,6 +383,7 @@ describe ('Play Full Game', () => {
 
             game.process_input("David", "play", "♠6")
             game.process_input("Ed", "play", "♠K")
+            game.prepare_next_round()
             expect(game.state).to.eq("game over")
 
         })

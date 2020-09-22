@@ -13,6 +13,7 @@ export class Table {
         this.pairs[this.pairs.length-1][1] = card
     }
 
+    
     canDefend(card, trump_suit) {
         return card.canBeat(this.pairs[this.pairs.length-1][0], trump_suit)
     }

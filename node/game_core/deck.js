@@ -1,6 +1,7 @@
 import { Card } from "./card.js";
 import seedrandom   from 'seedrandom';
-var rng = seedrandom('hello.');
+var isInTest = typeof global.it === 'function';
+var rng = isInTest?seedrandom('hello.'):seedrandom()
 
 export class Deck {
     constructor() {

@@ -28,4 +28,8 @@ export class Player {
         this.cards.splice(idx, 1)
         return 1
     }
+
+    getCards() {
+        return this.cards
+    }
 }

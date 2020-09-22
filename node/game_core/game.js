@@ -120,9 +120,10 @@ export class Game {
         } else {
             // Came can end on someone beating or taking
             if (this.is_game_over()) {
-                this.state = "game over"                
+                this.state = "game over"     
+                return true           
             }
-            return
+            return false
         }
 
         this.refill_all_players()
@@ -133,6 +134,7 @@ export class Game {
             this.set_players_for_next_round()
             this.state = "empty table"
         }
+        return true
     }
 
     is_game_over() {
@@ -173,7 +175,8 @@ export class Game {
         if (!this.check_verb(verb))                      return
 
         if (verb=="play") {
-            card = new Card(card)
+            if (typeof(card) == "string") 
+                card = new Card(card)
             if (!this.check_card(player_name, verb, card))   return
         }
 
@@ -252,7 +255,7 @@ export class Game {
                 }
                 break;
         }
-        this.prepare_next_round()
+        //this.prepare_next_round()
     }
 
 
@@ -277,5 +280,9 @@ export class Game {
             if (!card) return;
             this.players[player_name].addCard(card)
         }
+    }
+
+    whose_turn() {
+        return this.state == "attack in progress"?this.defender:this.attacker
     }
 }
