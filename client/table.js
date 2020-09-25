@@ -83,7 +83,14 @@ export class Table {
         }
 
         while (document.getElementsByClassName("table").length>0) {
-            let node = document.getElementsByClassName("table")[0]
+            let nodes = document.getElementsByClassName("table")
+            nodes = Array.prototype.slice.call(nodes)
+            nodes = nodes.sort(function(a,b){
+                if (a.style.zIndex < b.style.zIndex) return 1
+                return -1
+            })
+
+            let node = nodes[0]
             node.classList.remove("table")
             node.classList.add("pile")
 
