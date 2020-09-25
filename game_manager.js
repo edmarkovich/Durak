@@ -1,4 +1,4 @@
-import { AutoPlay } from "./auto_play.js"
+import { AutoPlay } from "./auto_play/auto_play.js"
 import {Game} from "./game_core/game.js"
 
 export class GameManager {
@@ -68,7 +68,7 @@ export class GameManager {
         let game = this.games[game_id].game
         let out = {
             game: {
-                trump: game.trump_card,
+                trump: game.trump_card.toString(),
                 players: Object.keys(game.players).map(x => {return {name: x, hand: game.players[x].cards.map(y=>y.toString())}}),
                 table: game.table.gatherAllCards(true).map(x => x.toString())
             },

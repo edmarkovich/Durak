@@ -7,8 +7,7 @@ export class Deck {
     constructor() {
         
         this.cards = []
-        let suits = ['♠',	'♥',	'♦',	'♣'];
-        suits.forEach(s=> Card.ranks.forEach(r => this.cards.push(new Card(s,r,))))
+        Card.suits.forEach(s=> Card.ranks.forEach(r => this.cards.push(new Card(s,r,))))
         this.shuffle()
         this.trump_suit = this.cards[0].suit
     }

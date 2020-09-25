@@ -7,7 +7,7 @@ export class Game {
     constructor(player_names, game_id) {
         this.players = {}
         this.deck = new Deck()
-        this.trump_card = this.deck.cards[0].toString()
+        this.trump_card = this.deck.cards[0]
         let self=this
         player_names.forEach( function (p) { self.players[p] = new Player() ; self.refill_player_cards(p) })
 
