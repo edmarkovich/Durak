@@ -156,7 +156,7 @@ export class Table {
         node.classList.add("table")
 
         if (mode == "Defend") {
-            await animate_transform(node, Card.getTransform(2 + this.last_attack_slot, 10, 2, 15) + "rotate3d(0,0,1,400deg)", 500).finished
+            await animate_transform(node, Card.getTransform(2 + this.last_attack_slot, 10, 2, 15) + "rotate3d(0,0,1,40deg)", 500).finished
         }
         else {
             this.last_attack_slot++
