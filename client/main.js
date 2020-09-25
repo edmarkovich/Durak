@@ -15,18 +15,19 @@ var initialized = false
 
 IOsocket.on('connect', async function() {
 
+
     if (initialized) {
         console.log("Already Initialized")
         return
     }
     initialized = true
 
-
     let create = new Create()
     window.got_click =  create.got_click.bind(create)
     create.renderCreate()
 
     state.my_name = await create.getName()
+
     
     state.firstRequest = await create.getRequest()
     state.game_id = create.getGameId()
@@ -70,9 +71,23 @@ IOsocket.on('GAME_UPDATE', data => {
 
 window.onload = async function() {
     state.my_name = new URLSearchParams(window.location.search).get("name")
+    cache_card_sprites()
 }
 
+async function cache_card_sprites() {
+    // Cache the Sprites
+    // TODO: less bad way to do this?
+    await sleep(3000)
+    Deck.place_one_card()
+    Deck.put_trump("♠A")
+    let node = document.getElementsByClassName("deck")[0]
+    node.classList.remove("deck")
+    node.classList.remove("card-container")
+    node.id = "sprite_cache"
 
+    node.classList.add("sprite_cache")
+    node.style.opacity = "1%"
+}
 
 
 function get_hands_array(game) {

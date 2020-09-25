@@ -8,26 +8,31 @@ export class Deck {
         await Deck.put_trump(trump)
     }
 
+    static async place_one_card() {
+        let back = document.createElement("div")
+        back.classList.add("back")
+
+        let front = document.createElement("div")
+        front.classList.add("front")
+        
+        let container = document.createElement("div")
+        container.setAttribute("class", "card-container deck")
+        
+        container.appendChild(back)
+        container.appendChild(front)
+        Card.flip_card(container,true)
+
+
+        document.body.appendChild(container)
+
+        return animate_transform(container, Card.getTransform(1, 0, 2, 0),500).finished
+    }
+
+
     static async new_deck() {
         let waits = []
         for (let i=0; i<36; i++) {
-            let back = document.createElement("div")
-            back.classList.add("back")
-
-            let front = document.createElement("div")
-            front.classList.add("front")
-            
-            let container = document.createElement("div")
-            container.setAttribute("class", "card-container deck")
-            
-            container.appendChild(back)
-            container.appendChild(front)
-            Card.flip_card(container,true)
-
-
-            document.body.appendChild(container)
-
-            waits.push(animate_transform(container, Card.getTransform(1, 0, 2, 0),500).finished)
+            waits.push(this.place_one_card())
         }
         for (let i=0; i<waits.length; ++i) { await waits[i].finished  }
     }
