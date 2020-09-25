@@ -48,7 +48,7 @@ export class Deck {
         //Put the deck over trump
         let waits = []
         for (let i=1; i<nodes.length; i++) {
-            let rotation = (90+(i*8)) % 360 
+            let rotation = (0+(i*8)) % 360 
             waits.push(animate_transform(nodes[i], Card.getTransform(0, 70, 2, 5)+ "rotate3d(0,0,1,"+rotation+"deg)", 500).finished)
         } 
         for (let i=0; i<waits.length; ++i) { await waits[i].finished  }
