@@ -75,8 +75,6 @@ window.onload = async function() {
 }
 
 async function cache_card_sprites() {
-    // Cache the Sprites
-    // TODO: less bad way to do this?
     await sleep(3000)
     Deck.place_one_card()
     Deck.put_trump("♠A")
@@ -86,7 +84,8 @@ async function cache_card_sprites() {
     node.id = "sprite_cache"
 
     node.classList.add("sprite_cache")
-    node.style.opacity = "1%"
+    node.style.opacity = "0.1%"
+    node.style.transform = "scale(0.1)"
 }
 
 
@@ -97,10 +96,6 @@ function get_hands_array(game) {
     }
     return out    
 }
-
-
-
-
 
 async function event_loop() {
     while (true) {

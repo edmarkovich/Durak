@@ -47,7 +47,7 @@ export class OtherHand extends Hand {
         node.id = ""+this.hand_index+":"+this.cards_count
         node.style.zIndex = this.cards_count
         await animate_transform(node, Card.getTransform(this.hand_index*3, 15*(this.cards_count), 0, +0*(this.cards_count)) 
-            + "rotate3d(0,0,1,"+(0*this.cards_count)+"deg)", 200).finished
+            + "rotate3d(0,0,1,"+(0*this.cards_count)+"deg)", 250).finished
         this.cards_count++
     }
 
@@ -65,7 +65,6 @@ export class OtherHand extends Hand {
  
      async refill(new_hand) {
         this.show_name(false)
-        let waits =[]
         let take_trump = new_hand.indexOf(this.trump_card) != -1
 
         while (new_hand.length > this.cards_count) {
@@ -73,11 +72,9 @@ export class OtherHand extends Hand {
             let node = Deck.take_card_from_deck(take_trump)
             take_trump=false
             await Card.make_deck_card(node);
-            //waits.push( this.add_card(node))
             await this.add_card(node)
             await sleep(150)
         }
-        await Promise.all(waits)
     }
 
     glow(on) {
@@ -132,7 +129,7 @@ export class MyHand extends Hand{
         return this.cards
     }   
 
-    async arrange() {   
+    async arrange(fast) {   
         
         function hand_sort(a,b) {
             function rank2int(card){ switch (card.substring(1)) {
@@ -155,7 +152,7 @@ export class MyHand extends Hand{
         for (let i=0; i<this.cards.length;++i) {
             let node = document.getElementById(this.cards[i]);
             if (!node) continue;
-            waits.push(animate_transform(node, Card.getTransform(i+0, 0, 4, 0), 500).finished)
+            waits.push(animate_transform(node, Card.getTransform(i+0, 0, 4, 0), fast?100:400).finished)
         }
         for (let i=0; i<waits.length; ++i) { await waits[i]  }
     }
@@ -176,8 +173,7 @@ export class MyHand extends Hand{
             }
 
             this.add_card(node, cards_to_add[i])
-            //waits.push(this.arrange())
-             await this.arrange()
+            await this.arrange(false)
         }
         await Promise.all(waits)
 

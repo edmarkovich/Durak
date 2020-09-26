@@ -68,8 +68,8 @@ export class Card {
 
     static async flip_card(container, reverse) {
         if (reverse) {
-            var a=animate_transform(getFirstOfClass(container,"front"), "rotate3d(0,1,0,-180deg)", 150);
-            var b=animate_transform(getFirstOfClass(container,"back"), "rotate3d(0,1,0,0deg)", 150);
+            var a=animate_transform(getFirstOfClass(container,"front"), "rotate3d(0,1,0,-180deg)", 250);
+            var b=animate_transform(getFirstOfClass(container,"back"), "rotate3d(0,1,0,0deg)", 250);
         } else {
             a=animate_transform(getFirstOfClass(container, "front"), "rotate3d(0,1,0,0deg)", 650);
             b=animate_transform(getFirstOfClass(container, "back"), "rotate3d(0,1,0,-180deg)", 650);

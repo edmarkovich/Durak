@@ -50,7 +50,7 @@ export class Table {
 
     async table_to_hand(player_name, player_hand) {
         let waits = []
-        let nodes = document.getElementsByClassName("table")
+        let nodes = this.sort_table_by_zindex()
         let to_hand = []
 
         for (let i=0; i<nodes.length; ++i) {
@@ -75,6 +75,15 @@ export class Table {
         await Promise.all(waits)
     }
 
+    sort_table_by_zindex() {
+        let nodes = document.getElementsByClassName("table")
+        nodes = Array.prototype.slice.call(nodes)
+        return nodes.sort(function(a,b){
+            if (a.style.zIndex < b.style.zIndex) return 1
+            return -1
+        })
+    }
+
     async clear(all_hands) {
         let waits = []
 
@@ -83,21 +92,17 @@ export class Table {
         }
 
         while (document.getElementsByClassName("table").length>0) {
-            let nodes = document.getElementsByClassName("table")
-            nodes = Array.prototype.slice.call(nodes)
-            nodes = nodes.sort(function(a,b){
-                if (a.style.zIndex < b.style.zIndex) return 1
-                return -1
-            })
 
-            let node = nodes[0]
+
+            let node = this.sort_table_by_zindex()[0]
             node.classList.remove("table")
             node.classList.add("pile")
 
             this.done_pile++
 
             // Put in the done pile
-            await Card.flip_card(node, true)
+            Card.flip_card(node, true)
+            await sleep(100)
             let r = (Math.random()*30)+(this.done_pile%10)*5
             let x = (Math.random()*10)+this.done_pile*5
             let y = (Math.random()*10)+(this.done_pile)*5
@@ -106,7 +111,7 @@ export class Table {
             await sleep(100)
         }
 
-        waits.push(this.getHand(this.my_name).arrange());
+        waits.push(this.getHand(this.my_name).arrange(false));
         await Promise.all(waits)
         this.last_attack_slot=-1
     }
@@ -115,7 +120,7 @@ export class Table {
         await this.clear(all_hands) 
         
         for (let i=0; i<this.player_sequence.length; ++i) {
-            await this.hands[this.player_sequence[i]].refill(all_hands[this.player_sequence[i]])
+           await this.hands[this.player_sequence[i]].refill(all_hands[this.player_sequence[i]])
         }
     }
 
@@ -123,7 +128,7 @@ export class Table {
         let hand = this.getHand(player_name)
         let node = hand.pop_card(card);
         await this.card_to_table(node, this.mode)
-        await hand.arrange()
+        await hand.arrange(true)
     }
 
     async render_turn(old_table_cards, new_table_cards, all_hands) {
