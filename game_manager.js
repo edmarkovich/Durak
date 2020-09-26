@@ -48,7 +48,6 @@ export class GameManager {
             if (this.games[game_id].game.prepare_next_round())
                 this.send_state(game_id)
         }
-        this.send_state(game_id)
     }
 
     process_move(message) {
