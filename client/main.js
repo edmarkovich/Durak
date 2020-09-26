@@ -141,6 +141,13 @@ async function process_inbound(payload) {
     }
 
     if ('prompt' in payload) {
+        if ('defender' in payload.prompt) {
+            console.log("Defender:", payload.prompt.defender)
+            for (let i=0; i< state.game.players.length; i++) {
+                let name = state.game.players[i].name
+                Table.state.theTable.hands[name].set_defender_status(name == payload.prompt.defender) 
+            }            
+        }
 
         if ('player' in payload.prompt) {
             // Glow hand and make the verb card

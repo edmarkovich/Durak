@@ -32,6 +32,9 @@ class Hand {
             name_div.classList.remove("highlight")
         }
     }
+
+    set_defender_status(defender) {}
+
 }
 
 export class OtherHand extends Hand {
@@ -39,7 +42,25 @@ export class OtherHand extends Hand {
         super(trump_card, player_name,0,hand_index)
         this.cards_count = 0
         this.hand_index = hand_index
+        this.defender = false
+
     }
+
+    set_defender_status(defender) {
+
+        if (this.defender == defender) return
+
+        this.defender = defender
+        let nodes = document.getElementsByClassName("his_card"+this.hand_index)
+        for (let i =0; i<nodes.length; ++i) {
+            if (defender) {
+                nodes[i].classList.add("defender")
+            } else {
+                nodes[i].classList.remove("defender")
+            }
+        } 
+    }    
+    
 
     async add_card(node) {
         node.classList.add("his_card"+this.hand_index)
@@ -49,6 +70,10 @@ export class OtherHand extends Hand {
         await animate_transform(node, Card.getTransform(this.hand_index*3, 15*(this.cards_count), 0, +0*(this.cards_count)) 
             + "rotate3d(0,0,1,"+(0*this.cards_count)+"deg)", 250).finished
         this.cards_count++
+
+        if (this.defender) {
+            node.classList.add("defender")
+        }
     }
 
     count() {return this.cards_count}
@@ -57,8 +82,10 @@ export class OtherHand extends Hand {
         this.cards_count--
         let node =document.getElementById(""+this.hand_index+":"+this.cards_count)
         node.classList.remove("his_card"+this.hand_index)
-        node.classList.remove("his");
-        node.classList.remove("highlight");
+        node.classList.remove("his")
+        node.classList.remove("highlight")
+        node.classList.remove("defender") 
+
         Card.make_it_a_card(node, card)
         return node;        
     }
@@ -116,10 +143,10 @@ export class MyHand extends Hand{
     pop_card(card) {
         let node = document.getElementById(card);   
 
-        node.classList.remove("mine");
-        node.classList.remove("highlight"); 
+        node.classList.remove("mine")
+        node.classList.remove("highlight") 
 
-        let idx = this.cards.indexOf(card);
+        let idx = this.cards.indexOf(card)
         this.cards.splice(idx,1)
 
         return node
