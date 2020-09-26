@@ -94,7 +94,9 @@ export class Game {
     }
 
     can_play_more() {
-        return (this.players[this.defender].hasCards() && this.table.numPairs()<6)
+        return this.players[this.defender].hasCards() 
+            && this.table.numPairs()<6
+            && this.table.numUnbeatPairs() < this.players[this.defender].numCards()
     }
 
     attacker_is_out_of_cards() {
@@ -267,7 +269,6 @@ export class Game {
                 }
                 break;
         }
-        //this.prepare_next_round()
     }
 
 

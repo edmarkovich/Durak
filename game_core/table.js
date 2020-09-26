@@ -31,6 +31,10 @@ export class Table {
         return this.pairs.length
     }
 
+    numUnbeatPairs() {
+        return this.pairs.filter(x => !x[1]).length
+    }
+
     gatherAllCards(dont_clear) {
         let out = []
         this.pairs.forEach( function(pair) { 
